@@ -4,11 +4,11 @@ Extension { #name : #TensorFlowComputationBasedTest }
 TensorFlowComputationBasedTest >> assert: anOperation isNotDifferentiableRespectTo: anInput [
 
 	self
-		should: [ anOperation partialDerivativeWithRespectTo: anInput ]
+		should: [anOperation partialDerivativeWithRespectTo: anInput]
 		raise: Error
-		withDescription:
-			( 'INVALID_ARGUMENT: Cannot compute the partial derivative for node ''<1s>'' as it''s unreachable from the output node(s).'
-				expandMacrosWith: anInput operationName )
+		withDescription: (
+			'INVALID_ARGUMENT: Cannot compute the partial derivative for node ''<1s>'' as it''s unreachable from the output node(s).'
+				expandMacrosWith: anInput operationName)
 ]
 
 { #category : #'*TFOperationGradientModelTests' }

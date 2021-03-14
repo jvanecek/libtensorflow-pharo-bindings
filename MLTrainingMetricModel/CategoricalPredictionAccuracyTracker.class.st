@@ -2,7 +2,8 @@ Class {
 	#name : #CategoricalPredictionAccuracyTracker,
 	#superclass : #TrainingMetricTracker,
 	#instVars : [
-		'accuracy'
+		'accuracy',
+		'accuraciesDuringOneEpoch'
 	],
 	#category : 'MLTrainingMetricModel'
 }
@@ -10,15 +11,35 @@ Class {
 { #category : #Accessing }
 CategoricalPredictionAccuracyTracker class >> metricKey [
 
-	^'training-accuracy'
+	^'accuracy'
 ]
 
 { #category : #Processing }
-CategoricalPredictionAccuracyTracker >> measureMetricConsidering: aTrainingEpochInput within: aTrainingContext [
+CategoricalPredictionAccuracyTracker >> measureMetricDuring: aFittingStage onEpochEndWithin: aTrainingContext [
 
 	aTrainingContext
-		addMetricValued: (accuracy computeWith: aTrainingEpochInput) scalarOutput
+		addMetricValued: accuraciesDuringOneEpoch mean
+		during: aFittingStage
 		to: self class metricKey
+]
+
+{ #category : #Processing }
+CategoricalPredictionAccuracyTracker >> measureMetricDuring: aFittingStage onEpochStartWithin: aTrainingContext [
+
+	accuraciesDuringOneEpoch := OrderedCollection new
+]
+
+{ #category : #Processing }
+CategoricalPredictionAccuracyTracker >> measureMetricDuring: aFittingStage onStepEndUsing: aStepInput within: aTrainingContext [
+
+	accuraciesDuringOneEpoch add: (accuracy computeWith: aStepInput) scalarOutput
+]
+
+{ #category : #Processing }
+CategoricalPredictionAccuracyTracker >> measureMetricDuring: aFittingStage onStepStartUsing: aStepInput within: aTrainingContext [
+	" do nothing "
+
+
 ]
 
 { #category : #Preprocessing }

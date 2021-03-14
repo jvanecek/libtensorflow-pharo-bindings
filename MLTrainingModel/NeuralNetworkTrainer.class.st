@@ -40,7 +40,7 @@ NeuralNetworkTrainer >> initializeOn: aTensorFlowComputation [
 	tf := aTensorFlowComputation.
 	metricTrackers := OrderedCollection new.
 
-	self afterEveryTrainingDo: [:iter :summary | ]
+	self afterEveryTrainingDo: [:context | ]
 ]
 
 { #category : #Configuring }
@@ -85,28 +85,22 @@ NeuralNetworkTrainer >> trackMetricWith: aMetricTracker [
 { #category : #Training }
 NeuralNetworkTrainer >> train: aModel doing: aTraining [
 
-	| loss optimization currentEpoch epoch context incrementEpoch |
+	| loss context |
 
 	self assertReadyToStartTraining.
-	currentEpoch := 0.
-	epoch := VariableNode on: aModel currentComputation named: 'currentEpoch' with: 1 asFloatTensor.
-	incrementEpoch := epoch += 1 asFloatTensor.
 
-	optimizer considerCurrentEpochIn: epoch.
 	loss := lossBuilder value: (LossBuilder for: aModel logits).
-	optimization := ModelUpdater updating: aModel toMinimize: loss using: optimizer.
 	context :=
 		NeuralNetworkTrainingContext
 			optimizing: aModel
-			using: optimization
+			minimizing: loss
+			using: optimizer
 			trackingMetricsWith: metricTrackers.
 
-	afterTrainingCallback value: currentEpoch value: context.
+	afterTrainingCallback value: context.
 	[
 		aTraining value: context.
-		currentEpoch := currentEpoch + 1.
-		optimization currentComputation compute: incrementEpoch.
-		afterTrainingCallback value: currentEpoch value: context.
+		afterTrainingCallback value: context.
 		stopCondition isModelWellTrainedAccording: context]
 			whileFalse.
 	^NeuralNetworkTrainingSummary regarding: context stoppedAfter: stopCondition
@@ -116,17 +110,6 @@ NeuralNetworkTrainer >> train: aModel doing: aTraining [
 NeuralNetworkTrainer >> train: aModel toFit: aDataset [
 
 	^self train: aModel doing: [:context | context computeOptimizationToFitTo: aDataset]
-]
-
-{ #category : #Training }
-NeuralNetworkTrainer >> train: aModel toFitPredictionFrom: anInstanceCollection to: aTarget [
-
-	^self
-		train: aModel
-		toFit: (
-			SampleDataset new
-				bindTrainingSetTo: anInstanceCollection andLabelsTo: aTarget;
-				yourself)
 ]
 
 { #category : #Configuring }

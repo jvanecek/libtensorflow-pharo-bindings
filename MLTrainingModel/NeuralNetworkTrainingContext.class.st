@@ -2,83 +2,189 @@ Class {
 	#name : #NeuralNetworkTrainingContext,
 	#superclass : #Object,
 	#instVars : [
-		'model',
+		'modelToTrain',
 		'optimization',
-		'accuracy',
-		'metricsDuringTrainings',
-		'metricTrackers'
+		'currentEpoch',
+		'metricTrackers',
+		'metricsCollected'
 	],
 	#category : 'MLTrainingModel'
 }
 
 { #category : #'Instance Creation' }
-NeuralNetworkTrainingContext class >> optimizing: aModel using: anOptimization trackingMetricsWith: aMetricTrackerCollection [
+NeuralNetworkTrainingContext class >> optimizing: aPredictionModel minimizing: aLossFunction using: anOptimizer trackingMetricsWith: aMetricTrackerCollection [
 
 	^self new
-		initializeOptimizing: aModel
-		using: anOptimization
+		initializeOptimizing: aPredictionModel
+		minimizing: aLossFunction
+		using: anOptimizer
 		trackingMetricsWith: aMetricTrackerCollection
 ]
 
 { #category : #Accessing }
-NeuralNetworkTrainingContext >> addMetricValued: aValue to: aMetricName [
+NeuralNetworkTrainingContext >> addMetricValued: aValue during: aFittingStage to: aMetricName [
 
-	(metricsDuringTrainings at: aMetricName ifAbsentPut: [OrderedCollection new]) add: aValue
+	(metricsCollected
+		at: (aFittingStage metricKeyNamed: aMetricName)
+		ifAbsentPut: [OrderedCollection new])
+			add: aValue
+]
+
+{ #category : #Accessing }
+NeuralNetworkTrainingContext >> buildInputWithFeatures: features andTarget: target [
+
+	^Dictionary new
+		at: modelToTrain inputVariableName put: features;
+		at: optimization lossToMinimize targetInputName put: target;
+		yourself
 ]
 
 { #category : #Computing }
+NeuralNetworkTrainingContext >> computeEpochFor: aStage using: aSampleDataset [
+
+	| losses loss |
+
+	(aStage shouldBeExecutedFor: aSampleDataset) ifFalse: [^self].
+	losses := OrderedCollection new.
+	self
+		measureEpochMetricsFor: aStage
+		during: [
+			aStage
+				withSuitableSetIn: aSampleDataset
+				do: [:features :target |
+					aStage
+						computeBatchStepUsing:
+							(self buildInputWithFeatures: features andTarget: target)
+						aggregatingLossTo: losses
+						within: self]].
+	loss := losses mean.
+	self addMetricValued: loss during: aStage to: self lossMetricKey.
+	^loss
+]
+
+{ #category : #'Computing - Training' }
 NeuralNetworkTrainingContext >> computeOptimizationToFitTo: aSampleDataset [
 
-	| loss trainingInputs |
+	| trainingLoss |
 
-	aSampleDataset withTrainingDatasetDo: [:features :target |
-		trainingInputs :=
-			Dictionary new
-				at: model inputVariableName put: features;
-				at: optimization lossToMinimize targetInputName put: target;
-				yourself].
-	loss := optimization computeWith: trainingInputs.
+	trainingLoss := self computeTrainingEpochUsing: aSampleDataset.
+	self computeValidationEpochUsing: aSampleDataset.
+	^trainingLoss
+]
 
-	self addMetricValued: loss scalarOutput to: self trainingLossMetricKey.
-	metricTrackers do: [:tracker | tracker measureMetricConsidering: trainingInputs within: self].
+{ #category : #'Computing - Training' }
+NeuralNetworkTrainingContext >> computeTrainingBatchStepUsing: anInput aggregatingLossTo: aLossCollection [
 
+	self
+		measureBatchStepMetricsFor: TrainingStage new
+		using: anInput
+		during: [
+			aLossCollection add: (optimization computeWith: anInput) scalarOutput.
+			currentEpoch incrementTrainingStep]
+]
+
+{ #category : #'Computing - Training' }
+NeuralNetworkTrainingContext >> computeTrainingEpochUsing: aSampleDataset [
+
+	| loss |
+
+	loss := self computeEpochFor: TrainingStage new using: aSampleDataset.
+	currentEpoch increment.
 	^loss
+]
+
+{ #category : #'Computing - Validation' }
+NeuralNetworkTrainingContext >> computeValidationBatchStepUsing: anInput aggregatingLossTo: aLossCollection [
+
+	self
+		measureBatchStepMetricsFor: ValidationStage new
+		using: anInput
+		during: [
+			aLossCollection add: (optimization lossToMinimize computeWith: anInput) scalarOutput]
+]
+
+{ #category : #'Computing - Validation' }
+NeuralNetworkTrainingContext >> computeValidationEpochUsing: aSampleDataset [
+
+	| loss |
+
+	loss := self computeEpochFor: ValidationStage new using: aSampleDataset.
+	^loss
+]
+
+{ #category : #Accessing }
+NeuralNetworkTrainingContext >> epochsTrained [
+
+	^currentEpoch value
 ]
 
 { #category : #Accessing }
 NeuralNetworkTrainingContext >> historicalTrainingLoss [
 
-	^self metricKnownAs: self trainingLossMetricKey
+	^self trainingMetricKnownAs: self lossMetricKey
 ]
 
 { #category : #Initialization }
-NeuralNetworkTrainingContext >> initializeOptimizing: aPredictionModel using: anOptimization trackingMetricsWith: aMetricTrackerCollection [
+NeuralNetworkTrainingContext >> initializeMetricsTrackedBy: aMetricTrackerCollection [
 
-	model := aPredictionModel.
-	optimization := anOptimization.
 	metricTrackers := aMetricTrackerCollection.
-	metricsDuringTrainings :=
-		Dictionary new
-			at: self trainingLossMetricKey put: OrderedCollection new;
-			yourself.
+	metricsCollected := Dictionary new.
 	metricTrackers do: [:each | each prepareMetricsWithin: self]
 ]
 
-{ #category : #Computing }
-NeuralNetworkTrainingContext >> lossValueWhenPredictingFrom: anInput andExpectedIs: anExpectedValues [
+{ #category : #Initialization }
+NeuralNetworkTrainingContext >> initializeOptimizationUsing: anOptimizer minimizing: aLossFunction [
 
-	^(optimization lossToMinimize computeWith: (
-		Dictionary new
-			at: model inputVariableName put: anInput;
-			at: optimization lossToMinimize targetInputName put: anExpectedValues;
-			yourself))
-				scalarOutput
+	anOptimizer considerCurrentEpochIn: currentEpoch.
+	optimization := ModelUpdater updating: modelToTrain toMinimize: aLossFunction using: anOptimizer
+]
+
+{ #category : #Initialization }
+NeuralNetworkTrainingContext >> initializeOptimizing: aPredictionModel minimizing: aLossFunction using: anOptimizer trackingMetricsWith: aMetricTrackerCollection [
+
+	modelToTrain := aPredictionModel.
+	currentEpoch := CurrentEpochHolder on: modelToTrain currentComputation.
+	self initializeOptimizationUsing: anOptimizer minimizing: aLossFunction.
+	self initializeMetricsTrackedBy: aMetricTrackerCollection
 ]
 
 { #category : #Accessing }
-NeuralNetworkTrainingContext >> metricKnownAs: aMetricKey [
+NeuralNetworkTrainingContext >> lossMetricKey [
 
-	^(metricsDuringTrainings at: aMetricKey) asArray
+	^'loss'
+]
+
+{ #category : #Accessing }
+NeuralNetworkTrainingContext >> lossValueWhenPredictingFrom: anInput andExpectedIs: anExpectedValues [
+
+	^(optimization lossToMinimize
+		computeWith: (self buildInputWithFeatures: anInput andTarget: anExpectedValues))
+			scalarOutput
+]
+
+{ #category : #Computing }
+NeuralNetworkTrainingContext >> measureBatchStepMetricsFor: aStage using: input during: aBlock [
+
+	metricTrackers
+		do: [:tracker | tracker measureMetricDuring: aStage onStepStartUsing: input within: self].
+	aBlock value.
+	metricTrackers
+		do: [:tracker | tracker measureMetricDuring: aStage onStepEndUsing: input within: self]
+]
+
+{ #category : #Computing }
+NeuralNetworkTrainingContext >> measureEpochMetricsFor: aStage during: aBlock [
+
+	metricTrackers
+		do: [:tracker | tracker measureMetricDuring: aStage onEpochStartWithin: self].
+	aBlock value.
+	metricTrackers do: [:tracker | tracker measureMetricDuring: aStage onEpochEndWithin: self]
+]
+
+{ #category : #Accessing }
+NeuralNetworkTrainingContext >> metricKnownAs: aMetricKey during: aFittingStage [
+
+	^(metricsCollected at: (aFittingStage metricKeyNamed: aMetricKey)) asArray
 ]
 
 { #category : #Printing }
@@ -96,7 +202,7 @@ NeuralNetworkTrainingContext >> printTrainingDescriptionOn: aStream [
 	aStream
 		nextPutAll: '== Model To Train ==';
 		cr;
-		print: model;
+		print: modelToTrain;
 		cr;
 		nextPutAll: '=====';
 		cr.
@@ -106,13 +212,13 @@ NeuralNetworkTrainingContext >> printTrainingDescriptionOn: aStream [
 ]
 
 { #category : #Accessing }
-NeuralNetworkTrainingContext >> totalNumberOfEpochs [
+NeuralNetworkTrainingContext >> trainingMetricKnownAs: aMetricKey [
 
-	^self historicalTrainingLoss size
+	^self metricKnownAs: aMetricKey during: TrainingStage new
 ]
 
-{ #category : #Initialization }
-NeuralNetworkTrainingContext >> trainingLossMetricKey [
+{ #category : #Accessing }
+NeuralNetworkTrainingContext >> validationMetricKnownAs: aMetricKey [
 
-	^'training-loss'
+	^self metricKnownAs: aMetricKey during: ValidationStage new
 ]

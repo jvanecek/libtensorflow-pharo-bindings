@@ -11,7 +11,7 @@ LossBuilderTest >> gradientDescentOf: aLossFunction withRespectTo: aVariable [
 
 	grad := aLossFunction partialDerivativeWithRespectTo: aVariable.
 	gradOutput := grad valueWithRespectTo: aVariable.
-	^ ( GradientDescent scalingBy: 0.2 ) apply: gradOutput to: aVariable
+	^(GradientDescent scalingBy: 0.2) apply: gradOutput to: aVariable
 ]
 
 { #category : #Accessing }
@@ -177,14 +177,16 @@ LossBuilderTest >> testOptimizeModelMinimizingCategoricalCrossEntropy [
 
 	| loss weight optimize |
 
-	loss := ( LossBuilder for: self modelWithTwoOutputUnits ) buildCategoricalCrossEntropy.
+	loss := (LossBuilder for: self modelWithTwoOutputUnits) buildCategoricalCrossEntropy.
 	weight := self weight.
 	optimize := self gradientDescentOf: loss withRespectTo: weight.
 	tf compute: optimize feedingInputsWith: self inputAndExpectedProbabilities.
+	
 	self
 		assertOutputOf: weight
-		isMatrixCloseTo:
-			#(#(-0.0354343689978123 -0.0645656287670136) #(0.0145656336098909 -0.0145656289532781) #(-0.0031515508890152 -0.0468484424054623))
+		isMatrixCloseTo: #(
+			(-3.54343689978123e-2 -6.45656287670136e-2) (1.45656336098909e-2 -1.45656289532781e-2)
+			(-3.1515508890152e-3 -4.68484424054623e-2))
 ]
 
 { #category : #'Test - Optimizer' }
@@ -192,15 +194,19 @@ LossBuilderTest >> testOptimizeModelMinimizingCategoricalCrossEntropyWithoutRedu
 
 	| loss weight optimize |
 
-	loss := ( LossBuilder for: self modelWithTwoOutputUnits )
-		withoutReducing;
-		buildCategoricalCrossEntropy.
+	loss :=
+		(LossBuilder for: self modelWithTwoOutputUnits)
+			withoutReducing;
+			buildCategoricalCrossEntropy.
 	weight := self weight.
 	optimize := self gradientDescentOf: loss withRespectTo: weight.
 	tf compute: optimize feedingInputsWith: self inputAndExpectedProbabilities.
+	
 	self
 		assertOutputOf: weight
-		isMatrixCloseTo: #(#( -0.141737475991249  -0.258262515068054) #(0.0582625344395638  -0.0582625158131123) #( -0.0126062035560608  -0.187393769621849))
+		isMatrixCloseTo: #(
+			(-1.41737475991249e-1 -2.58262515068054e-1) (5.82625344395638e-2 -5.82625158131123e-2)
+			(-1.26062035560608e-2 -1.87393769621849e-1))
 ]
 
 { #category : #'Test - Optimizer' }
@@ -208,12 +214,12 @@ LossBuilderTest >> testOptimizeModelMinimizingMeanSquaredError [
 
 	| loss weight optimize |
 
-	loss := ( LossBuilder for: self modelWithTwoOutputUnits ) buildMeanSquaredError.
+	loss := (LossBuilder for: self modelWithTwoOutputUnits) buildMeanSquaredError.
 	weight := self weight.
 	optimize := self gradientDescentOf: loss withRespectTo: weight.
 	tf compute: optimize feedingInputsWith: self inputAndExpectedProbabilities.
 	
-	self assertOutputOf: weight isMatrixCloseTo: #(#( -0.02  -0.08) #(0.03  -0.03) #(0.02  -0.07))
+	self assertOutputOf: weight isMatrixCloseTo: #((-0.02 -0.08) (0.03 -0.03) (0.02 -0.07))
 ]
 
 { #category : #'Test - Optimizer' }
@@ -221,14 +227,15 @@ LossBuilderTest >> testOptimizeModelMinimizingMeanSquaredErrorWithoutReducing [
 
 	| loss weight optimize |
 
-	loss := ( LossBuilder for: self modelWithTwoOutputUnits )
-		withoutReducing;
-		buildSquaredError.
+	loss :=
+		(LossBuilder for: self modelWithTwoOutputUnits)
+			withoutReducing;
+			buildSquaredError.
 	weight := self weight.
 	optimize := self gradientDescentOf: loss withRespectTo: weight.
 	tf compute: optimize feedingInputsWith: self inputAndExpectedProbabilities.
 	
-	self assertOutputOf: weight isMatrixCloseTo: #(#( -0.16  -0.64) #(0.24  -0.24) #(0.16  -0.56))
+	self assertOutputOf: weight isMatrixCloseTo: #((-0.16 -0.64) (0.24 -0.24) (0.16 -0.56))
 ]
 
 { #category : #'Test - Optimizer' }
@@ -236,15 +243,16 @@ LossBuilderTest >> testOptimizeModelMinimizingSparseCategoricalCrossEntropy [
 
 	| loss weight optimize |
 
-	loss := ( LossBuilder for: self modelWithTwoOutputUnits ) buildSparseCategoricalCrossEntropy.
+	loss := (LossBuilder for: self modelWithTwoOutputUnits) buildSparseCategoricalCrossEntropy.
 	weight := self weight.
 	optimize := self gradientDescentOf: loss withRespectTo: weight.
 	tf compute: optimize feedingInputsWith: self inputAndExpectedLabels.
-
+	
 	self
 		assertOutputOf: weight
-		isMatrixCloseTo:
-			#(#(0.0645656362175942 -0.0645656287670136) #(0.0145656336098909 -0.0145656289532781) #(0.0468484535813332 -0.0468484424054623))
+		isMatrixCloseTo: #(
+			(6.45656362175942e-2 -6.45656287670136e-2) (1.45656336098909e-2 -1.45656289532781e-2)
+			(4.68484535813332e-2 -4.68484424054623e-2))
 ]
 
 { #category : #'Test - Optimizer' }
@@ -252,16 +260,18 @@ LossBuilderTest >> testOptimizeModelMinimizingSparseCategoricalCrossEntropyWitho
 
 	| loss weight optimize |
 
-	loss := ( LossBuilder for: self modelWithTwoOutputUnits )
-		withoutReducing;
-		buildSparseCategoricalCrossEntropy.
+	loss :=
+		(LossBuilder for: self modelWithTwoOutputUnits)
+			withoutReducing;
+			buildSparseCategoricalCrossEntropy.
 	weight := self weight.
 	optimize := self gradientDescentOf: loss withRespectTo: weight.
 	tf compute: optimize feedingInputsWith: self inputAndExpectedLabels.
 	
 	self
 		assertOutputOf: weight
-		isMatrixCloseTo: #(#(0.2582634  -0.2582634) #(0.058262532  -0.058262532) #(0.187393808  -0.187393808))
+		isMatrixCloseTo: #(
+			(0.2582634 -0.2582634) (0.058262532 -0.058262532) (0.187393808 -0.187393808))
 ]
 
 { #category : #'Test - Loss' }

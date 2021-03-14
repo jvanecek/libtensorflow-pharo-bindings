@@ -3,5 +3,17 @@ Extension { #name : #NeuralNetworkTrainingSummary }
 { #category : #'*MLTrainingMetricModel' }
 NeuralNetworkTrainingSummary >> historicalTrainingAccuracy [
 
-	^trainingContext metricKnownAs: CategoricalPredictionAccuracyTracker metricKey
+	^self trainingMetricKnownAs: CategoricalPredictionAccuracyTracker metricKey
+]
+
+{ #category : #'*MLTrainingMetricModel' }
+NeuralNetworkTrainingSummary >> trainingMetricKnownAs: aMetricKey [
+
+	^trainingContext trainingMetricKnownAs: aMetricKey
+]
+
+{ #category : #'*MLTrainingMetricModel' }
+NeuralNetworkTrainingSummary >> validationMetricKnownAs: aMetricKey [
+
+	^trainingContext validationMetricKnownAs: aMetricKey
 ]

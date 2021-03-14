@@ -7,8 +7,7 @@ Class {
 		'validationSet',
 		'validationLabels',
 		'testingSet',
-		'testingLabels',
-		'batchSize'
+		'testingLabels'
 	],
 	#category : 'MLTrainingModel'
 }
@@ -20,24 +19,36 @@ SampleDataset class >> new [
 ]
 
 { #category : #Configuring }
-SampleDataset >> bindTestingSetTo: aTrainingSet andLabelsTo: aLabelsSet [
+SampleDataset >> bindTestingSetTo: aTrainingSet withLabels: aLabelsSet [
 
 	testingSet := aTrainingSet.
 	testingLabels := aLabelsSet
 ]
 
 { #category : #Configuring }
-SampleDataset >> bindTrainingSetTo: aTrainingSet andLabelsTo: aLabelsSet [
+SampleDataset >> bindTrainingSetTo: aTrainingSet withLabels: aLabelsSet [
 
 	trainingSet := aTrainingSet.
 	trainingLabels := aLabelsSet
 ]
 
 { #category : #Configuring }
-SampleDataset >> bindValidationSetTo: aValidationSet andLabelsTo: aLabelsSet [
+SampleDataset >> bindValidationSetTo: aValidationSet withLabels: aLabelsSet [
 
 	validationSet := aValidationSet.
 	validationLabels := aLabelsSet
+]
+
+{ #category : #Testing }
+SampleDataset >> hasTrainingSetConfigured [
+
+	^trainingSet isNil not
+]
+
+{ #category : #Testing }
+SampleDataset >> hasValidationSetConfigured [
+
+	^validationSet isNil not
 ]
 
 { #category : #Initialization }
@@ -50,32 +61,13 @@ SampleDataset >> initialize [
 	validationLabels := nil.
 
 	testingSet := nil.
-	testingLabels := nil. 
-	
-	self splittedInBatchesOf: 32
-]
-
-{ #category : #Configuring }
-SampleDataset >> splittedInBatchesOf: anAmountOfInstances [
-	
-	batchSize := anAmountOfInstances
+	testingLabels := nil
 ]
 
 { #category : #Accessing }
 SampleDataset >> withTestingDatasetDo: aBlock [
 
 	testingSet isNil ifFalse: [aBlock value: testingSet value: testingLabels]
-]
-
-{ #category : #Accessing }
-SampleDataset >> withTrainingBatchesDo: aBlock [
-
-	self withTrainingDatasetDo: [:features :labels |
-		(1 to: features size by: batchSize) do: [:index | | upperBound |
-			upperBound := (index + batchSize - 1) min: features size.
-			aBlock
-				value: (features copyFrom: index to: upperBound)
-				value: (labels copyFrom: index to: upperBound)]]
 ]
 
 { #category : #Accessing }

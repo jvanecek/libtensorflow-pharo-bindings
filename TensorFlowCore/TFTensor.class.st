@@ -658,13 +658,6 @@ TFTensor >> numDims [
 	^self rank
 ]
 
-{ #category : #acccessing }
-TFTensor >> printOn: aStream [
-
-	aStream nextPutAll:
-		('<1s> <2s>' expandMacrosWith: self typeDescription with: self shapeDescription asLowercase)
-]
-
 { #category : #accessing }
 TFTensor >> rank [
 	^ self library tensorRank: self

@@ -29,11 +29,11 @@ GradientDescent class >> scalingBy: aLearningRate [
 { #category : #Applying }
 GradientDescent >> apply: aGradient to: aVariable [
 
-	^ aVariable currentComputation
+	^aVariable currentComputation
 		newOperationOf: 'ApplyGradientDescent'
 		namePrefixed: operationName
-		withAll: ( Array with: aVariable with: learningRate with: aGradient )
-		describedBy: [ :d |  ]
+		withAll: (Array with: aVariable with: learningRate with: aGradient)
+		describedBy: [:d | ]
 ]
 
 { #category : #Initialization }

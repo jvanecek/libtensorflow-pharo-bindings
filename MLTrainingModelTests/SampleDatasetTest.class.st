@@ -11,7 +11,7 @@ SampleDatasetTest >> testBindTestingSet [
 
 	sample := SampleDataset new.
 
-	sample bindTestingSetTo: #((1) (2) (3)) andLabelsTo: #(1 2 3).
+	sample bindTestingSetTo: #((1) (2) (3)) withLabels: #(1 2 3).
 
 	wasBinded := false.
 	sample
@@ -32,7 +32,7 @@ SampleDatasetTest >> testBindTrainingSet [
 
 	sample := SampleDataset new.
 
-	sample bindTrainingSetTo: #((1) (2) (3)) andLabelsTo: #(1 2 3).
+	sample bindTrainingSetTo: #((1) (2) (3)) withLabels: #(1 2 3).
 
 	wasBinded := false.
 	sample
@@ -42,7 +42,7 @@ SampleDatasetTest >> testBindTrainingSet [
 			self assert: labels equals: #(1 2 3)];
 		withValidationDatasetDo: [:features :labels | self fail];
 		withTestingDatasetDo: [:features :labels | self fail].
-		
+
 	self assert: wasBinded
 ]
 
@@ -53,7 +53,7 @@ SampleDatasetTest >> testBindValidationSet [
 
 	sample := SampleDataset new.
 
-	sample bindValidationSetTo: #((1) (2) (3)) andLabelsTo: #(1 2 3).
+	sample bindValidationSetTo: #((1) (2) (3)) withLabels: #(1 2 3).
 
 	wasBinded := false.
 	sample
@@ -65,58 +65,4 @@ SampleDatasetTest >> testBindValidationSet [
 		withTestingDatasetDo: [:features :labels | self fail].
 
 	self assert: wasBinded
-]
-
-{ #category : #Testing }
-SampleDatasetTest >> testIterateTrainingSetInBatches [
-
-	| sample expectedFeaturesBatches expectedLabelsBatches batchIndex |
-
-	sample := SampleDataset new.
-	sample
-		splittedInBatchesOf: 3;
-		bindTrainingSetTo: #((1) (2) (3) (4)) andLabelsTo: #(1 2 3 4).
-
-	expectedFeaturesBatches :=
-		OrderedCollection new
-			add: #((1) (2) (3));
-			add: #((4));
-			yourself.
-	expectedLabelsBatches :=
-		OrderedCollection new
-			add: #(1 2 3);
-			add: #(4);
-			yourself.
-	batchIndex := 0.
-	sample withTrainingBatchesDo: [:features :labels |
-		batchIndex := batchIndex + 1.
-		self assert: features equals: (expectedFeaturesBatches at: batchIndex).
-		self assert: labels equals: (expectedLabelsBatches at: batchIndex)].
-
-	self assert: batchIndex equals: 2
-]
-
-{ #category : #Testing }
-SampleDatasetTest >> testIterateTrainingSetInBatchesWhenNoSizeSpecified [
-
-	| sample expectedFeaturesBatches expectedLabelsBatches batchIndex |
-
-	sample := SampleDataset new.
-	sample bindTrainingSetTo: #((1) (2) (3) (4)) andLabelsTo: #(1 2 3 4).
-
-	expectedFeaturesBatches :=
-		OrderedCollection new
-			add: #((1) (2) (3) (4));
-			yourself.
-	expectedLabelsBatches :=
-		OrderedCollection new
-			add: #(1 2 3 4);
-			yourself.
-	batchIndex := 0.
-	sample withTrainingBatchesDo: [:features :labels |
-		batchIndex := batchIndex + 1.
-		self assert: features equals: (expectedFeaturesBatches at: batchIndex).
-		self assert: labels equals: (expectedLabelsBatches at: batchIndex)].
-
-	self assert: batchIndex equals: 1
 ]

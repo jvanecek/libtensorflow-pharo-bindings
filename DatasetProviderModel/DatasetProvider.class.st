@@ -48,6 +48,17 @@ DatasetProvider >> fashionDataset [
 ]
 
 { #category : #'Accessing - MNIST' }
+DatasetProvider >> fashionDatasetOn: aTensorFlowComputation [
+
+	^(SampleDatasetComputationAware
+		on: aTensorFlowComputation
+		transformingFeaturesWith: [:features | features reshapeFlattened / 255.0]
+		transformingLabelsWith: [:labels | labels]
+		applying: [:dataset | dataset inBatchesOf: 32])
+			bindSetsFrom: self fashionDataset
+]
+
+{ #category : #'Accessing - MNIST' }
 DatasetProvider >> handwrittenDigitsDataset [
 
 	handwrittenDigitsDataset ifNil: [self initializeHandwrittenDataset].
@@ -68,16 +79,30 @@ DatasetProvider >> initializeFashionDataset [
 		add: 'train-images-idx3-ubyte.gz';
 		add: 't10k-labels-idx1-ubyte.gz';
 		add: 't10k-images-idx3-ubyte.gz';
-		do: [ :fileName | 
+		do: [:fileName |
 			self
-				download: ( '<1s><2s>' expandMacrosWith: baseUrl with: fileName )
-				to: baseDirectory / ( '<1s>' expandMacrosWith: fileName )
-			].
+				download: ('<1s><2s>' expandMacrosWith: baseUrl with: fileName)
+				to: baseDirectory / fileName].
 
-	fashionDataset := SampleDataset new
-		bindTrainingSetTo: ( self tensorFromFileNamed: baseDirectory / 'train-images-idx3-ubyte.gz' )
-			andLabelsTo: ( self tensorFromFileNamed: baseDirectory / 'train-labels-idx1-ubyte.gz' );
-		yourself
+	fashionDataset :=
+		SampleDataset new
+			bindTrainingSetTo: (
+					self
+						tensorTyped: TFTensor typeFloat
+						fromFileNamed: baseDirectory / 'train-images-idx3-ubyte.gz')
+				withLabels: (
+					self
+						tensorTyped: TFTensor typeInt32
+						fromFileNamed: baseDirectory / 'train-labels-idx1-ubyte.gz');
+			bindValidationSetTo: (
+					self
+						tensorTyped: TFTensor typeFloat
+						fromFileNamed: baseDirectory / 't10k-images-idx3-ubyte.gz')
+				withLabels: (
+					self
+						tensorTyped: TFTensor typeInt32
+						fromFileNamed: baseDirectory / 't10k-labels-idx1-ubyte.gz');
+			yourself
 ]
 
 { #category : #Initialization }
@@ -94,18 +119,30 @@ DatasetProvider >> initializeHandwrittenDataset [
 		add: 'train-images-idx3-ubyte.gz';
 		add: 't10k-labels-idx1-ubyte.gz';
 		add: 't10k-images-idx3-ubyte.gz';
-		do: [ :fileName | 
+		do: [:fileName |
 			self
-				download: ( '<1s><2s>' expandMacrosWith: baseUrl with: fileName )
-				to: baseDirectory / ( '<1s>' expandMacrosWith: fileName )
-			].
+				download: ('<1s><2s>' expandMacrosWith: baseUrl with: fileName)
+				to: baseDirectory / ('<1s>' expandMacrosWith: fileName)].
 
-	handwrittenDigitsDataset := SampleDataset new
-		bindTrainingSetTo: ( self tensorFromFileNamed: baseDirectory / 'train-images-idx3-ubyte.gz' )
-			andLabelsTo: ( self tensorFromFileNamed: baseDirectory / 'train-labels-idx1-ubyte.gz' );
-		bindTestingSetTo: ( self tensorFromFileNamed: baseDirectory / 't10k-images-idx3-ubyte.gz' )
-			andLabelsTo: ( self tensorFromFileNamed: baseDirectory / 't10k-labels-idx1-ubyte.gz' );
-		yourself
+	handwrittenDigitsDataset :=
+		SampleDataset new
+			bindTrainingSetTo: (
+					self
+						tensorTyped: TFTensor typeFloat
+						fromFileNamed: baseDirectory / 'train-images-idx3-ubyte.gz')
+				withLabels: (
+					self
+						tensorTyped: TFTensor typeInt32
+						fromFileNamed: baseDirectory / 'train-labels-idx1-ubyte.gz');
+			bindTestingSetTo: (
+					self
+						tensorTyped: TFTensor typeFloat
+						fromFileNamed: baseDirectory / 't10k-images-idx3-ubyte.gz')
+				withLabels: (
+					self
+						tensorTyped: TFTensor typeInt32
+						fromFileNamed: baseDirectory / 't10k-labels-idx1-ubyte.gz');
+			yourself
 ]
 
 { #category : #Accessing }
@@ -121,7 +158,7 @@ DatasetProvider >> shakespeareText [
 ]
 
 { #category : #Accessing }
-DatasetProvider >> tensorFromFileNamed: aString [
+DatasetProvider >> tensorTyped: aTensorType fromFileNamed: aString [
 
 	| file reader compressed |
 
@@ -131,6 +168,7 @@ DatasetProvider >> tensorFromFileNamed: aString [
 	compressed := file binaryReadStream.
 	reader := IdxReader onStream: ( GZipReadStream on: compressed ) upToEnd asByteArray readStream.
 	^ TFTensor
-		fromInt32s: reader next
+		fromNumbers: reader next
+		type: aTensorType
 		shape: ( TensorShape withDimensionsSized: reader dimensionSizes )
 ]

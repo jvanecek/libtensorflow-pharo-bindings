@@ -103,6 +103,18 @@ SampleDatasetComputationAware >> bindValidationFeaturesTo: aFeaturesTensor withL
 				slicingAll: (Array with: featuresNode with: labelsNode))
 ]
 
+{ #category : #Testing }
+SampleDatasetComputationAware >> hasTrainingSetConfigured [
+
+	^ trainingDataset isNil not
+]
+
+{ #category : #Testing }
+SampleDatasetComputationAware >> hasValidationSetConfigured [
+
+	^ validationDataset isNil not
+]
+
 { #category : #Initialization }
 SampleDatasetComputationAware >> initializeOn: aTensorFlowComputation transformingFeaturesWith: aFeaturesTransformation transformingLabelsWith: aLabelsTransformation applying: aDatasetTransformation [
 

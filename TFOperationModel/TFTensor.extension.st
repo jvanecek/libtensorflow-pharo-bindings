@@ -43,6 +43,13 @@ TFTensor >> outputOn: aGraph [
 ]
 
 { #category : #'*TFOperationModel' }
+TFTensor >> printOn: aStream [
+
+	aStream nextPutAll:
+		('<1s> <2s>' expandMacrosWith: self typeDescription with: self shapeDescription asLowercase)
+]
+
+{ #category : #'*TFOperationModel' }
 TFTensor >> shapeDescription [
 
 	^self shape description
