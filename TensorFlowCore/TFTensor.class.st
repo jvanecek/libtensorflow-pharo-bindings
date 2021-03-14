@@ -62,7 +62,6 @@ TFTensor class >> fromDoubles: values [
 { #category : #'instance creation' }
 TFTensor class >> fromDoubles: values shape: shape [
 	^ self fromNumbers: values type: self typeDouble shape: shape
-
 ]
 
 { #category : #'instance creation' }
@@ -73,7 +72,6 @@ TFTensor class >> fromFloats: values [
 { #category : #'instance creation' }
 TFTensor class >> fromFloats: values shape: shape [
 	^ self fromNumbers: values type: self typeFloat shape: shape
-
 ]
 
 { #category : #'instance creation' }
@@ -92,7 +90,6 @@ TFTensor class >> fromInt32s: values [
 { #category : #'instance creation' }
 TFTensor class >> fromInt32s: values shape: shape [
 	^ self fromNumbers: values type: self typeInt32 shape: shape
-
 ]
 
 { #category : #'instance creation' }
@@ -111,7 +108,6 @@ TFTensor class >> fromInt64s: values [
 { #category : #'instance creation' }
 TFTensor class >> fromInt64s: values shape: shape [
 	^ self fromNumbers: values type: self typeInt64 shape: shape
-
 ]
 
 { #category : #'instance creation' }
@@ -149,7 +145,7 @@ TFTensor class >> fromString: aString [
 	^ answer
 ]
 
-{ #category : #acccessing }
+{ #category : #'instance creation' }
 TFTensor class >> fromStringArray: aStringArray [
 
 	^self fromStrings: aStringArray shape: (TensorShape vectorSized: aStringArray size)
@@ -197,8 +193,7 @@ TFTensor class >> fromStrings: aStringArray [
 TFTensor class >> fromStrings: strings shape: shape [
 	| flatten |
 	flatten := self elementsOf: strings.
-	^ self fromStringArray:  flatten shape: shape.
-
+	^ self fromStringArray: flatten shape: shape
 ]
 
 { #category : #types }
@@ -332,7 +327,7 @@ TFTensor class >> sizeOfString: aString [
 	^ TensorFlowCAPI current stringEncodedSize: aString
 ]
 
-{ #category : #acccessing }
+{ #category : #'instance creation' }
 TFTensor class >> type: anInteger shape: aTensorShape [
 	" I understand dimenssions are:
 		#()		-> Scalar
@@ -546,8 +541,8 @@ TFTensor >> asNumbers [
 ]
 
 { #category : #converting }
-TFTensor >> asOperationOn: aTF_Graph [
-	^ aTF_Graph const: self
+TFTensor >> asOperationOn: aTFGraph [
+	^ aTFGraph const: self
 ]
 
 { #category : #converting }
@@ -663,7 +658,7 @@ TFTensor >> rank [
 	^ self library tensorRank: self
 ]
 
-{ #category : #accessing }
+{ #category : #Accessing }
 TFTensor >> scalarOutput [
 
 	self isScalar ifTrue: [^self allElements any].
@@ -671,7 +666,7 @@ TFTensor >> scalarOutput [
 	AssertionFailure signal: 'This tensor is not a scalar'
 ]
 
-{ #category : #acccessing }
+{ #category : #accessing }
 TFTensor >> shape [
 
 	| answer count |
@@ -682,7 +677,7 @@ TFTensor >> shape [
 	^TensorShape withDimensionsSized: answer contents
 ]
 
-{ #category : #acccessing }
+{ #category : #accessing }
 TFTensor >> size [
 
 	^self shape totalAmountOfElements

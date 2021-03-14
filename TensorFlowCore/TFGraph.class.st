@@ -55,7 +55,8 @@ TFGraph >> add: nameString described: aBlock [
 
 { #category : #accessing }
 TFGraph >> allInitializers [
-	^ self operationsSelect: [ :op | op type = 'Assign' and: [ op name endsWith: '_initializer' ] ]
+	^ self
+		operationsSelect: [ :op | op type = 'Assign' and: [ op name endsWith: '_initializer' ] ]
 ]
 
 { #category : #accessing }
@@ -89,20 +90,20 @@ TFGraph >> concat: nameString described: aBlock [
 ]
 
 { #category : #'root operations' }
-TFGraph >> const: aTF_Tensor [
+TFGraph >> const: aTFTensor [
 	| name |
 	name := self nameFor: 'constant'.
-	^ self const: name value: aTF_Tensor
+	^ self const: name value: aTFTensor
 ]
 
 { #category : #'root operations' }
-TFGraph >> const: nameString value: aTF_Tensor [
+TFGraph >> const: nameString value: aTFTensor [
 	^ self
 		newOperation: 'Const'
 		named: nameString
 		described: [ :description | 
-			description at: 'dtype' putType: aTF_Tensor type.
-			description at: 'value' putTensor: aTF_Tensor ]
+			description at: 'dtype' putType: aTFTensor type.
+			description at: 'value' putTensor: aTFTensor ]
 ]
 
 { #category : #accessing }
@@ -174,12 +175,13 @@ TFGraph >> fromBlock: aBlockClosure inputTypes: anArray [
 
 { #category : #'initialize-release' }
 TFGraph >> fromBlock: aBlockClosure inputTypes: anArray named: nameString [
-	| previousContext answer |
-	previousContext := context.
-	context := context, nameString, '/'.
-	answer := self fromBlock: aBlockClosure inputTypes: anArray.
-	context := previousContext.
-	^ answer
+
+	| answer |
+
+	self
+		inScopeNamed: nameString
+		do: [answer := self fromBlock: aBlockClosure inputTypes: anArray].
+	^answer
 ]
 
 { #category : #'initialize-release' }
@@ -226,13 +228,13 @@ TFGraph >> gtInspectorGraphIn: composite [
 ]
 
 { #category : #'initialize-release' }
-TFGraph >> import: aTF_Buffer [
+TFGraph >> import: aTFBuffer [
 	| options status |
 	status := TFStatus create.
 	options := TFImportGraphDefOptions create.
 	self library
 		importGraphDefInto: self
-		from: aTF_Buffer
+		from: aTFBuffer
 		options: options
 		status: status.
 	options delete.
@@ -250,7 +252,8 @@ TFGraph >> importBinaryFileNamed: aString [
 TFGraph >> importFileNamed: aString [
 	| buffer |
 	buffer := TFBuffer fromFileNamed: aString.
-	[self import: buffer] ensure: [buffer delete].
+	[ self import: buffer ]
+		ensure: [ buffer delete ]
 ]
 
 { #category : #'initialize-release' }
@@ -276,11 +279,12 @@ TFGraph >> initialize [
 ]
 
 { #category : #running }
-TFGraph >> initializeOn: aTF_Session [
+TFGraph >> initializeOn: aTFSession [
 	| initializers |
-	initializers := self allInitializers collect: [ :each | each output: 0 ].
-	initializers isNotEmpty
-		ifTrue: [ aTF_Session runOutputs: initializers ]
+	initializers := self allInitializers
+		collect: [ :each | each output: 0 ].
+	initializers size > 0
+		ifTrue: [ aTFSession runOutputs: initializers ]
 ]
 
 { #category : #'root operations' }
@@ -288,8 +292,7 @@ TFGraph >> inputType: typeInteger [
 	^ self
 		newOperation: 'Placeholder'
 		named: (self nameFor: 'input')
-		described: [:description |
-			description at: 'dtype' putType: typeInteger]
+		described: [ :description | description at: 'dtype' putType: typeInteger ]
 ]
 
 { #category : #private }
@@ -299,7 +302,7 @@ TFGraph >> library [
 
 { #category : #operations }
 TFGraph >> mul: nameString described: aBlock [
-	^self newOperation: 'Mul' named: nameString described: aBlock
+	^ self newOperation: 'Mul' named: nameString described: aBlock
 ]
 
 { #category : #'random operations' }
@@ -325,13 +328,18 @@ TFGraph >> nameFor: aNodeName [
 
 { #category : #operations }
 TFGraph >> newOperation: typeString named: aString [
-	^ self newOperation: typeString named: aString described: [:unused | ]
+	^ self
+		newOperation: typeString
+		named: aString
+		described: [ :unused |  ]
 ]
 
 { #category : #operations }
 TFGraph >> newOperation: typeString named: aString described: aBlock [
 	| description answer |
-	description := self newOperationDescription: typeString named: aString.
+	description := self
+		newOperationDescription: typeString
+		named: aString.
 	aBlock value: description.
 	answer := description finish.
 	answer graph: self.
@@ -340,8 +348,10 @@ TFGraph >> newOperation: typeString named: aString described: aBlock [
 
 { #category : #operations }
 TFGraph >> newOperationDescription: typeString named: aString [
-	^ self library newOperationDescriptionOn: self type: typeString named: aString
-
+	^ self library
+		newOperationDescriptionOn: self
+		type: typeString
+		named: aString
 ]
 
 { #category : #accessing }
@@ -376,7 +386,7 @@ TFGraph >> operationNamed: aString ifFound: aFoundBlock ifNotFound: aNotFoundBlo
 TFGraph >> operationsCount [
 	| answer |
 	answer := 0.
-	self operationsDo: [:each | answer := answer + 1].
+	self operationsDo: [ :each | answer := answer + 1 ].
 	^ answer
 ]
 
@@ -393,9 +403,7 @@ TFGraph >> operationsDo: oneArgBlock [
 TFGraph >> operationsSelect: oneArgBlock [
 	| answer |
 	answer := OrderedCollection new.
-	
-	self operationsSelect: oneArgBlock thenDo: [:op | answer add: op].
-	
+	self operationsSelect: oneArgBlock thenDo: [ :op | answer add: op ].
 	^ answer asArray
 ]
 
@@ -403,11 +411,10 @@ TFGraph >> operationsSelect: oneArgBlock [
 TFGraph >> operationsSelect: conditionBlock thenDo: actionBlock [
 	| answer |
 	answer := OrderedCollection new.
-	
-	self operationsDo: [:op |
-		(conditionBlock value: op)
-			ifTrue: [actionBlock value: op]].
-	
+	self
+		operationsDo: [ :op | 
+			(conditionBlock value: op)
+				ifTrue: [ actionBlock value: op ] ].
 	^ answer asArray
 ]
 
@@ -444,8 +451,7 @@ TFGraph >> placeholder: nameString type: typeInteger [
 	^ self
 		newOperation: 'Placeholder'
 		named: nameString
-		described: [:description |
-			description at: 'dtype' putType: typeInteger]
+		described: [ :description | description at: 'dtype' putType: typeInteger ]
 ]
 
 { #category : #'random operations' }
@@ -522,47 +528,53 @@ TFGraph >> randomUniformShaped: shapeArray stddev: aNumber [
 ]
 
 { #category : #outputs }
-TFGraph >> rankOf: aTF_OutputOrInput [
+TFGraph >> rankOf: aTFOutputOrInput [
 	| status answer |
 	status := TFStatus create.
-	answer := self library graph: self getRankOf: aTF_OutputOrInput status: status.
+	answer := self library
+		graph: self
+		getRankOf: aTFOutputOrInput
+		status: status.
 	status check.
 	^ answer
 ]
 
 { #category : #running }
-TFGraph >> runInputs: inArrayOfTF_Outputs values: inArrayOfTF_Tensor outputs: outArrayOfTF_Outputs [
+TFGraph >> runInputs: inArrayOfTFOutputs values: inArrayOfTFTensor outputs: outArrayOfTFOutputs [
 	| session |
 	session := TFSession on: self.
 	self initializeOn: session.
-	^ session runInputs: inArrayOfTF_Outputs values: inArrayOfTF_Tensor outputs: outArrayOfTF_Outputs
+	^ session
+		runInputs: inArrayOfTFOutputs
+		values: inArrayOfTFTensor
+		outputs: outArrayOfTFOutputs
 ]
 
 { #category : #running }
-TFGraph >> runOutput: aTF_Output [
+TFGraph >> runOutput: aTFOutput [
 	| session |
 	session := TFSession on: self.
 	self initializeOn: session.
-	^ session runOutput: aTF_Output
+	^ session runOutput: aTFOutput
 ]
 
 { #category : #running }
-TFGraph >> runOutputs: anArrayOfTF_Outputs [
+TFGraph >> runOutputs: anArrayOfTFOutputs [
 	| session |
 	session := TFSession on: self.
 	self initializeOn: session.
-	^ session runOutputs: anArrayOfTF_Outputs
+	^ session runOutputs: anArrayOfTFOutputs
 ]
 
 { #category : #outputs }
-TFGraph >> shapeOf: aTF_OutputOrInput [
+TFGraph >> shapeOf: aTFOutputOrInput [
 	| status value size answer |
-	size := self rankOf: aTF_OutputOrInput.
+	size := self rankOf: aTFOutputOrInput.
 	value := FFIExternalArray externalNewType: 'int64' size: size.
 	status := TFStatus create.
 	self library
 		graph: self
-		getShapeOf: aTF_OutputOrInput
+		getShapeOf: aTFOutputOrInput
 		into: value getHandle
 		size: size
 		status: status.
@@ -572,13 +584,13 @@ TFGraph >> shapeOf: aTF_OutputOrInput [
 ]
 
 { #category : #outputs }
-TFGraph >> shapeOf: aTF_OutputOrInput set: shape [
+TFGraph >> shapeOf: aTFOutputOrInput set: shape [
 	| status value |
 	value := FFIExternalArray externalNewType: 'int64' fromArray: shape.
 	status := TFStatus create.
 	self library
 		graph: self
-		setShapeOf: aTF_OutputOrInput
+		setShapeOf: aTFOutputOrInput
 		to: value getHandle
 		size: shape size
 		status: status.
@@ -589,8 +601,9 @@ TFGraph >> shapeOf: aTF_OutputOrInput set: shape [
 TFGraph >> truncatedNormalRandomShaped: shapeArray [
 	| shape |
 	shape := self const: shapeArray asInt32Tensor.
-	^ shape unaryOp: 'TruncatedNormal' described: [:description |
-		description at: 'dtype' putType: TFTensor typeFloat]
+	^ shape
+		unaryOp: 'TruncatedNormal'
+		described: [ :description | description at: 'dtype' putType: TFTensor typeFloat ]
 ]
 
 { #category : #'root operations' }
@@ -601,26 +614,29 @@ TFGraph >> truncatedNormalRandomShaped: shapeArray stddev: aNumber [
 ]
 
 { #category : #'root operations' }
-TFGraph >> variable: nameString forTensor: aTF_Tensor [
-	^ self variable: nameString type: aTF_Tensor type shape: aTF_Tensor shape
+TFGraph >> variable: nameString forTensor: aTFTensor [
+	^ self
+		variable: nameString
+		type: aTFTensor type
+		shape: aTFTensor shape
 ]
 
 { #category : #'root operations' }
-TFGraph >> variable: nameString initialValue: aTF_Tensor [
+TFGraph >> variable: nameString initialValue: aTFTensor [
 	| const var |
-	var := self variable: nameString forTensor: aTF_Tensor.
-	const := self const: nameString, '_initialValue' value: aTF_Tensor.
+	var := self variable: nameString forTensor: aTFTensor.
+	const := self const: nameString , '_initialValue' value: aTFTensor.
 	var assign: const.
 	^ var
 ]
 
 { #category : #'root operations' }
-TFGraph >> variable: nameString initialValueFrom: aTF_Operation [
+TFGraph >> variable: nameString initialValueFrom: aTFOperation [
 	| output var shape |
-	output := aTF_Operation output: 0.
+	output := aTFOperation output: 0.
 	shape := self shapeOf: output.
-	var := self variable: nameString type: output type shape: shape..
-	var assign: aTF_Operation.
+	var := self variable: nameString type: output type shape: shape.
+	var assign: aTFOperation.
 	^ var
 ]
 
@@ -629,10 +645,10 @@ TFGraph >> variable: nameString type: typeInteger shape: anArray [
 	^ self
 		newOperation: 'Variable'
 		named: nameString
-		described: [:description |
+		described: [ :description | 
 			description
 				at: 'dtype' putType: typeInteger;
-				at: 'shape' putShape: anArray]
+				at: 'shape' putShape: anArray asTensorShape ]
 ]
 
 { #category : #debugging }

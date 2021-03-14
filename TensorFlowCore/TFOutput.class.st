@@ -35,12 +35,12 @@ typedef struct TF_Output {
 ]
 
 { #category : #'instance creation' }
-TFOutput class >> onOperation: aTF_Operation index: anInteger [
+TFOutput class >> onOperation: aTFOperation index: anInteger [
 
 	^ self externalNew
-		operation: aTF_Operation getHandle;
+		operation: aTFOperation getHandle;
 		index: anInteger;
-		graph: aTF_Operation graph;
+		graph: aTFOperation graph;
 		yourself
 ]
 

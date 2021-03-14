@@ -12,8 +12,8 @@ Class {
 }
 
 { #category : #'ops binary' }
-TFOperation >> * aTF_Operation [
-	^ self binaryOp: 'MatMul' with: aTF_Operation
+TFOperation >> * aTFOperation [
+	^ self binaryOp: 'MatMul' with: aTFOperation
 ]
 
 { #category : #'ops binary' }
@@ -22,16 +22,16 @@ TFOperation >> ** aTF_Operation [
 ]
 
 { #category : #'ops binary' }
-TFOperation >> *\ aTF_Operation [
+TFOperation >> *\ aTFOperation [
 	^ self
 		binaryOp: 'MatMul'
-		with: aTF_Operation
+		with: aTFOperation
 		described: [ :description | description at: 'transpose_b' putBoolean: true ]
 ]
 
 { #category : #'ops binary' }
-TFOperation >> + aTF_Operation [
-	^ self binaryOp: 'Add' with: aTF_Operation
+TFOperation >> + aTFOperation [
+	^ self binaryOp: 'Add' with: aTFOperation
 ]
 
 { #category : #'ops binary' }
@@ -42,15 +42,13 @@ TFOperation >> += aTF_Operation [
 ]
 
 { #category : #'ops binary' }
-TFOperation >> - aTF_Operation [
-	^ self binaryOp: 'Sub' with: aTF_Operation
+TFOperation >> - aTFOperation [
+	^ self binaryOp: 'Sub' with: aTFOperation
 ]
 
 { #category : #'ops binary' }
-TFOperation >> -= aTF_Operation [
-"Update self by subtracting a value"
-
-	^ self binaryOp: 'AssignSub' with: aTF_Operation
+TFOperation >> -= aTFOperation [
+	^ self binaryOp: 'AssignSub' with: aTFOperation
 ]
 
 { #category : #comparing }
@@ -61,29 +59,25 @@ TFOperation >> = aTF_Operation [
 ]
 
 { #category : #'ops binary' }
-TFOperation >> > aTF_Operation [
-	^ self binaryOp: 'Greater' with: aTF_Operation
+TFOperation >> > aTFOperation [
+	^ self binaryOp: 'Greater' with: aTFOperation
 ]
 
 { #category : #'ops binary' }
-TFOperation >> @* aTF_Operation [
-	"Returns x * y element-wise"
-	
-	^ self binaryOp: 'Mul' with: aTF_Operation
+TFOperation >> @* aTFOperation [
+	^ self binaryOp: 'Mul' with: aTFOperation
 ]
 
 { #category : #'ops binary' }
-TFOperation >> @/ aTF_Operation [
-	"Returns x / y element-wise"
-
-	^ self binaryOp: 'Div' with: aTF_Operation
+TFOperation >> @/ aTFOperation [
+	^ self binaryOp: 'Div' with: aTFOperation
 ]
 
 { #category : #'ops binary' }
-TFOperation >> \* aTF_Operation [
+TFOperation >> \* aTFOperation [
 	^ self
 		binaryOp: 'MatMul'
-		with: aTF_Operation
+		with: aTFOperation
 		described: [ :description | description at: 'transpose_a' putBoolean: true ]
 ]
 
@@ -98,10 +92,8 @@ TFOperation >> \*\ aTF_Operation [
 ]
 
 { #category : #'ops binary' }
-TFOperation >> \\ aTF_Operation [
-	"Returns element-wise remainder of division"
-	
-	^ self binaryOp: 'Mod' with: aTF_Operation
+TFOperation >> \\ aTFOperation [
+	^ self binaryOp: 'Mod' with: aTFOperation
 ]
 
 { #category : #'ops unary' }

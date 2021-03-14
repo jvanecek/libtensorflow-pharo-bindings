@@ -27,7 +27,7 @@ TFOperation >> operationName [
 { #category : #'*TFOperationModel' }
 TFOperation >> outputDimensions [
 
-	^ graph outputDimensionsCount: self firstOutput
+	^graph outputDimensionsCount: self firstOutput
 ]
 
 { #category : #'*TFOperationModel' }

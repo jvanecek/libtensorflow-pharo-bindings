@@ -24,32 +24,32 @@ TFOperationDescription >> add: input [
 	"To be removed maybe ?"
 
 	self halt.
-	self library description: self addInput: input
+	self addInput: input
 ]
 
 { #category : #inputs }
-TFOperationDescription >> addControlInput: aTF_OutputOrInput [
-	^ self library description: self addControlInput: aTF_OutputOrInput
+TFOperationDescription >> addControlInput: aTFOutputOrInput [
+	^ self library description: self addControlInput: aTFOutputOrInput
 ]
 
 { #category : #inputs }
-TFOperationDescription >> addInput: aTF_OutputOrInput [
-	^ self library description: self addInput: aTF_OutputOrInput
+TFOperationDescription >> addInput: aTFOutputOrInput [
+	^ self library description: self addInput: aTFOutputOrInput
 ]
 
 { #category : #inputs }
-TFOperationDescription >> addInputFromOutput: indexInteger of: aTF_Operation [
+TFOperationDescription >> addInputFromOutput: indexInteger of: aTFOperation [
 	| input |
-	input := aTF_Operation input: indexInteger.
+	input := aTFOperation input: indexInteger.
 	[ self library description: self addInput: input ]
 		ensure: [ input free ]
 ]
 
 { #category : #inputs }
-TFOperationDescription >> addInputs: anArrayOfTF_Output [
+TFOperationDescription >> addInputs: anArrayOfTFOutput [
 	| inputs |
-	inputs := TFOutputArray fromCollection: anArrayOfTF_Output.
-	self library description: self addInputs: inputs size: anArrayOfTF_Output size
+	inputs := TFOutputArray fromCollection: anArrayOfTFOutput.
+	self library description: self addInputs: inputs size: anArrayOfTFOutput size
 ]
 
 { #category : #attributes }
@@ -59,7 +59,10 @@ TFOperationDescription >> at: attribute putBoolean: value [
 
 { #category : #attributes }
 TFOperationDescription >> at: attribute putFloat: value [
-	self library description: self set: attribute asAsciiZ toFloat: value asFloat
+	self library
+		description: self
+		set: attribute asAsciiZ
+		toFloat: value asFloat
 ]
 
 { #category : #attributes }
@@ -138,13 +141,13 @@ TFOperationDescription >> at: attribute putStrings: anArrayOfStrings [
 ]
 
 { #category : #attributes }
-TFOperationDescription >> at: attribute putTensor: aTF_Tensor [
+TFOperationDescription >> at: attribute putTensor: aTFTensor [
 	| status |
 	status := TFStatus create.
 	self library
 		description: self
 		set: attribute asAsciiZ
-		toTensor: aTF_Tensor
+		toTensor: aTFTensor
 		status: status.
 	status check
 ]

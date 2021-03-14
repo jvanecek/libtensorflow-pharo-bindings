@@ -64,23 +64,23 @@ TFSession >> run [
 ]
 
 { #category : #running }
-TFSession >> runInputs: inArrayOfTF_Inputs values: inArrayOfTF_Tensor outputs: outArrayOfTF_Outputs [
+TFSession >> runInputs: inArrayOfTFInputs values: inArrayOfTFTensor outputs: outArrayOfTFOutputs [
 	| inputs invalues outputs outvalues status |
 	status := TFStatus create.
-	inputs := TFInputArray fromCollection: inArrayOfTF_Inputs.
-	invalues := TFTensorPtrArray fromCollection: inArrayOfTF_Tensor.
-	outputs := TFOutputArray externalFromArray: outArrayOfTF_Outputs.
-	outvalues := TFTensorPtrArray externalNew: outArrayOfTF_Outputs size.
+	inputs := TFInputArray fromCollection: inArrayOfTFInputs.
+	invalues := TFTensorPtrArray fromCollection: inArrayOfTFTensor.
+	outputs := TFOutputArray externalFromArray: outArrayOfTFOutputs.
+	outvalues := TFTensorPtrArray externalNew: outArrayOfTFOutputs size.
 	
 	self library
 		runSession: self
 		options: nil
 		inputs: inputs getHandle
 		values: invalues getHandle
-		count: inArrayOfTF_Inputs size
+		count: inArrayOfTFInputs size
 		outputs: outputs getHandle
 		values: outvalues getHandle
-		count: outArrayOfTF_Outputs size
+		count: outArrayOfTFOutputs size
 		targets: nil
 		count: 0
 		metadata: nil
@@ -90,17 +90,17 @@ TFSession >> runInputs: inArrayOfTF_Inputs values: inArrayOfTF_Tensor outputs: o
 ]
 
 { #category : #running }
-TFSession >> runOperation: aTF_Operation [
-	^ self runOperations: (Array with: aTF_Operation)
+TFSession >> runOperation: aTFOperation [
+	^ self runOperations: (Array with: aTFOperation)
 ]
 
 { #category : #running }
-TFSession >> runOperation: aTF_Operation input: inTF_OutputOrInput value: inTF_Tensor output: outTF_Output [
+TFSession >> runOperation: aTFOperation input: inTFOutputOrInput value: inTFTensor output: outTFTOutput [
 	| inputs invalues operations outputs outvalues tensor |
-	inputs := Array with: inTF_OutputOrInput.
-	invalues := Array with: inTF_Tensor.
-	outputs := Array with: outTF_Output.
-	operations := Array with: aTF_Operation.
+	inputs := Array with: inTFOutputOrInput.
+	invalues := Array with: inTFTensor.
+	outputs := Array with: outTFTOutput.
+	operations := Array with: aTFOperation.
 	outvalues := self
 		runOperations: operations
 		inputs: inputs
@@ -111,24 +111,24 @@ TFSession >> runOperation: aTF_Operation input: inTF_OutputOrInput value: inTF_T
 ]
 
 { #category : #running }
-TFSession >> runOperation: aTF_Operation output: aTF_Output [
+TFSession >> runOperation: aTFOperation output: aTFOutput [
 	| operations answer outputs |
 	operations := TFOperationPtrArray externalNew: 1.
 	outputs := TFOutputArray externalNew: 1.
-	outputs at:1 put: aTF_Output.
-	operations at:1 put: aTF_Operation getHandle getHandle.
+	outputs at:1 put: aTFOutput.
+	operations at:1 put: aTFOperation getHandle getHandle.
 	answer := self runOperations: operations outputs: outputs size: 1.
 	^ answer first
 ]
 
 { #category : #running }
-TFSession >> runOperations: anArrayOfOperations [
+TFSession >> runOperations: anArrayOfTFOperations [
 
 	| status operations |
 
 	status := TFStatus create.
 	operations := TFOperationPtrArray
-		fromCollection: ( anArrayOfOperations collect: [ :op | op getHandle getHandle ] ).
+		fromCollection: ( anArrayOfTFOperations collect: [ :op | op getHandle getHandle ] ).
 	self library
 		runSession: self
 		options: nil
@@ -139,35 +139,35 @@ TFSession >> runOperations: anArrayOfOperations [
 		values: nil
 		count: 0
 		targets: operations getHandle
-		count: anArrayOfOperations size
+		count: anArrayOfTFOperations size
 		metadata: nil
 		status: status.
 	status check
 ]
 
 { #category : #running }
-TFSession >> runOperations: anArrayOfOperations inputs: inArrayOfTF_Outputs values: inArrayOfTF_Tensor outputs: outArrayOfTF_Outputs [
+TFSession >> runOperations: anArrayOfTFOperations inputs: inArrayOfTFOutputs values: inArrayOfTFTensor outputs: outArrayOfTFOutputs [
 
 	| operations inputs invalues outputs outvalues status |
 
 	status := TFStatus create.
 	operations := TFOperationPtrArray
-		fromCollection: ( anArrayOfOperations collect: [ :op | op getHandle getHandle ] ).
-	inputs := TFOutputArray fromCollection: inArrayOfTF_Outputs.
-	invalues := TFTensorPtrArray fromCollection: inArrayOfTF_Tensor.
-	outputs := TFOutputArray fromCollection: outArrayOfTF_Outputs.
-	outvalues := TFTensorPtrArray externalNew: outArrayOfTF_Outputs size.
+		fromCollection: ( anArrayOfTFOperations collect: [ :op | op getHandle getHandle ] ).
+	inputs := TFOutputArray fromCollection: inArrayOfTFOutputs.
+	invalues := TFTensorPtrArray fromCollection: inArrayOfTFTensor.
+	outputs := TFOutputArray fromCollection: outArrayOfTFOutputs.
+	outvalues := TFTensorPtrArray externalNew: outArrayOfTFOutputs size.
 	self library
 		runSession: self
 		options: nil
 		inputs: inputs getHandle
 		values: invalues
-		count: inArrayOfTF_Outputs size
+		count: inArrayOfTFOutputs size
 		outputs: outputs getHandle
 		values: outvalues
-		count: outArrayOfTF_Outputs size
+		count: outArrayOfTFOutputs size
 		targets: operations getHandle
-		count: anArrayOfOperations size
+		count: anArrayOfTFOperations size
 		metadata: nil
 		status: status.
 	status check.
@@ -175,7 +175,7 @@ TFSession >> runOperations: anArrayOfOperations inputs: inArrayOfTF_Outputs valu
 ]
 
 { #category : #running }
-TFSession >> runOperations: aTF_OperationArray outputs: aTF_OutputArray size: anInteger [
+TFSession >> runOperations: aTFOperationArray outputs: aTFOutputArray size: anInteger [
 	| status outvalues |
 	status := TFStatus create.
 	outvalues := TFTensorPtrArray externalNew: anInteger.
@@ -185,10 +185,10 @@ TFSession >> runOperations: aTF_OperationArray outputs: aTF_OutputArray size: an
 		inputs: nil
 		values: nil
 		count: 0
-		outputs: aTF_OutputArray getHandle
+		outputs: aTFOutputArray getHandle
 		values: outvalues getHandle
 		count: anInteger
-		targets: aTF_OperationArray getHandle
+		targets: aTFOperationArray getHandle
 		count: 1
 		metadata: nil
 		status: status.
@@ -197,21 +197,21 @@ TFSession >> runOperations: aTF_OperationArray outputs: aTF_OutputArray size: an
 ]
 
 { #category : #running }
-TFSession >> runOutput: aTF_Output [
+TFSession >> runOutput: aTFOutput [
 	| results |
-	results := self runOutputs: {aTF_Output}.
+	results := self runOutputs: {aTFOutput}.
 	^ results first
 ]
 
 { #category : #running }
-TFSession >> runOutputs: anArrayOfTF_Outputs [
+TFSession >> runOutputs: anArrayOfTFOutputs [
 	| outputs |
-	outputs := TFOutputArray fromCollection: anArrayOfTF_Outputs.
-	^ self runOutputs: outputs size: anArrayOfTF_Outputs size
+	outputs := TFOutputArray fromCollection: anArrayOfTFOutputs.
+	^ self runOutputs: outputs size: anArrayOfTFOutputs size
 ]
 
 { #category : #running }
-TFSession >> runOutputs: aTF_OutputArray size: anInteger [
+TFSession >> runOutputs: aTFOutputArray size: anInteger [
 	| status outvalues |
 	status := TFStatus create.
 	outvalues := TFTensorPtrArray externalNew: anInteger.
@@ -221,7 +221,7 @@ TFSession >> runOutputs: aTF_OutputArray size: anInteger [
 		inputs: nil
 		values: nil
 		count: 0
-		outputs: aTF_OutputArray getHandle
+		outputs: aTFOutputArray getHandle
 		values: outvalues getHandle
 		count: anInteger
 		targets: nil
