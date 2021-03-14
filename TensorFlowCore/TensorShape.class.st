@@ -95,6 +95,15 @@ TensorShape >> dimensionSizes [
 	^dimensionSizes
 ]
 
+{ #category : #Converting }
+TensorShape >> flattened [
+
+	self rank < 2 ifTrue: [^self].
+	self representsMatrix
+		ifTrue: [^self class vectorSized: dimensionSizes first * dimensionSizes second].
+	^self class matrixSized: dimensionSizes first by: dimensionSizes second * dimensionSizes third
+]
+
 { #category : #Comparing }
 TensorShape >> hash [
 
