@@ -6,24 +6,23 @@ Class {
 
 { #category : #baseline }
 BaselineOfLibTensorFlowPharoBinding >> baseline: spec [
+
 	<baseline>
 	spec
 		for: #common
-		do: [
-			"Dependencies"
+		do: [ "Dependencies"
 			self
 				idxReader: spec;
-				roassal2: spec.
-
-			"Packages"
+				roassal2: spec.	"Packages"
 			spec
-				package: 'LibTensorFlow-Core' with: [ spec requires: #(IdxReader) ];
-				package: 'LibTensorFlow-Examples' with: [ spec requires: #('LibTensorFlow-Core' 'Roassal2') ].
-
-			"Groups"
+				package: 'TensorFlowCore' with: [ spec requires: #(IdxReader) ];
+				package: 'TensorFlowCoreTests' with: [ spec requires: #('TensorFlowCore') ];
+				package: 'LibTensorFlowExamplesApp' with: [ spec requires: #('TensorFlowCore' 'Roassal2') ].	"Groups"
 			spec
-				group: 'Core' with: #('LibTensorFlow-Core');
-				group: 'Examples' with: #('LibTensorFlow-Examples') ]
+				group: 'Core' with: #('TensorFlowCore');
+				group: 'Examples' with: #('LibTensorFlowExamplesApp');
+				group: 'Development' with: #('Core' 'Examples' 'TensorFlowCoreTests')
+			]
 ]
 
 { #category : #baseline }
