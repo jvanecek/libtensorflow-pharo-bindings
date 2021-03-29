@@ -239,22 +239,6 @@ TensorFlowEnvironmentTest >> testSquare [
 ]
 
 { #category : #Tests }
-TensorFlowEnvironmentTest >> testVariable [
-
-	| environment variable |
-
-	environment := TensorFlowEnvironment new.
-
-	environment calculate: [:calculator |
-		variable := calculator variableNamed: 'this_var'.
-		calculator assign: 3 to: variable].
-	self assert: (environment calculate: [:calculator | variable]) isTensorEquivalentTo: 3 asTensor.
-
-	environment calculate: [:calculator | calculator assign: variable squared to: variable].
-	self assert: (environment calculate: [:calculator | variable]) isTensorEquivalentTo: 9 asTensor
-]
-
-{ #category : #Tests }
 TensorFlowEnvironmentTest >> testVariableMustBeAssignedBeforeCompletingCalculation [
 
 	self

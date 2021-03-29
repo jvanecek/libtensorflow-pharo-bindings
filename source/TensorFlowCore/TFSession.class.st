@@ -95,22 +95,6 @@ TFSession >> runOperation: aTFOperation [
 ]
 
 { #category : #running }
-TFSession >> runOperation: aTFOperation input: inTFOutputOrInput value: inTFTensor output: outTFTOutput [
-	| inputs invalues operations outputs outvalues tensor |
-	inputs := Array with: inTFOutputOrInput.
-	invalues := Array with: inTFTensor.
-	outputs := Array with: outTFTOutput.
-	operations := Array with: aTFOperation.
-	outvalues := self
-		runOperations: operations
-		inputs: inputs
-		values: invalues
-		outputs: outputs.
-	tensor := outvalues first.
-	^ tensor
-]
-
-{ #category : #running }
 TFSession >> runOperation: aTFOperation output: aTFOutput [
 	| operations answer outputs |
 	operations := TFOperationPtrArray externalNew: 1.

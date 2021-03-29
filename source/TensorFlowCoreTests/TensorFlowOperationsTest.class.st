@@ -305,7 +305,7 @@ TensorFlowOperationsTest >> testGraphVariableFromTruncatedNormalStddev [
 	var := graph variable: 'var' initialValueFrom: random.
 	
 	session := TFSession on: graph.
-	init := graph operationNamed: 'var_1_initializer'.
+	init := graph operationNamed: 'var_initializer'.
 	result1 := session runOutput: (init output: 0).
 	result2 := session runOutput: (var output: 0).
 

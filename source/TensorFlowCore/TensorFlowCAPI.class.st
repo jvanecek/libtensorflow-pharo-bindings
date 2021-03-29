@@ -408,7 +408,7 @@ TensorFlowCAPI >> graph: aTF_Graph getShapeOf: aTF_OutputOrInput into: anInt64Ar
 TensorFlowCAPI >> graph: aTF_Graph operationAt: contextULongLongPtr [
 	| answer |
 	answer := self graph: aTF_Graph operationAtAsVoid: contextULongLongPtr.
-	answer handle: answer getHandle getHandle.
+	answer handle: answer getHandle.
 	answer graph: aTF_Graph.
 	^ answer
 ]
@@ -610,7 +610,7 @@ TensorFlowCAPI >> operation: aTF_Operation attr: nameZString getString: valueStr
 ]
 
 { #category : #operation }
-TensorFlowCAPI >> operation: aTF_Operation attr: nameZString getStrings: valueStringArray sizes: sizesArray maxCount: maxCount storage: aBytaArray size: storageSize status: status [
+TensorFlowCAPI >> operation: aTF_Operation attr: nameZString getStrings: valueStringArray sizes: sizesArray maxCount: maxCount storage: aByteArray size: storageSize status: status [
 	"TF_CAPI_EXPORT extern void TF_OperationGetAttrStringList(
     TF_Operation* oper, const char* attr_name, void** values, size_t* lengths,
 int max_values, void* storage, size_t storage_size, TF_Status* status);"

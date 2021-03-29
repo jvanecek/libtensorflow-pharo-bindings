@@ -10,7 +10,8 @@ Class {
 
 { #category : #accessing }
 TensorFlowExamplesSlowTest class >> defaultTimeLimit [
-	^ 5 minutes
+
+	^ 15 minutes
 ]
 
 { #category : #initialization }

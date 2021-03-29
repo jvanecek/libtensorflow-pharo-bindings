@@ -327,14 +327,6 @@ TFGraph >> nameFor: aNodeName [
 ]
 
 { #category : #operations }
-TFGraph >> newOperation: typeString named: aString [
-	^ self
-		newOperation: typeString
-		named: aString
-		described: [ :unused |  ]
-]
-
-{ #category : #operations }
 TFGraph >> newOperation: typeString named: aString described: aBlock [
 	| description answer |
 	description := self

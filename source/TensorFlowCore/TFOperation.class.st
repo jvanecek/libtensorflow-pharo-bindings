@@ -141,7 +141,7 @@ TFOperation >> assign: aTF_Operation [
 	^ self
 		binaryOp: 'Assign'
 		with: aTF_Operation
-		named: (self nameFor: self name) , '_initializer'
+		named: (self nameFor: self name, '_initializer') 
 ]
 
 { #category : #attributes }

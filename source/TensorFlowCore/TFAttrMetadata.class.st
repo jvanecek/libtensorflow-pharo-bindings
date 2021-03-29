@@ -83,6 +83,12 @@ TFAttrMetadata >> is_list: anObject [
 	handle unsignedByteAt: OFFSET_IS_LIST put: anObject
 ]
 
+{ #category : #accessing }
+TFAttrMetadata >> listSize [
+
+	^ self list_size
+]
+
 { #category : #'accessing structure variables' }
 TFAttrMetadata >> list_size [
 	"This method was automatically generated"
