@@ -13,6 +13,14 @@ Class {
 }
 
 { #category : #accessing }
+MNISTImageFile class >> initialize [
+
+	MNISTImageFile trainingSet. 
+	MNISTImageFile testSet. 
+
+]
+
+{ #category : #accessing }
 MNISTImageFile class >> magic [
 	^ 2051
 ]

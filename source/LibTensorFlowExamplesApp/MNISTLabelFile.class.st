@@ -8,6 +8,14 @@ Class {
 	#category : 'LibTensorFlowExamplesApp'
 }
 
+{ #category : #'class initialization' }
+MNISTLabelFile class >> initialize [
+
+	MNISTLabelFile trainingSet. 
+	MNISTLabelFile testSet. 
+
+]
+
 { #category : #accessing }
 MNISTLabelFile class >> magic [
 	^ 2049
@@ -18,7 +26,7 @@ MNISTLabelFile class >> testName [
 	^ 't10k-labels-idx1-ubyte'
 ]
 
-{ #category : #tests }
+{ #category : #accessing }
 MNISTLabelFile class >> testSet [
 	
 	testSet isNil ifTrue: [testSet := super testSet]. 
@@ -30,7 +38,7 @@ MNISTLabelFile class >> trainName [
 	^ 'train-labels-idx1-ubyte'
 ]
 
-{ #category : #tests }
+{ #category : #accessing }
 MNISTLabelFile class >> trainingSet [
 	
 	trainingSet isNil ifTrue: [trainingSet := super trainingSet]. 

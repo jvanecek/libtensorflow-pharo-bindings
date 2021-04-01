@@ -12,39 +12,39 @@ Class {
 MNISTFile class >> download: aName [
 
 	| datasetURL outputFileName |
-	datasetURL := 'http://yann.lecun.com/exdb/mnist/' , aName.
-	outputFileName := 'dataset/' , aName.
-	FileSystem disk workingDirectory fileSystem ensureCreateDirectory: 'dataset'.
-	UIManager default
-		informUserDuring: [ :bar | 
-			bar label: 'Downloading MNIST dataset ...'.
-			[ ZnClient new
+	" I changed the original http://yann.lecun.com/exdb/mnist/, because is constantly unavailable "
+	datasetURL := 'https://github.com/jvanecek/datasets/blob/main/mnist-handwritten/' , aName, '?raw=true'.
+	outputFileName := self fullDatasetNamed: aName.
+	self
+		informUserProgressOf: [ | client |
+
+			client := ZnClient new
 				url: datasetURL;
-				signalProgress: true;
-				downloadTo: outputFileName ]
-				on: HTTPProgress
-				do: [ :progress | 
-					progress isEmpty
-						ifFalse: [ bar current: progress percentage.
-							progress total
-								ifNotNil: [ :aTotalNumber | 
-									| humanReadable |
-									humanReadable := self printHumanReadableSize: aTotalNumber.
-									bar label: 'Downloading ' , humanReadable , ' of MNIST dataset ... ' ] ].
-					progress resume ] ].
+				signalProgress: true.
+
+			( client downloadTo: outputFileName )
+				ifFalse: [ self
+						error:
+							( 'Could not download <1s> (<2p>)'
+								expandMacrosWith: datasetURL
+								with: client response statusLine reason )
+					]
+			].
 	^ outputFileName asFileReference
 ]
 
 { #category : #'instance creation' }
 MNISTFile class >> fromFile: aString [
-	| file filename reader compressed|
-	filename := aString, '.gz'.
-	file := ('dataset/', filename) asFileReference.
-	file exists ifFalse:[ file := self download: filename].
+
+	| file filename reader compressed |
+
+	filename := aString , '.gz'.
+	file := ( self fullDatasetNamed: filename ) asFileReference.
+	file exists
+		ifFalse: [ file := self download: filename ].
 	compressed := file binaryReadStream.
-	reader := IdxReader onStream: ((GZipReadStream on: compressed) upToEnd asByteArray readStream).
+	reader := IdxReader onStream: ( GZipReadStream on: compressed ) upToEnd asByteArray readStream.
 	^ self fromReader: reader
-	
 ]
 
 { #category : #'instance creation' }
@@ -52,6 +52,41 @@ MNISTFile class >> fromReader: aReader [
 	| answer |
 	answer := self new.
 	^ answer parse: aReader
+]
+
+{ #category : #private }
+MNISTFile class >> fullDatasetNamed: aName [
+
+	| fullname |
+
+	fullname := 'dataset/' , aName.
+	FileSystem disk workingDirectory fileSystem ensureCreateDirectory: 'dataset'.
+	^ fullname
+]
+
+{ #category : #private }
+MNISTFile class >> informUserProgressOf: aBlock [
+
+	UIManager default
+		informUserDuring: [ :bar | 
+			bar label: 'Downloading MNIST dataset ...'.
+
+			aBlock
+				on: HTTPProgress
+				do: [ :progress | 
+					progress isEmpty
+						ifFalse: [ bar current: progress percentage.
+							progress total
+								ifNotNil: [ :aTotalNumber | 
+									| humanReadable |
+
+									humanReadable := self printHumanReadableSize: aTotalNumber.
+									bar label: 'Downloading ' , humanReadable , ' of MNIST dataset ... '
+									]
+							].
+					progress resume
+					]
+			]
 ]
 
 { #category : #private }
