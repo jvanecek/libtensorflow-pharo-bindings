@@ -1,0 +1,16 @@
+SmalltalkCISpec {
+  #loading : [
+    SCIMetacelloLoadSpec {
+      #baseline : 'LibTensorFlowPharoBinding',
+      #directory : 'source',
+      #load : [ 'Development' ],
+      #platforms : [  #pharo ]
+    }
+  ],
+  #testing : {
+    #coverage : {
+      #packages : [ 'Tensor*', 'TFDataset*', 'TFOperation*', 'TFOptimizer*', 'TFRegularization*', 'TFUtility*', 'TFVariable*', 'TFTensor*', 'MLTraining*', 'MLNeural*' ],
+      #format: #lcov
+    }
+  }
+}

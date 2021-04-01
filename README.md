@@ -1,5 +1,8 @@
 # libtensorflow-pharo-bindings
 
+[![Build Status](https://github.com/jvanecek/libtensorflow-pharo-bindings/workflows/Build/badge.svg?branch=new-model)](https://github.com/jvanecek/libtensorflow-pharo-bindings/actions?query=workflow%3ABuild)
+[![Coverage Status](https://codecov.io/github/jvanecek/libtensorflow-pharo-bindings/coverage.svg?branch=new-model)](https://codecov.io/gh/jvanecek/libtensorflow-pharo-bindings/branch/new-model)
+
 This is a fork of https://github.com/Cuis-Smalltalk/Machine-Learning for Pharo. This library was also ported to VA Smalltalk : 
 https://github.com/vasmalltalk/tensorflow-vast
 

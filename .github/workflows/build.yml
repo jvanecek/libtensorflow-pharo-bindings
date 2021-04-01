@@ -1,0 +1,35 @@
+name: Build
+
+on:
+  push:
+    branches: [ new-model ]
+
+  workflow_dispatch:
+
+jobs:
+   build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        smalltalk: [ Pharo64-7.0 ]
+    name: ${{ matrix.smalltalk }}
+    steps:
+      - uses: actions/checkout@v2
+      - uses: hpi-swa/setup-smalltalkCI@v1
+        with:
+          smalltalk-version: ${{ matrix.smalltalk }}
+      - name: Install TensorFlow
+        run: ./scripts/install-tensorflow.sh
+        env:
+          VERSION: 2.3.1
+      - name: Load Image and Run Tests
+        run: smalltalkci -s ${{ matrix.smalltalk }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        timeout-minutes: 20
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          name: ${{matrix.os}}-${{matrix.smalltalk}}
+          token: ${{ secrets.CODECOV_TOKEN }}
