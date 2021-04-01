@@ -6,8 +6,3 @@ Class {
 	#superclass : #PackageManifest,
 	#category : #'TensorFlowCore-Manifest'
 }
-
-{ #category : #'code-critics' }
-ManifestLibTensorFlowCore class >> ruleRTInvocationSequenceRuleV1FalsePositive [
-	^ #(#(#(#RGPackage #(#'LibTensorFlow-Core')) #'2018-07-27T15:20:01.424584+01:00') )
-]

@@ -1,0 +1,66 @@
+Class {
+	#name : #ReduceMean,
+	#superclass : #TensorFlowOperationAbstract,
+	#instVars : [
+		'axis',
+		'tensor',
+		'currentComputation'
+	],
+	#category : 'TFOperationModel'
+}
+
+{ #category : #'Instance Creation' }
+ReduceMean class >> allAxisOf: aTFOperation [
+
+	^(1 to: aTFOperation outputDimensions) collect: [:axis | axis - 1]
+]
+
+{ #category : #'Instance Creation' }
+ReduceMean class >> named: aName ofValuesIn: aTFOperation [
+
+	^self named: aName ofValuesIn: aTFOperation alongside: (self allAxisOf: aTFOperation)
+]
+
+{ #category : #'Instance Creation' }
+ReduceMean class >> named: anOperationName ofValuesIn: aTensor alongside: anAxis [
+
+	^self new initializeNamed: anOperationName ofValuesIn: aTensor alongside: anAxis
+]
+
+{ #category : #'Instance Creation' }
+ReduceMean class >> ofValuesIn: aTFOperation [
+
+	^self ofValuesIn: aTFOperation alongside: (self allAxisOf: aTFOperation)
+]
+
+{ #category : #'Instance Creation' }
+ReduceMean class >> ofValuesIn: aTensor alongside: anAxis [
+
+	^self named: self operationType ofValuesIn: aTensor alongside: anAxis
+]
+
+{ #category : #Accessing }
+ReduceMean class >> operationType [
+
+	^'Mean'
+]
+
+{ #category : #Initialization }
+ReduceMean >> currentComputation [
+
+	^currentComputation
+]
+
+{ #category : #Initialization }
+ReduceMean >> initializeNamed: anOperationName ofValuesIn: aTensor alongside: anAxis [
+	
+	currentComputation := aTensor currentComputation.
+	tensor := aTensor.
+	axis := anAxis.
+	value :=
+		tensor currentComputation
+			newOperationOf: self class operationType
+			namePrefixed: anOperationName
+			with: tensor
+			with: axis asInt32Tensor
+]
