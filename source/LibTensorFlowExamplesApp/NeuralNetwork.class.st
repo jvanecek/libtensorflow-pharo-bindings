@@ -1,7 +1,7 @@
 Class {
 	#name : #NeuralNetwork,
 	#superclass : #Object,
-	#category : 'MLNeuralNetworkModel'
+	#category : #LibTensorFlowExamplesApp
 }
 
 { #category : #Predicting }

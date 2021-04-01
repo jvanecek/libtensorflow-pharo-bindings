@@ -5,7 +5,7 @@ Class {
 		'prediction',
 		'tf'
 	],
-	#category : 'MLNeuralNetworkModel'
+	#category : #LibTensorFlowExamplesApp
 }
 
 { #category : #'Instance Creation' }

@@ -6,7 +6,7 @@ Class {
 		'afterTrainingCallback',
 		'epoch'
 	],
-	#category : 'MLNeuralNetworkModel'
+	#category : #LibTensorFlowExamplesApp
 }
 
 { #category : #'Instance Creation' }
@@ -30,6 +30,12 @@ NeuralNetworkBuilder >> buildBasedOn: aModel toFitPredictionFrom: aFeaturesColle
 		doing: [:trainedModel | aModel updateWeightsToFitPredictionFrom: aFeaturesCollection to: aTarget]
 ]
 
+{ #category : #'Not categorized' }
+NeuralNetworkBuilder >> epochsTrained [
+
+	^epoch
+]
+
 { #category : #Processing }
 NeuralNetworkBuilder >> initialize [
 
@@ -42,12 +48,6 @@ NeuralNetworkBuilder >> initialize [
 NeuralNetworkBuilder >> stopTrainingWhen: aStopCondition [
 
 	stopCondition := aStopCondition
-]
-
-{ #category : #'Not categorized' }
-NeuralNetworkBuilder >> totalNumberOfEpochs [
-
-	^epoch
 ]
 
 { #category : #Processing }

@@ -1,8 +1,14 @@
 Class {
 	#name : #Rectified3LayerNeuralNetworkTest,
 	#superclass : #TestCase,
-	#category : 'MLNeuralNetworkModelTests'
+	#category : #LibTensorFlowExamplesApp
 }
+
+{ #category : #accessing }
+Rectified3LayerNeuralNetworkTest class >> defaultTimeLimit [
+
+	^ 10 minutes
+]
 
 { #category : #Test }
 Rectified3LayerNeuralNetworkTest >> testMNIST3LayersNNForwardGraph [

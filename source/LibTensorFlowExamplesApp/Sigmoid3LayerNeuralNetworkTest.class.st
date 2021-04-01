@@ -1,8 +1,14 @@
 Class {
 	#name : #Sigmoid3LayerNeuralNetworkTest,
 	#superclass : #TestCase,
-	#category : 'MLNeuralNetworkModelTests'
+	#category : #LibTensorFlowExamplesApp
 }
+
+{ #category : #accessing }
+Sigmoid3LayerNeuralNetworkTest class >> defaultTimeLimit [
+
+	^ 10 minutes
+]
 
 { #category : #Test }
 Sigmoid3LayerNeuralNetworkTest >> testPrediction3LayersSigmoid [

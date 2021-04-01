@@ -1,5 +1,5 @@
 Class {
-	#name : #Sigmoid3LayerNeuralNetwork,
+	#name : #Rectified3LayerNeuralNetwork,
 	#superclass : #NeuralNetwork,
 	#instVars : [
 		'tf',
@@ -7,53 +7,53 @@ Class {
 		'loss',
 		'optimization'
 	],
-	#category : 'MLNeuralNetworkModel'
+	#category : #LibTensorFlowExamplesApp
 }
 
 { #category : #'Instance Creation' }
-Sigmoid3LayerNeuralNetwork class >> new [
-	
+Rectified3LayerNeuralNetwork class >> new [
+
 	^super new initialize
 ]
 
 { #category : #Initialization }
-Sigmoid3LayerNeuralNetwork >> initialize [
+Rectified3LayerNeuralNetwork >> initialize [
 
 	tf := TensorFlowComputation new.
 	self initializeFeedforward.
-	self initializeLossLayer.
+	tf inScopeNamed: 'loss' do: [self initializeLossLayer].
 	self initializeBackpropagation
 ]
 
 { #category : #Initialization }
-Sigmoid3LayerNeuralNetwork >> initializeBackpropagation [
+Rectified3LayerNeuralNetwork >> initializeBackpropagation [
 
 	optimization :=
 		ModelUpdater
 			updating: prediction
 			toMinimize: loss
-			using: (GradientDescent scalingBy: 0.1 asTensor)
+			using: (GradientDescent scalingBy: 0.0001 asTensor)
 ]
 
 { #category : #Initialization }
-Sigmoid3LayerNeuralNetwork >> initializeFeedforward [
+Rectified3LayerNeuralNetwork >> initializeFeedforward [
 
 	prediction :=
 		(SequentialModelBuilder on: tf)
 			addDenseLayerSized: 128
 				builtWith: [:layer | | inputSize |
-					inputSize := 28 * 28.
+					inputSize := self inputSize.
 					layer
 						inputSize: inputSize;
 						weightInitializedWith: (self randomInitializerFor: inputSize);
-						activatedBySigmoid];
+						activatedByRelu];
 			addDenseLayerSized: 32
 				builtWith: [:layer | | inputSize |
 					inputSize := 128.
 					layer
 						inputSize: inputSize;
 						weightInitializedWith: (self randomInitializerFor: inputSize);
-						activatedBySigmoid];
+						activatedByRelu];
 			addDenseLayerSized: 10
 				builtWith: [:layer | | inputSize |
 					inputSize := 32.
@@ -61,17 +61,23 @@ Sigmoid3LayerNeuralNetwork >> initializeFeedforward [
 						inputSize: inputSize;
 						weightInitializedWith: (self randomInitializerFor: inputSize)];
 			buildApplyingToLogits: [:logits |
-				IndexWithMaximum named: 'prediction' in: logits across: 1]
+				IndexWithMaximum named: 'prediction' in: logits softmax across: 1]
 ]
 
 { #category : #Initialization }
-Sigmoid3LayerNeuralNetwork >> initializeLossLayer [
+Rectified3LayerNeuralNetwork >> initializeLossLayer [
 
 	loss := (LossBuilder for: prediction logits) buildSparseCategoricalCrossEntropy
 ]
 
-{ #category : #Computing }
-Sigmoid3LayerNeuralNetwork >> predictFrom: aFeatureTensor [
+{ #category : #Accessing }
+Rectified3LayerNeuralNetwork >> inputSize [
+
+	^28 * 28
+]
+
+{ #category : #Predicting }
+Rectified3LayerNeuralNetwork >> predictFrom: aFeatureTensor [
 
 	^tf
 		compute: prediction
@@ -81,32 +87,32 @@ Sigmoid3LayerNeuralNetwork >> predictFrom: aFeatureTensor [
 				yourself)
 ]
 
-{ #category : #Computing }
-Sigmoid3LayerNeuralNetwork >> predictFrom: aFeatureTensor andCompareTo: anExpectedTensor [
+{ #category : #Predicting }
+Rectified3LayerNeuralNetwork >> predictFrom: aFeatureTensor andCompareTo: anExpectedTensor [
 
 	^tf
 		computeAllNamed: (Array with: prediction operationName with: loss operationName)
 		feedingInputsWith: (
 			Dictionary new
 				at: 'input' put: aFeatureTensor asFloatTensor;
-				at: 'expected' put: anExpectedTensor asInt32Tensor;
+				at: 'loss/expected' put: anExpectedTensor asInt32Tensor;
 				yourself)
 ]
 
-{ #category : #Accessing }
-Sigmoid3LayerNeuralNetwork >> randomInitializerFor: anAmountOfFeatures [
+{ #category : #Initialization }
+Rectified3LayerNeuralNetwork >> randomInitializerFor: anAmountOfFeatures [
 
 	^TruncatedNormalInitializer spreadedBy: 1.0 / anAmountOfFeatures sqrt withSeed: 1
 ]
 
-{ #category : #Computing }
-Sigmoid3LayerNeuralNetwork >> updateWeightsToFitPredictionFrom: aFeatureTensor to: aTrainingLabelTensor [
+{ #category : #Training }
+Rectified3LayerNeuralNetwork >> updateWeightsToFitPredictionFrom: aFeatureTensor to: aTrainingLabelTensor [
 
 	tf
 		computeAllNamed: (Array with: optimization operationName)
 		feedingInputsWith: (
 			Dictionary new
 				at: 'input' put: aFeatureTensor asFloatTensor;
-				at: 'expected' put: aTrainingLabelTensor asInt32Tensor;
+				at: 'loss/expected' put: aTrainingLabelTensor asInt32Tensor;
 				yourself)
 ]

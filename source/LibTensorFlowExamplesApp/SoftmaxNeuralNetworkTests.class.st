@@ -1,8 +1,14 @@
 Class {
 	#name : #SoftmaxNeuralNetworkTests,
 	#superclass : #TestCase,
-	#category : 'MLNeuralNetworkModelTests'
+	#category : #LibTensorFlowExamplesApp
 }
+
+{ #category : #accessing }
+SoftmaxNeuralNetworkTests class >> defaultTimeLimit [
+
+	^ 10 minutes
+]
 
 { #category : #'testing MNIST' }
 SoftmaxNeuralNetworkTests >> testMNISTSoftMaxForwardGraph [

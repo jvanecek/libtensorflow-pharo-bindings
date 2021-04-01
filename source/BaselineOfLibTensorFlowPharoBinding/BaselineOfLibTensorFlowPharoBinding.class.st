@@ -10,19 +10,24 @@ BaselineOfLibTensorFlowPharoBinding >> baseline: spec [
 	<baseline>
 	spec
 		for: #common
-		do: [ "Dependencies"
-			self
+		do: [ self
 				idxReader: spec;
-				roassal2: spec.	"Packages"
-			self corePackagesIn: spec.
-			self operationPackagesIn: spec.
-			self machineLearningPackagesIn: spec.	"Groups"
-			self coreGroupsIn: spec.
-			self operationGroupsIn: spec.
-			self machineLearningGroupsIn: spec.
+				roassal2: spec.
+			self
+				corePackagesIn: spec;
+				operationPackagesIn: spec;
+				machineLearningPackagesIn: spec;
+				experimentingPackageIn: spec.
+			self
+				coreGroupsIn: spec;
+				operationGroupsIn: spec;
+				machineLearningGroupsIn: spec;
+				experimentingGroupsIn: spec.
 			spec
 				group: 'Development'
-				with: #('Core-Development' 'Operations-Development' 'MachineLearning-Development')
+					with:
+					#('Core-Development' 'Operations-Development' 'MachineLearning-Development' 'MachineLearning-Experimenting');
+				group: 'CI' with: #('Core-Development' 'Operations-Development' 'MachineLearning-Development')
 			]
 ]
 
@@ -30,10 +35,9 @@ BaselineOfLibTensorFlowPharoBinding >> baseline: spec [
 BaselineOfLibTensorFlowPharoBinding >> coreGroupsIn: spec [
 
 	spec
-		group: 'Core' with: #('TensorFlowCore' 'TensorFlowEnvironmentModel' 'VAST-Compatibility-Model' 'MLMathExtensions');
-		group: 'Examples' with: #('LibTensorFlowExamplesApp');
-		group: 'Core-Development'
-			with: #('Core' 'Examples' 'TensorFlowCoreTests' 'TensorFlowEnvironmentModelTests' )
+		group: 'Core'
+			with: #('TensorFlowCore' 'TensorFlowEnvironmentModel' 'VAST-Compatibility-Model' 'MLMathExtensions');
+		group: 'Core-Development' with: #('Core' 'TensorFlowCoreTests' 'TensorFlowEnvironmentModelTests')
 ]
 
 { #category : #baseline }
@@ -42,13 +46,28 @@ BaselineOfLibTensorFlowPharoBinding >> corePackagesIn: spec [
 	spec
 		package: 'TensorFlowCore' with: [ spec requires: #(IdxReader) ];
 		package: 'TensorFlowCoreTests' with: [ spec requires: #('TensorFlowCore') ];
-		package: 'LibTensorFlowExamplesApp' with: [ spec requires: #('TensorFlowCore' 'Roassal2') ];
 		package: 'TensorFlowEnvironmentModel'
 			with: [ spec requires: #('TensorFlowCore' 'VAST-Compatibility-Model') ];
 		package: 'TensorFlowEnvironmentModelTests'
 			with: [ spec requires: #('TensorFlowEnvironmentModel') ];
 		package: 'VAST-Compatibility-Model' with: [  ];
 		package: 'MLMathExtensions' with: [  ]
+]
+
+{ #category : #baseline }
+BaselineOfLibTensorFlowPharoBinding >> experimentingGroupsIn: spec [
+
+	spec
+		group: 'Examples' with: #('LibTensorFlowExamplesApp');
+		group: 'MachineLearning-Experimenting' with: #('MLTrainingVisualizationModel' 'Examples')
+]
+
+{ #category : #baseline }
+BaselineOfLibTensorFlowPharoBinding >> experimentingPackageIn: spec [
+
+	spec
+		package: 'LibTensorFlowExamplesApp' with: [ spec requires: #('TensorFlowCore' 'Roassal2') ];
+		package: 'MLTrainingVisualizationModel' with: [ spec requires: #('MLTrainingModel' 'Roassal2') ]
 ]
 
 { #category : #baseline }
@@ -60,12 +79,12 @@ BaselineOfLibTensorFlowPharoBinding >> idxReader: spec [
 BaselineOfLibTensorFlowPharoBinding >> machineLearningGroupsIn: spec [
 
 	spec
-		group: 'MachineLearning-Runtime'
+		group: 'MachineLearning-Deployment'
 			with:
-			#('TFVariableSpecificationModel' 'TFRegularizationModel' 'TFDatasetModel' 'TFUtilityModel' 'MLNeuralNetworkLayerModel' 'TFOptimizerModel' 'MLNeuralNetworkModel' 'MLTrainingMetricModel' 'DatasetProviderModel' 'MLTrainingLaboratoryModel' 'MLTrainingVisualizationModel');
+			#('TFVariableSpecificationModel' 'TFRegularizationModel' 'TFDatasetModel' 'TFUtilityModel' 'MLNeuralNetworkLayerModel' 'TFOptimizerModel' 'MLTrainingMetricModel' 'DatasetProviderModel' 'MLTrainingLaboratoryModel');
 		group: 'MachineLearning-Development'
 			with:
-			#('MachineLearning-Runtime' 'TFVariableSpecificationModelTests' 'TFRegularizationModelTests' 'TFUtilityModelTests' 'TFOptimizerModelTests' 'TFDatasetModelTests' 'MLNeuralNetworkLayerModelTests' 'MLTrainingMetricModelTests' 'MLNeuralNetworkModelTests' 'MLTrainingModelTests')
+			#('MachineLearning-Deployment' 'TFVariableSpecificationModelTests' 'TFRegularizationModelTests' 'TFUtilityModelTests' 'TFOptimizerModelTests' 'TFDatasetModelTests' 'MLNeuralNetworkLayerModelTests' 'MLTrainingMetricModelTests' 'MLTrainingModelTests' 'LibTensorFlowExamplesApp')
 ]
 
 { #category : #baseline }
@@ -89,8 +108,6 @@ BaselineOfLibTensorFlowPharoBinding >> machineLearningPackagesIn: spec [
 		package: 'TFOptimizerModel' with: [ spec requires: #('TFVariableSpecificationModel') ];
 		package: 'TFOptimizerModelTests'
 			with: [ spec requires: #('TensorFlowEnvironmentModelTests' 'TFOptimizerModel') ];
-		package: 'MLNeuralNetworkModel' with: [ spec requires: #('MLTrainingModel' 'TFOptimizerModel') ];
-		package: 'MLNeuralNetworkModelTests' with: [ spec requires: #('MLNeuralNetworkModel') ];
 		package: 'MLTrainingMetricModel' with: [ spec requires: #('MLTrainingModel') ];
 		package: 'MLTrainingMetricModelTests' with: [ spec requires: #('MLTrainingMetricModel') ];
 		package: 'TFDatasetModelTests'
@@ -98,7 +115,7 @@ BaselineOfLibTensorFlowPharoBinding >> machineLearningPackagesIn: spec [
 		package: 'DatasetProviderModel' with: [ spec requires: #('MLTrainingModel' 'TFDatasetModel') ];
 		package: 'MLTrainingLaboratoryModel'
 			with: [ spec requires: #('DatasetProviderModel' 'MLTrainingMetricModel' 'TFOptimizerModel') ];
-		package: 'MLTrainingVisualizationModel' with: [ spec requires: #('MLTrainingModel' 'Roassal2') ]
+		package: 'LibTensorFlowExamplesApp' with: [  ]
 ]
 
 { #category : #baseline }

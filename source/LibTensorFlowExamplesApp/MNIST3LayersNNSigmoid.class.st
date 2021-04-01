@@ -54,11 +54,11 @@ MNIST3LayersNNSigmoid >> initializeLearningGraph [
 	learn := graph newOperation: 'Identity' named: 'learn' described: [:description |
 		description
 			addInput: loss output;
-			addControlInput: learnWeights1 output;
-			addControlInput: learnBiases1 output;
-			addControlInput: learnWeights2 output;
-			addControlInput: learnBiases2 output;
-			addControlInput: learnWeights3 output;
-			addControlInput: learnBiases3 output].
+			addControlInput: learnWeights1;
+			addControlInput: learnBiases1;
+			addControlInput: learnWeights2;
+			addControlInput: learnBiases2;
+			addControlInput: learnWeights3;
+			addControlInput: learnBiases3].
 
 ]

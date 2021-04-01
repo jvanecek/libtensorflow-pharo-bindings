@@ -7,7 +7,7 @@ Class {
 		'prediction',
 		'optimization'
 	],
-	#category : 'MLNeuralNetworkModel'
+	#category : #LibTensorFlowExamplesApp
 }
 
 { #category : #Accessing }
