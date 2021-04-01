@@ -14,20 +14,121 @@ BaselineOfLibTensorFlowPharoBinding >> baseline: spec [
 			self
 				idxReader: spec;
 				roassal2: spec.	"Packages"
+			self corePackagesIn: spec.
+			self operationPackagesIn: spec.
+			self machineLearningPackagesIn: spec.	"Groups"
+			self coreGroupsIn: spec.
+			self operationGroupsIn: spec.
+			self machineLearningGroupsIn: spec.
 			spec
-				package: 'TensorFlowCore' with: [ spec requires: #(IdxReader) ];
-				package: 'TensorFlowCoreTests' with: [ spec requires: #('TensorFlowCore') ];
-				package: 'LibTensorFlowExamplesApp' with: [ spec requires: #('TensorFlowCore' 'Roassal2') ].	"Groups"
-			spec
-				group: 'Core' with: #('TensorFlowCore');
-				group: 'Examples' with: #('LibTensorFlowExamplesApp');
-				group: 'Development' with: #('Core' 'Examples' 'TensorFlowCoreTests')
+				group: 'Development'
+				with: #('Core-Development' 'Operations-Development' 'MachineLearning-Development')
 			]
+]
+
+{ #category : #baseline }
+BaselineOfLibTensorFlowPharoBinding >> coreGroupsIn: spec [
+
+	spec
+		group: 'Core' with: #('TensorFlowCore' 'TensorFlowEnvironmentModel' 'VAST-Compatibility-Model' 'MLMathExtensions');
+		group: 'Examples' with: #('LibTensorFlowExamplesApp');
+		group: 'Core-Development'
+			with: #('Core' 'Examples' 'TensorFlowCoreTests' 'TensorFlowEnvironmentModelTests' )
+]
+
+{ #category : #baseline }
+BaselineOfLibTensorFlowPharoBinding >> corePackagesIn: spec [
+
+	spec
+		package: 'TensorFlowCore' with: [ spec requires: #(IdxReader) ];
+		package: 'TensorFlowCoreTests' with: [ spec requires: #('TensorFlowCore') ];
+		package: 'LibTensorFlowExamplesApp' with: [ spec requires: #('TensorFlowCore' 'Roassal2') ];
+		package: 'TensorFlowEnvironmentModel'
+			with: [ spec requires: #('TensorFlowCore' 'VAST-Compatibility-Model') ];
+		package: 'TensorFlowEnvironmentModelTests'
+			with: [ spec requires: #('TensorFlowEnvironmentModel') ];
+		package: 'VAST-Compatibility-Model' with: [  ];
+		package: 'MLMathExtensions' with: [  ]
 ]
 
 { #category : #baseline }
 BaselineOfLibTensorFlowPharoBinding >> idxReader: spec [
 	spec baseline: 'IdxReader' with: [ spec repository: 'github://guillep/idx-reader' ]
+]
+
+{ #category : #baseline }
+BaselineOfLibTensorFlowPharoBinding >> machineLearningGroupsIn: spec [
+
+	spec
+		group: 'MachineLearning-Runtime'
+			with:
+			#('TFVariableSpecificationModel' 'TFRegularizationModel' 'TFDatasetModel' 'TFUtilityModel' 'MLNeuralNetworkLayerModel' 'TFOptimizerModel' 'MLNeuralNetworkModel' 'MLTrainingMetricModel' 'DatasetProviderModel' 'MLTrainingLaboratoryModel' 'MLTrainingVisualizationModel');
+		group: 'MachineLearning-Development'
+			with:
+			#('MachineLearning-Runtime' 'TFVariableSpecificationModelTests' 'TFRegularizationModelTests' 'TFUtilityModelTests' 'TFOptimizerModelTests' 'TFDatasetModelTests' 'MLNeuralNetworkLayerModelTests' 'MLTrainingMetricModelTests' 'MLNeuralNetworkModelTests' 'MLTrainingModelTests')
+]
+
+{ #category : #baseline }
+BaselineOfLibTensorFlowPharoBinding >> machineLearningPackagesIn: spec [
+
+	spec
+		package: 'TFVariableSpecificationModel' with: [ spec requires: #('TFOperationModel') ];
+		package: 'TFVariableSpecificationModelTests'
+			with: [ spec requires: #('TensorFlowEnvironmentModelTests' 'TFVariableSpecificationModel') ];
+		package: 'TFRegularizationModel' with: [ spec requires: #('TFOperationModel') ];
+		package: 'TFRegularizationModelTests'
+			with: [ spec requires: #('TensorFlowEnvironmentModelTests' 'TFRegularizationModel') ];
+		package: 'TFDatasetModel' with: [ spec requires: #('TFOperationModel') ];
+		package: 'TFUtilityModel' with: [ spec requires: #('TFDatasetModel') ];
+		package: 'TFUtilityModelTests'
+			with: [ spec requires: #('TensorFlowEnvironmentModelTests' 'TFUtilityModel') ];
+		package: 'MLNeuralNetworkLayerModel' with: [ spec requires: #('TFVariableSpecificationModel') ];
+		package: 'MLNeuralNetworkLayerModelTests' with: [ spec requires: #('MLNeuralNetworkLayerModel') ];
+		package: 'MLTrainingModel' with: [ spec requires: #('MLNeuralNetworkLayerModel') ];
+		package: 'MLTrainingModelTests' with: [ spec requires: #('MLTrainingModel') ];
+		package: 'TFOptimizerModel' with: [ spec requires: #('TFVariableSpecificationModel') ];
+		package: 'TFOptimizerModelTests'
+			with: [ spec requires: #('TensorFlowEnvironmentModelTests' 'TFOptimizerModel') ];
+		package: 'MLNeuralNetworkModel' with: [ spec requires: #('MLTrainingModel' 'TFOptimizerModel') ];
+		package: 'MLNeuralNetworkModelTests' with: [ spec requires: #('MLNeuralNetworkModel') ];
+		package: 'MLTrainingMetricModel' with: [ spec requires: #('MLTrainingModel') ];
+		package: 'MLTrainingMetricModelTests' with: [ spec requires: #('MLTrainingMetricModel') ];
+		package: 'TFDatasetModelTests'
+			with: [ spec requires: #('MLTrainingModel' 'TensorFlowEnvironmentModelTests' 'TFUtilityModel') ];
+		package: 'DatasetProviderModel' with: [ spec requires: #('MLTrainingModel' 'TFDatasetModel') ];
+		package: 'MLTrainingLaboratoryModel'
+			with: [ spec requires: #('DatasetProviderModel' 'MLTrainingMetricModel' 'TFOptimizerModel') ];
+		package: 'MLTrainingVisualizationModel' with: [ spec requires: #('MLTrainingModel' 'Roassal2') ]
+]
+
+{ #category : #baseline }
+BaselineOfLibTensorFlowPharoBinding >> operationGroupsIn: spec [
+
+	spec
+		group: 'Operations-Runtime'
+			with:
+			#('TFTensorModifierModel' 'TFOperationModel' 'TFOperationGradientModel' 'TFVariableSpecificationModel');
+		group: 'Operations-Development'
+			with:
+			#('Operations-Runtime' 'TFTensorModifierModelTests' 'TFOperationModelTests' 'TFOperationGradientFailingModelTests' 'TFOperationGradientModelTests' 'TFVariableSpecificationModelTests')
+]
+
+{ #category : #baseline }
+BaselineOfLibTensorFlowPharoBinding >> operationPackagesIn: spec [
+
+	spec
+		package: 'TFTensorModifierModel' with: [ spec requires: #('TensorFlowCore') ];
+		package: 'TFTensorModifierModelTests'
+			with: [ spec requires: #('TensorFlowEnvironmentModelTests' 'TFOperationModel') ];
+		package: 'TFOperationModel'
+			with: [ spec requires: #('TensorFlowEnvironmentModel' 'TFTensorModifierModel') ];
+		package: 'TFOperationGradientModel' with: [ spec requires: #('TFOperationModel') ];
+		package: 'TFOperationModelTests'
+			with: [ spec requires: #('TensorFlowEnvironmentModelTests' 'TFOperationModel') ];
+		package: 'TFOperationGradientFailingModelTests'
+			with: [ spec requires: #('TFOperationGradientModelTests') ];
+		package: 'TFOperationGradientModelTests'
+			with: [ spec requires: #('TFOperationGradientModel' 'TFOperationModelTests') ]
 ]
 
 { #category : #baseline }
