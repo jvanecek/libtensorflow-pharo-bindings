@@ -10,6 +10,28 @@ TensorFlowCAPISlowTests class >> defaultTimeLimit [
 	^ 15 minutes
 ]
 
+{ #category : #'testing session' }
+TensorFlowCAPISlowTests >> assertCreating: anAmount of: aTensorFlowObjectCreator releasesExternalMemoryRepeatingUpTo: timesRepeat [
+
+	| total handles |
+
+	total := 0.
+	handles := Set new.
+	timesRepeat timesRepeat: [
+		total := total + anAmount.
+		handles addAll: (
+			(1 to: anAmount) collect: [:i |
+				Smalltalk garbageCollect.
+				aTensorFlowObjectCreator value getHandle getHandle ]).
+		handles size < total ifTrue: [
+			" Meaning some external addresses where reused, so we're good "
+			^self]].
+	self 
+		assert: handles size < total
+		description: 'No external address could be reused, check for some leak'
+	
+]
+
 { #category : #'testing tensor' }
 TensorFlowCAPISlowTests >> mulGraphTwoInputsInt64ConstTensorDeleted [
 	^ TensorFlowCAPITest new mulGraphTwoInputsInt64ConstTensorDeleted
@@ -17,24 +39,11 @@ TensorFlowCAPISlowTests >> mulGraphTwoInputsInt64ConstTensorDeleted [
 
 { #category : #'testing graph' }
 TensorFlowCAPISlowTests >> testGraphFinalizationReleasesExternalMemory [
-	" WeakArray restartFinalizationProcess "
 
-	| tries total handles |
-	self skip: 'Is this test deprecated?'.
-	total := 0.
-	tries := 10.
-	handles := Set new.
-	20
-		timesRepeat: [ total := total + tries.
-			handles
-				addAll:
-					((1 to: tries)
-						collect: [ :i | 
-							Smalltalk garbageCollect.
-							TFGraph create useFinalization getHandle ]).
-			handles size < total
-				ifTrue: [ ^ self ] ].
-	self assert: handles size < total
+	self
+		assertCreating: 10
+		of: [ TFGraph create useFinalization ]
+		releasesExternalMemoryRepeatingUpTo: 20
 ]
 
 { #category : #'testing tensor' }
@@ -70,82 +79,36 @@ TensorFlowCAPISlowTests >> testRunGraphMulTwoInputsConstTensorDeletedManyTimes [
 ]
 
 { #category : #'testing session' }
-TensorFlowCAPISlowTests >> testSessionFinalizationReleasesExternalMemory [ 
-	" WeakArray restartFinalizationProcess "
-	| tries total handles graph |
-	self skip: 'Is this test deprecated?'.
-	total := 0.
-	tries := 20.
-	graph := TFGraph create.
-	handles := Set new.
-	
-	20 timesRepeat: [
-		total := total + tries.
-		handles addAll: ((1 to: tries) collect: [:i |
-			Smalltalk garbageCollect.
-			(TFSession on: graph) getHandle]).
-		handles size < total ifTrue: [
-			^ self]].
-	
-	self assert: (handles size) < total.
+TensorFlowCAPISlowTests >> testSessionFinalizationReleasesExternalMemory [
 
+	| graph |
+
+	graph := TFGraph create.
+	self assertCreating: 20 of: [ TFSession on: graph ] releasesExternalMemoryRepeatingUpTo: 20
 ]
 
 { #category : #'testing options' }
 TensorFlowCAPISlowTests >> testSessionOptionFinalizationReleasesExternalMemory [
-	" WeakArray restartFinalizationProcess "
 
-	| tries total handles |
-	self skip: 'Is this test deprecated?'.
-	total := 0.
-	tries := 10.
-	handles := Set new.
-	20
-		timesRepeat: [ total := total + tries.
-			handles
-				addAll:
-					((1 to: tries)
-						collect: [ :i | 
-							Smalltalk garbageCollect.
-							TFSessionOptions create getHandle ]).
-			handles size < total
-				ifTrue: [ ^ self ] ].
-	self assert: handles size < total
+	self assertCreating: 10 of: [ TFSessionOptions create ] releasesExternalMemoryRepeatingUpTo: 20
 ]
 
 { #category : #'testing status' }
 TensorFlowCAPISlowTests >> testStatusFinalizationReleasesExternalMemory [
-	" WeakArray restartFinalizationProcess "
-	| handles |
-	self skip: 'Is this test deprecated?'.
-	handles := (1 to: 11) collect: [:i |
-		Smalltalk garbageCollect.
-		TFStatus create getHandle].
 
-	self assert: (handles asSet size) < 11.
+	self assertCreating: 11 of: [ TFStatus create ] releasesExternalMemoryRepeatingUpTo: 1
 ]
 
 { #category : #'testing tensor' }
 TensorFlowCAPISlowTests >> testTensorFinalizationReleasesExternalMemory [
-	" WeakArray restartFinalizationProcess "
 
-	| handles template tries total |
-	self skip: 'Is this test deprecated?'.
-	total := 0.
-	tries := 20.
-	handles := Set new.
-	template := {(String new: 10).
-	(String new: 100).
-	(String new: 1000)}.
-	20
-		timesRepeat: [ total := total + tries.
-			handles
-				addAll:
-					((1 to: tries)
-						collect: [ :i | 
-							Smalltalk garbageCollect.
-							(TFTensor fromStringArray: template) getHandle ]).
-			handles size < total
-				ifTrue: [ ^ self ] ].
-	self assert: handles size < total
+	| template |
+
+	template := {( String new: 10 ).
+	( String new: 100 ).
+	( String new: 1000 )}.
+	self
+		assertCreating: 20
+		of: [ TFTensor fromStringArray: template ]
+		releasesExternalMemoryRepeatingUpTo: 20
 ]
