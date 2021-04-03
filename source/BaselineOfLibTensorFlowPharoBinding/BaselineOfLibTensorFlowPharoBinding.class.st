@@ -27,7 +27,9 @@ BaselineOfLibTensorFlowPharoBinding >> baseline: spec [
 				group: 'Development'
 					with:
 					#('Core-Development' 'Operations-Development' 'MachineLearning-Development' 'MachineLearning-Experimenting');
-				group: 'CI' with: #('Core-Development' 'Operations-Development' 'MachineLearning-Development')
+				group: 'CI' with: #('Core-Development' 'Operations-Development' 'MachineLearning-Development');
+				group: 'Deprecated'
+					with: #('TensorFlowDeprecatedCore' 'TensorFlowDeprecatedCoreTests' 'TensorFlowEnvironmentDeprecatedModel')
 			]
 ]
 

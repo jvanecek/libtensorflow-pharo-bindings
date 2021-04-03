@@ -69,7 +69,7 @@ Class {
 		'inputValues',
 		'top_n'
 	],
-	#category : #LibTensorFlowExamplesApp
+	#category : #LibTensorFlowExamplesDeprecatedApp
 }
 
 { #category : #accessing }

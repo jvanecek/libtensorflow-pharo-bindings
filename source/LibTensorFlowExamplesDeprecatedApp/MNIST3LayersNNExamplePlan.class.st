@@ -1,3 +1,7 @@
+"
+=== DEPRECATED === 
+This object was rewritten into Rectified3LayerNeuralNetwork
+"
 Class {
 	#name : #MNIST3LayersNNExamplePlan,
 	#superclass : #Object,
@@ -20,7 +24,7 @@ Class {
 		'hidden1',
 		'learn'
 	],
-	#category : 'LibTensorFlowExamplesApp'
+	#category : #LibTensorFlowExamplesDeprecatedApp
 }
 
 { #category : #accessing }

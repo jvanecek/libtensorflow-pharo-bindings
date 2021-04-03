@@ -1,10 +1,13 @@
+"
+This algorithm was rewritten in NearestNeighborNetwork
+"
 Class {
 	#name : #NearestNeighbor,
 	#superclass : #Object,
 	#instVars : [
 		'plan'
 	],
-	#category : 'LibTensorFlowExamplesApp'
+	#category : #LibTensorFlowExamplesDeprecatedApp
 }
 
 { #category : #'as yet unclassified' }

@@ -38,17 +38,6 @@ TFSessionOptions >> config: aString [
 ]
 
 { #category : #'initialize-release' }
-TFSessionOptions >> delete [
-"deprecated"
-self halt.
-
-	self ignoreFinalization.
-	self isNull ifFalse: [
-		self library deleteSessionOptions: self].
-	handle := nil
-]
-
-{ #category : #'initialize-release' }
 TFSessionOptions >> library [
 	^ TensorFlowCAPI current
 ]

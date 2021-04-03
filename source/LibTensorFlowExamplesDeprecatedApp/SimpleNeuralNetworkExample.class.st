@@ -6,7 +6,7 @@ Class {
 		'backward',
 		'weights'
 	],
-	#category : 'LibTensorFlowExamplesApp'
+	#category : #LibTensorFlowExamplesDeprecatedApp
 }
 
 { #category : #accessing }

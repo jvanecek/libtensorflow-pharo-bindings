@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'calculator'
 	],
-	#category : 'TensorFlowEnvironmentModel'
+	#category : #TensorFlowEnvironmentDeprecatedModel
 }
 
 { #category : #'Instance Creation' }

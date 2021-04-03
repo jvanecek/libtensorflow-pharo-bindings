@@ -5,7 +5,7 @@ Class {
 		'images',
 		'labels'
 	],
-	#category : 'LibTensorFlowExamplesApp'
+	#category : #LibTensorFlowExamplesDeprecatedApp
 }
 
 { #category : #accessing }

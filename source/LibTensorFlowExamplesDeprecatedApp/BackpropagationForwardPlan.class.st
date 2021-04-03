@@ -1,7 +1,7 @@
 Class {
 	#name : #BackpropagationForwardPlan,
 	#superclass : #ExamplePlan,
-	#category : 'LibTensorFlowExamplesApp'
+	#category : #LibTensorFlowExamplesDeprecatedApp
 }
 
 { #category : #initialization }

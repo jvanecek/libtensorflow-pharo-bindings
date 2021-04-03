@@ -1,10 +1,13 @@
 "
-self new graph writeDefToFileNamed: 'graph.pb'
+self new graph writeDefToFileNamed: 'graph.pb'.
+
+=== DEPRECATED === 
+This object was rewritten into Sigmoid3LayerNeuralNetwork
 "
 Class {
 	#name : #MNIST3LayersNNSigmoid,
 	#superclass : #MNIST3LayersNNExamplePlan,
-	#category : 'LibTensorFlowExamplesApp'
+	#category : #LibTensorFlowExamplesDeprecatedApp
 }
 
 { #category : #initialization }

@@ -32,11 +32,6 @@ TensorFlowCAPISlowTests >> assertCreating: anAmount of: aTensorFlowObjectCreator
 	
 ]
 
-{ #category : #'testing tensor' }
-TensorFlowCAPISlowTests >> mulGraphTwoInputsInt64ConstTensorDeleted [
-	^ TensorFlowCAPITest new mulGraphTwoInputsInt64ConstTensorDeleted
-]
-
 { #category : #'testing graph' }
 TensorFlowCAPISlowTests >> testGraphFinalizationReleasesExternalMemory [
 

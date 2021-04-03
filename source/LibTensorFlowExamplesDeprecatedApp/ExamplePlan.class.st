@@ -7,7 +7,7 @@ Class {
 		'outputs',
 		'session'
 	],
-	#category : 'LibTensorFlowExamplesApp'
+	#category : #LibTensorFlowExamplesDeprecatedApp
 }
 
 { #category : #initialization }

@@ -1,7 +1,10 @@
+"
+This object was rewritten into NearestNeighborNetwork
+"
 Class {
 	#name : #ExampleNearestNeighborPlan,
 	#superclass : #ExamplePlan,
-	#category : 'LibTensorFlowExamplesApp'
+	#category : #LibTensorFlowExamplesDeprecatedApp
 }
 
 { #category : #initialization }

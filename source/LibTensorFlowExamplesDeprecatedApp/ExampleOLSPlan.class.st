@@ -1,7 +1,10 @@
+"
+This object was rewritten into OrdinaryLeastSquareRegression
+"
 Class {
 	#name : #ExampleOLSPlan,
 	#superclass : #ExamplePlan,
-	#category : 'LibTensorFlowExamplesApp'
+	#category : #LibTensorFlowExamplesDeprecatedApp
 }
 
 { #category : #initialization }

@@ -28,7 +28,7 @@ Class {
 		'hidden3',
 		'learn'
 	],
-	#category : 'LibTensorFlowExamplesApp'
+	#category : #LibTensorFlowExamplesDeprecatedApp
 }
 
 { #category : #examples }

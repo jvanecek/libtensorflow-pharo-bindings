@@ -1,3 +1,6 @@
+"
+This object was rewritten into SoftmaxNeuralNetwork
+"
 Class {
 	#name : #MNISTSoftMaxExamplePlan,
 	#superclass : #Object,
@@ -15,7 +18,7 @@ Class {
 		'learnBiases',
 		'activation'
 	],
-	#category : 'LibTensorFlowExamplesApp'
+	#category : #LibTensorFlowExamplesDeprecatedApp
 }
 
 { #category : #initialization }

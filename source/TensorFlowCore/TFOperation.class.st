@@ -11,122 +11,11 @@ Class {
 	#category : #TensorFlowCore
 }
 
-{ #category : #'ops binary' }
-TFOperation >> * aTFOperation [
-	^ self binaryOp: 'MatMul' with: aTFOperation
-]
-
-{ #category : #'ops binary' }
-TFOperation >> ** aTF_Operation [
-	^ self binaryOp: 'Pow' with: aTF_Operation
-]
-
-{ #category : #'ops binary' }
-TFOperation >> *\ aTFOperation [
-	^ self
-		binaryOp: 'MatMul'
-		with: aTFOperation
-		described: [ :description | description at: 'transpose_b' putBoolean: true ]
-]
-
-{ #category : #'ops binary' }
-TFOperation >> + aTFOperation [
-	^ self binaryOp: 'Add' with: aTFOperation
-]
-
-{ #category : #'ops binary' }
-TFOperation >> += aTF_Operation [
-	"Update self by adding a value"
-
-	^ self binaryOp: 'AssignAdd' with: aTF_Operation
-]
-
-{ #category : #'ops binary' }
-TFOperation >> - aTFOperation [
-	^ self binaryOp: 'Sub' with: aTFOperation
-]
-
-{ #category : #'ops binary' }
-TFOperation >> -= aTFOperation [
-	^ self binaryOp: 'AssignSub' with: aTFOperation
-]
-
 { #category : #comparing }
 TFOperation >> = aTF_Operation [
 	^ self class = aTF_Operation class and: [ 
 		" Doing this so different instances of the same pointer matches "
 		handle asString  = aTF_Operation getHandle asString ]
-]
-
-{ #category : #'ops binary' }
-TFOperation >> > aTFOperation [
-	^ self binaryOp: 'Greater' with: aTFOperation
-]
-
-{ #category : #'ops binary' }
-TFOperation >> @* aTFOperation [
-	^ self binaryOp: 'Mul' with: aTFOperation
-]
-
-{ #category : #'ops binary' }
-TFOperation >> @/ aTFOperation [
-	^ self binaryOp: 'Div' with: aTFOperation
-]
-
-{ #category : #'ops binary' }
-TFOperation >> \* aTFOperation [
-	^ self
-		binaryOp: 'MatMul'
-		with: aTFOperation
-		described: [ :description | description at: 'transpose_a' putBoolean: true ]
-]
-
-{ #category : #'ops binary' }
-TFOperation >> \*\ aTF_Operation [
-	^ self
-		binaryOp: 'MatMul'
-		with: aTF_Operation
-		described: [ :description | 
-			description at: 'transpose_a' putBoolean: true.
-			description at: 'transpose_b' putBoolean: true ]
-]
-
-{ #category : #'ops binary' }
-TFOperation >> \\ aTFOperation [
-	^ self binaryOp: 'Mod' with: aTFOperation
-]
-
-{ #category : #'ops unary' }
-TFOperation >> abs [
-	"Computes the absolute value of a tensor"
-	"https://www.tensorflow.org/api_docs/cc/class/tensorflow/ops/abs"
-
-	^ self unaryOp: 'Abs'
-]
-
-{ #category : #'ops unary' }
-TFOperation >> alias: nameString [
-	"Return a tensor with the same shape and contents as the input tensor or value"
-	"https://www.tensorflow.org/api_docs/cc/class/tensorflow/ops/identity"
-
-	^ self unaryOp: 'Identity' named: nameString
-]
-
-{ #category : #'ops unary' }
-TFOperation >> arcCos [
-	^ self unaryOp: 'Acos'
-]
-
-{ #category : #'ops unary' }
-TFOperation >> arcSin [
-	^ self unaryOp: 'Asin'
-	
-]
-
-{ #category : #'ops unary' }
-TFOperation >> arcTan [
-	^ self unaryOp: 'Atan'
-	
 ]
 
 { #category : #converting }
@@ -136,14 +25,6 @@ TFOperation >> asOperationOn: aTF_Graph [
 		ifFalse: [^ self error: 'Can''t move an operation to another Graph']
 ]
 
-{ #category : #'ops binary' }
-TFOperation >> assign: aTF_Operation [
-	^ self
-		binaryOp: 'Assign'
-		with: aTF_Operation
-		named: (self nameFor: self name, '_initializer') 
-]
-
 { #category : #attributes }
 TFOperation >> attrMetadata: nameString [
 	| status answer |
@@ -151,33 +32,6 @@ TFOperation >> attrMetadata: nameString [
 	answer := self library operation: self getMetadataFor: nameString asAsciiZ status: status.
 	status check.
 	^ answer
-]
-
-{ #category : #'ops binary' }
-TFOperation >> binaryOp: aString with: aTF_Operation [
-	^ self binaryOp: aString with: aTF_Operation described: [ :nothing |  ]
-]
-
-{ #category : #'ops binary' }
-TFOperation >> binaryOp: aString with: aTF_Operation described: oneArgBlock [
-	| name |
-	name := self nameFor: aString.
-	^ self
-		binaryOp: aString
-		with: aTF_Operation
-		named: name
-		described: oneArgBlock
-]
-
-{ #category : #'ops binary' }
-TFOperation >> binaryOp: aString with: aTF_Operation named: name [
-	^ self binaryOp: aString with: aTF_Operation named: name described: [:nothing]
-
-]
-
-{ #category : #'ops binary' }
-TFOperation >> binaryOp: aString with: aTF_Operation named: name described: oneArgBlock [
-	^ self op: aString withAll: {aTF_Operation} named: name described: oneArgBlock
 ]
 
 { #category : #attributes }
@@ -194,45 +48,11 @@ TFOperation >> boolAt: nameString [
 	^ value booleanAt: 1
 ]
 
-{ #category : #'ops binary' }
-TFOperation >> castTo: typeInteger [
-	^ self unaryOp: 'Cast' described: [ :description | description at: 'DstT' putType: typeInteger ]
-]
-
-{ #category : #'ops unary' }
-TFOperation >> cos [
-	^ self unaryOp: 'Cos'
-]
-
-{ #category : #'ops other' }
-TFOperation >> descent: delta rate: learningRate [
-	^ self
-		op: 'ApplyGradientDescent'
-		withAll:
-			{learningRate.
-			delta}
-]
-
 { #category : #accessing }
 TFOperation >> device [
 "The name of the device to which this op has been assigned, if any.
 Returns: The string name of the device to which this op has been assigned, or an empty string if it has not been assigned to a device."
 	^ self library operationDevice: self
-]
-
-{ #category : #'ops unary' }
-TFOperation >> exp [
-	^ self unaryOp: 'Exp'
-]
-
-{ #category : #'ops binary' }
-TFOperation >> findMaxOn: aTF_Operation [
-	^ self binaryOp: 'ArgMax' with: aTF_Operation
-]
-
-{ #category : #'ops binary' }
-TFOperation >> findMinOn: aTF_Operation [
-	^ self binaryOp: 'ArgMin' with: aTF_Operation
 ]
 
 { #category : #accessing }
@@ -272,15 +92,6 @@ TFOperation >> graph: aTF_Graph [
 	graph := aTF_Graph
 ]
 
-{ #category : #'ops unary' }
-TFOperation >> identity [
-	"Return a tensor with the same shape and contents as the input tensor or value"
-	"https://www.tensorflow.org/api_docs/cc/class/tensorflow/ops/identity"
-
-	^ self unaryOp: 'Identity'
-	
-]
-
 { #category : #accessing }
 TFOperation >> input: anInteger [
 	"Return input at position anInteger"
@@ -306,28 +117,9 @@ TFOperation >> intAt: nameString [
 
 ]
 
-{ #category : #'ops unary' }
-TFOperation >> inverse [
-	"Return a tensor that is the inverse of the input"
-
-	^ self unaryOp: 'MatrixInverse'
-]
-
-{ #category : #'ops binary' }
+{ #category : #accessing }
 TFOperation >> library [
 	^ TensorFlowCAPI current
-]
-
-{ #category : #accessing }
-TFOperation >> log [
-	"CComputes natural logarithm of x element-wise"
-
-	^ self unaryOp: 'Log'
-]
-
-{ #category : #'ops binary' }
-TFOperation >> meanOn: shapeTensorOrOperation [
-	^ self binaryOp: 'Mean' with: shapeTensorOrOperation
 ]
 
 { #category : #accessing }
@@ -335,47 +127,6 @@ TFOperation >> name [
 	"The full name of this operation"
 	
 	^ self library operationName: self
-]
-
-{ #category : #'ops other' }
-TFOperation >> nameFor: namePrefix [
-	^ graph nameFor: namePrefix
-]
-
-{ #category : #'ops unary' }
-TFOperation >> negated [
-	^ self unaryOp: 'Neg'
-]
-
-{ #category : #'ops other' }
-TFOperation >> op: aString withAll: aTF_OperationArray [
-	^ self op: aString withAll: aTF_OperationArray described: [:nothing]
-
-]
-
-{ #category : #'ops other' }
-TFOperation >> op: aString withAll: aTF_OperationArray described: oneArgBlock [
-	| name |
-	name := self nameFor: aString.
-	^ self op: aString withAll: aTF_OperationArray named: name described: oneArgBlock
-]
-
-{ #category : #'ops other' }
-TFOperation >> op: aString withAll: aTF_OperationArray named: name [
-	^ self op: aString withAll: aTF_OperationArray named: name described: [:nothing]
-
-]
-
-{ #category : #'ops other' }
-TFOperation >> op: aString withAll: aTF_OperationArray named: name described: oneArgBlock [
-	^ graph newOperation: aString named: name described: [:description |
-		description addInput: self output.
-		aTF_OperationArray do: [:each |
-			| input |
-			input := (each asOperationOn: graph) output.
-			description addInput: input].
-		oneArgBlock value: description].
-	
 ]
 
 { #category : #initialization }
@@ -411,26 +162,6 @@ TFOperation >> printOn: stream [
 				print: self name ]
 ]
 
-{ #category : #'ops unary' }
-TFOperation >> rectified [
-	"Computes rectified linear: f(x) = max(x, 0)"
-	"https://en.wikipedia.org/wiki/Rectifier_(neural_networks)"
-
-	^ self unaryOp: 'Relu'
-]
-
-{ #category : #'ops unary' }
-TFOperation >> rectified6 [
-	"Computes rectified linear 6: f(x) = min(max(x, 0), 6)"
-
-	^ self unaryOp: 'Relu6'
-]
-
-{ #category : #'ops unary' }
-TFOperation >> shape [
-	^ self unaryOp: 'Shape'
-]
-
 { #category : #attributes }
 TFOperation >> shapeAt: nameString [
 	| value status size answer |
@@ -449,47 +180,6 @@ TFOperation >> shapeAt: nameString [
 
 	answer := (1 to: size) collect: [:i | value at: i].
 	^ TensorShape withDimensionsSized: answer
-]
-
-{ #category : #'ops unary' }
-TFOperation >> sigmoid [
-	^ self unaryOp: 'Sigmoid'
-]
-
-{ #category : #'ops unary' }
-TFOperation >> sin [
-	^ self unaryOp: 'Sin'
-	
-]
-
-{ #category : #'ops binary' }
-TFOperation >> sizeOn: dimensionInteger [
-	^ self shape sliceFrom: {dimensionInteger} asInt32Tensor size: #(1) asInt32Tensor.
-]
-
-{ #category : #'ops other' }
-TFOperation >> sliceFrom: begin size: size [
-	^ self op: 'Slice' withAll: {begin. size}
-]
-
-{ #category : #'ops unary' }
-TFOperation >> softmax [
-	^ self unaryOp: 'Softmax'
-
-]
-
-{ #category : #'ops binary' }
-TFOperation >> sparseSoftmaxCrossEntropyWithLogits: aTF_Operation [
-	^ self
-		binaryOp: 'SparseSoftmaxCrossEntropyWithLogits'
-		with: aTF_Operation
-		named: (self nameFor: 'SparseSoftmaxCrossEntropyWithLogits')
-]
-
-{ #category : #'ops unary' }
-TFOperation >> squared [
-	^ self @* self
-	
 ]
 
 { #category : #attributes }
@@ -536,17 +226,6 @@ TFOperation >> stringsAt: nameString [
 		one asString]
 ]
 
-{ #category : #'ops binary' }
-TFOperation >> sumOn: aTF_Operation [
-	^ self binaryOp: 'Sum' with: aTF_Operation
-]
-
-{ #category : #'ops unary' }
-TFOperation >> tan [
-	^ self unaryOp: 'Tan'
-	
-]
-
 { #category : #attributes }
 TFOperation >> tensorAt: nameString [
 	| value status |
@@ -556,19 +235,6 @@ TFOperation >> tensorAt: nameString [
 	status check.
 	^ TFTensor fromHandle: (value pointerAt: 1)
 
-]
-
-{ #category : #'ops binary' }
-TFOperation >> timesRectifiedGradOf: aTF_Operation [
-	^ self binaryOp: 'ReluGrad' with: aTF_Operation
-]
-
-{ #category : #'ops unary' }
-TFOperation >> transposePermutingAxes: permutation [
-
-	| name |
-	name := 'Transpose'.
-	^ self op: name withAll: { permutation } named: (self nameFor:name) described: [:description| ]
 ]
 
 { #category : #accessing }
@@ -587,31 +253,6 @@ TFOperation >> typeAt: nameString [
 	status check.
 	^ value unsignedLongLongAt: 1
 
-]
-
-{ #category : #'ops unary' }
-TFOperation >> unaryOp: aString [
-	| name |
-	name := self nameFor: aString.
-	^ self unaryOp: aString named: name
-]
-
-{ #category : #'ops unary' }
-TFOperation >> unaryOp: aString described: oneArgBlock [
-	| name |
-	name := self nameFor: aString.
-	^ self unaryOp: aString named: name described: oneArgBlock
-]
-
-{ #category : #'ops unary' }
-TFOperation >> unaryOp: aString named: name [
-	^ self unaryOp: aString named: name described: [:description | ].
-	
-]
-
-{ #category : #'ops unary' }
-TFOperation >> unaryOp: aString named: name described: oneArgBlock [
-	^ self op: aString withAll: {} named: name described: oneArgBlock
 ]
 
 { #category : #accessing }

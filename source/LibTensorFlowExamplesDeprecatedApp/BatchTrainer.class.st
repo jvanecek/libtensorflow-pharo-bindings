@@ -9,7 +9,7 @@ Class {
 		'imageTesting',
 		'labelTesting'
 	],
-	#category : 'LibTensorFlowExamplesApp'
+	#category : #LibTensorFlowExamplesDeprecatedApp
 }
 
 { #category : #initialization }

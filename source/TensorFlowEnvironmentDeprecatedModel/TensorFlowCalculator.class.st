@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'graph'
 	],
-	#category : 'TensorFlowEnvironmentModel'
+	#category : #TensorFlowEnvironmentDeprecatedModel
 }
 
 { #category : #'Instance Creation' }

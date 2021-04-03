@@ -1,7 +1,7 @@
 Class {
 	#name : #TensorFlowEnvironmentTest,
 	#superclass : #TestCase,
-	#category : 'TensorFlowEnvironmentModelTests'
+	#category : #TensorFlowEnvironmentDeprecatedModelTests
 }
 
 { #category : #Asserting }

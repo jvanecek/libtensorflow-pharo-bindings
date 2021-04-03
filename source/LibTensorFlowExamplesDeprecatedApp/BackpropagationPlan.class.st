@@ -9,7 +9,7 @@ Class {
 		'delta',
 		'lastDelta'
 	],
-	#category : 'LibTensorFlowExamplesApp'
+	#category : #LibTensorFlowExamplesDeprecatedApp
 }
 
 { #category : #accessing }

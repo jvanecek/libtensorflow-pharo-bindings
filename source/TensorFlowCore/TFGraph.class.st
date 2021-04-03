@@ -48,11 +48,6 @@ TFGraph class >> fromString: aString [
 	^ self create importString: aString
 ]
 
-{ #category : #operations }
-TFGraph >> add: nameString described: aBlock [
-	^ self newOperation: 'Add' named: nameString described: aBlock
-]
-
 { #category : #accessing }
 TFGraph >> allInitializers [
 	^ self
@@ -77,33 +72,6 @@ TFGraph >> allVariables [
 { #category : #gtInspector }
 TFGraph >> asRoassalView [
 	^ self drawOnRoassalView: RTView new
-]
-
-{ #category : #operations }
-TFGraph >> asString: nameString described: aBlock [
-	^ self newOperation: 'AsString' named: nameString described: aBlock
-]
-
-{ #category : #operations }
-TFGraph >> concat: nameString described: aBlock [
-	^ self newOperation: 'Concat' named: nameString described: aBlock
-]
-
-{ #category : #'root operations' }
-TFGraph >> const: aTFTensor [
-	| name |
-	name := self nameFor: 'constant'.
-	^ self const: name value: aTFTensor
-]
-
-{ #category : #'root operations' }
-TFGraph >> const: nameString value: aTFTensor [
-	^ self
-		newOperation: 'Const'
-		named: nameString
-		described: [ :description | 
-			description at: 'dtype' putType: aTFTensor type.
-			description at: 'value' putTensor: aTFTensor ]
 ]
 
 { #category : #accessing }
@@ -150,71 +118,6 @@ TFGraph >> drawOnRoassalView: view [
 	(RTLayoutBuilder new forceWithCharge: -600) on: view elements.
 
 	^ view
-]
-
-{ #category : #'initialize-release' }
-TFGraph >> fromBlock: aBlockClosure [
-	"Create operations from a block"
-
-	| types |
-	types := Array new: aBlockClosure argumentCount.
-	types atAllPut: TFTensor typeFloat.
-	^ self fromBlock: aBlockClosure inputTypes: types
-]
-
-{ #category : #'initialize-release' }
-TFGraph >> fromBlock: aBlockClosure inputTypes: anArray [
-	| inputs index |
-	index := 0.
-	inputs := (1 to: aBlockClosure argumentCount) collect: [:each |
-		index := index + 1.
-		self inputType: (anArray at: index)].
-	^ aBlockClosure valueWithArguments: inputs.
-
-]
-
-{ #category : #'initialize-release' }
-TFGraph >> fromBlock: aBlockClosure inputTypes: anArray named: nameString [
-
-	| answer |
-
-	self
-		inScopeNamed: nameString
-		do: [answer := self fromBlock: aBlockClosure inputTypes: anArray].
-	^answer
-]
-
-{ #category : #'initialize-release' }
-TFGraph >> fromBlock: aBlockClosure named: nameString [
-	| types |
-	types := Array new: aBlockClosure argumentCount.
-	types atAllPut: TFTensor typeFloat.
-	^ self fromBlock: aBlockClosure inputTypes: types named: nameString
-]
-
-{ #category : #gradients }
-TFGraph >> gradientsOf: yArrayOfTFOutput withRespectTo: xArrayOfTFOutput product: dxArrayOfOutput [
-
-	| y x dx status dy |
-
-	y := TFOutputArray externalFromArray: yArrayOfTFOutput.
-	x := TFOutputArray externalFromArray: xArrayOfTFOutput.
-	dx := dxArrayOfOutput
-		ifNil: [ ExternalData fromHandle: ExternalAddress new beNull type: ExternalType char asPointerType ]
-		ifNotNil: [ TFOutputArray externalFromArray: dxArrayOfOutput ].
-	dy := TFOutputArray externalNew: xArrayOfTFOutput size.
-	status := TFStatus create.
-	self library
-		graph: self
-		y: y
-		yCount: yArrayOfTFOutput size
-		x: x
-		xCount: xArrayOfTFOutput size
-		dx: dx
-		status: status
-		into: dy.
-	status check.
-	^ dy
 ]
 
 { #category : #gtInspector }
@@ -287,32 +190,9 @@ TFGraph >> initializeOn: aTFSession [
 		ifTrue: [ aTFSession runOutputs: initializers ]
 ]
 
-{ #category : #'root operations' }
-TFGraph >> inputType: typeInteger [
-	^ self
-		newOperation: 'Placeholder'
-		named: (self nameFor: 'input')
-		described: [ :description | description at: 'dtype' putType: typeInteger ]
-]
-
 { #category : #private }
 TFGraph >> library [
 	^ TensorFlowCAPI current
-]
-
-{ #category : #operations }
-TFGraph >> mul: nameString described: aBlock [
-	^ self newOperation: 'Mul' named: nameString described: aBlock
-]
-
-{ #category : #'random operations' }
-TFGraph >> multinomialShaped: shapeConstant numSamples: aNumber [
-	"Draws samples from a multinomial distribution."
-	| numSamples|
-	numSamples := self const: aNumber asInt32Tensor .
-
-	^ shapeConstant op: 'Multinomial' withAll: {numSamples} named: 'Mltn' described:
-	[:description |]
 ]
 
 { #category : #'root operations' }
@@ -338,7 +218,7 @@ TFGraph >> newOperation: typeString named: aString described: aBlock [
 	^ answer
 ]
 
-{ #category : #operations }
+{ #category : #private }
 TFGraph >> newOperationDescription: typeString named: aString [
 	^ self library
 		newOperationDescriptionOn: self
@@ -419,106 +299,6 @@ TFGraph >> outputDimensionsCount: aTF_Output [
 	^ answer
 ]
 
-{ #category : #'random operations' }
-TFGraph >> parametrizedTruncatedNormalShaped: shapeArray means: means stdevs: stdevs minVals:minVals maxVals:maxVals [
-	| shape meansTensor stdevsTensor minValsTensor maxValsTensor |
-	shape := self const: shapeArray asInt32Tensor.
-	meansTensor := self const: means asFloatTensor.
-	stdevsTensor := self const: stdevs asFloatTensor.
-	minValsTensor := self const: minVals asFloatTensor.
-	maxValsTensor := self const: maxVals asFloatTensor.	
-	^ shape op: 'ParameterizedTruncatedNormal' withAll: {meansTensor. stdevsTensor. minValsTensor.maxValsTensor} named: 'Mltn' described:
-	[:description |]
-]
-
-{ #category : #'random operations' }
-TFGraph >> parametrizedTruncatedNormalShaped: shapeArray stddev: aNumber [
-	| random |
-	random := self truncatedNormalRandomShaped: shapeArray.
-	^ random @* (self const: aNumber asTensor)
-]
-
-{ #category : #'root operations' }
-TFGraph >> placeholder: nameString type: typeInteger [
-	^ self
-		newOperation: 'Placeholder'
-		named: nameString
-		described: [ :description | description at: 'dtype' putType: typeInteger ]
-]
-
-{ #category : #'random operations' }
-TFGraph >> randomGamma:shapeArray alpha: alpha [ 
-	"Outputs random values from a uniform distribution."
-	| shape alphaTensor |
-	shape := self const: shapeArray asInt32Tensor.
-	alphaTensor:= self const: alpha asFloatTensor.
-
-	^ shape op: 'RandomGamma' withAll: {alphaTensor.} named: 'RG' described:
-	[:description |]
-]
-
-{ #category : #'random operations' }
-TFGraph >> randomNormalShaped:shapeArray [
-	"Outputs random values from a normal distribution"
-	| shape |
-	shape := self const: shapeArray asInt32Tensor.
-	^ shape unaryOp: 'RandomStandardNormal' described: [:description |
-		description at: 'dtype' putType: TFTensor typeFloat]
-]
-
-{ #category : #'random operations' }
-TFGraph >> randomNormalShaped: shapeArray stddev: aNumber [
-	| random |
-	random := self randomNormalShaped: shapeArray.
-	^ random @* (self const: aNumber asTensor)
-]
-
-{ #category : #'random operations' }
-TFGraph >> randomPoisson:shapeArray rate: rate [ 
-	"Outputs random values from a uniform distribution."
-	| shape  rateTensor |
-	shape := self const: shapeArray asInt32Tensor.
-	rateTensor:= self const: rate asFloatTensor.
-
-	^ shape op: 'RandomPoissonV2' withAll: {rateTensor.} named: 'RP' described:
-	[:description |]
-]
-
-{ #category : #'random operations' }
-TFGraph >> randomShuffle: aTensor [
-	
-	| shape |
-	shape := self const: aTensor.
-	^ shape unaryOp: 'RandomShuffle' described: [:description |]
-]
-
-{ #category : #'random operations' }
-TFGraph >> randomUniformIntShaped:shapeArray minVal: minTensorAsArray maxVal:maxTensorAsArray [
-	"Outputs random values from a uniform distribution."
-	| shape mini maxi |
-	shape := self const: shapeArray asInt32Tensor.
-	mini:= self const: minTensorAsArray asInt32Tensor.
-	maxi := self const: maxTensorAsArray  asInt32Tensor.
-	^ shape op: 'RandomUniformInt' withAll: {mini. maxi.} named: 'RUI' described:
-	[:description |]
-]
-
-{ #category : #'random operations' }
-TFGraph >> randomUniformShaped:shapeArray [
-	"Outputs random values from a uniform distribution."
-	| shape |
-	shape := self const: shapeArray asInt32Tensor.
-	^ shape unaryOp: 'RandomUniform' described: [:description |
-		description at: 'dtype' putType: TFTensor typeFloat]
-]
-
-{ #category : #'random operations' }
-TFGraph >> randomUniformShaped: shapeArray stddev: aNumber [
-	| random |
-	random := self randomUniformIntShaped: shapeArray.
-	^ random @* (self const: aNumber asTensor)
-]
-
 { #category : #outputs }
 TFGraph >> rankOf: aTFOutputOrInput [
 	| status answer |
@@ -529,17 +309,6 @@ TFGraph >> rankOf: aTFOutputOrInput [
 		status: status.
 	status check.
 	^ answer
-]
-
-{ #category : #running }
-TFGraph >> runInputs: inArrayOfTFOutputs values: inArrayOfTFTensor outputs: outArrayOfTFOutputs [
-	| session |
-	session := TFSession on: self.
-	self initializeOn: session.
-	^ session
-		runInputs: inArrayOfTFOutputs
-		values: inArrayOfTFTensor
-		outputs: outArrayOfTFOutputs
 ]
 
 { #category : #running }
@@ -575,74 +344,6 @@ TFGraph >> shapeOf: aTFOutputOrInput [
 	^ answer asTensorShape
 ]
 
-{ #category : #outputs }
-TFGraph >> shapeOf: aTFOutputOrInput set: shape [
-	| status value |
-	value := FFIExternalArray externalNewType: 'int64' fromArray: shape.
-	status := TFStatus create.
-	self library
-		graph: self
-		setShapeOf: aTFOutputOrInput
-		to: value getHandle
-		size: shape size
-		status: status.
-	status check
-]
-
-{ #category : #'root operations' }
-TFGraph >> truncatedNormalRandomShaped: shapeArray [
-	| shape |
-	shape := self const: shapeArray asInt32Tensor.
-	^ shape
-		unaryOp: 'TruncatedNormal'
-		described: [ :description | description at: 'dtype' putType: TFTensor typeFloat ]
-]
-
-{ #category : #'root operations' }
-TFGraph >> truncatedNormalRandomShaped: shapeArray stddev: aNumber [
-	| random |
-	random := self truncatedNormalRandomShaped: shapeArray.
-	^ random @* (self const: aNumber asTensor)
-]
-
-{ #category : #'root operations' }
-TFGraph >> variable: nameString forTensor: aTFTensor [
-	^ self
-		variable: nameString
-		type: aTFTensor type
-		shape: aTFTensor shape
-]
-
-{ #category : #'root operations' }
-TFGraph >> variable: nameString initialValue: aTFTensor [
-	| const var |
-	var := self variable: nameString forTensor: aTFTensor.
-	const := self const: nameString , '_initialValue' value: aTFTensor.
-	var assign: const.
-	^ var
-]
-
-{ #category : #'root operations' }
-TFGraph >> variable: nameString initialValueFrom: aTFOperation [
-	| output var shape |
-	output := aTFOperation output: 0.
-	shape := self shapeOf: output.
-	var := self variable: nameString type: output type shape: shape.
-	var assign: aTFOperation.
-	^ var
-]
-
-{ #category : #'root operations' }
-TFGraph >> variable: nameString type: typeInteger shape: anArray [
-	^ self
-		newOperation: 'Variable'
-		named: nameString
-		described: [ :description | 
-			description
-				at: 'dtype' putType: typeInteger;
-				at: 'shape' putShape: anArray asTensorShape ]
-]
-
 { #category : #debugging }
 TFGraph >> writeDefTo: strm [
 	strm nextPutAll: self definition
@@ -651,13 +352,4 @@ TFGraph >> writeDefTo: strm [
 { #category : #debugging }
 TFGraph >> writeDefToFileNamed: filename [
 	filename asFileReference writeStreamDo: [ :strm | self writeDefTo: strm ]
-]
-
-{ #category : #'root operations' }
-TFGraph >> zerosShaped: shapeArray [
-	"This operation creates a tensor of shape shapeArray and fills it zero"
-	
-	| shape |
-	shape := self const: shapeArray asInt32Tensor.
-	^ shape binaryOp: 'Fill' with: 0.0 asTensor
 ]

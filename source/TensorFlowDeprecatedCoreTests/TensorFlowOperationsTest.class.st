@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'library'
 	],
-	#category : #TensorFlowCoreTests
+	#category : #TensorFlowDeprecatedCoreTests
 }
 
 { #category : #initialization }
