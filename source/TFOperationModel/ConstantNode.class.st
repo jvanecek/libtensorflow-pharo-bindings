@@ -36,11 +36,17 @@ ConstantNode class >> like: anOperation filledWith: aValue [
 { #category : #'Instance Creation' }
 ConstantNode class >> on: aComputation named: aName shaped: aShape filledWith: aTensor [
 
-	^self
+	^ self
 		on: aComputation
 		named: aName
 		with: aShape asInt32Tensor
-		wrappedWith: [:shape | shape binaryOp: 'Fill' with: aTensor]
+		wrappedWith: [ :shape | 
+			aComputation
+				newOperationOf: 'Fill'
+				namePrefixed: aName, '-fill'
+				with: shape
+				with: aTensor
+			]
 ]
 
 { #category : #'Instance Creation' }

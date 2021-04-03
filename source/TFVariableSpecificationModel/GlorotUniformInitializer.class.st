@@ -26,12 +26,12 @@ GlorotUniformInitializer class >> withSeed: anIntegerSeed [
 ]
 
 { #category : #Applying }
-GlorotUniformInitializer >> applyTo: aTFVariable [
+GlorotUniformInitializer >> applyTo: aVariableNode [
 
-	aTFVariable assign: (
+	aVariableNode assign: (
 		tensorGenerator
-			glorotUniformTensorOn: aTFVariable graph
-			shaped: aTFVariable outputShape)
+			glorotUniformTensorOn: aVariableNode currentComputation
+			shaped: aVariableNode outputShape)
 ]
 
 { #category : #Initialization }

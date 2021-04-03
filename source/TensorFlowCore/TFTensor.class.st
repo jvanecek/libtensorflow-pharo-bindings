@@ -541,8 +541,9 @@ TFTensor >> asNumbers [
 ]
 
 { #category : #converting }
-TFTensor >> asOperationOn: aTFGraph [
-	^ aTFGraph const: self
+TFTensor >> asOperationOn: aComputation [
+
+	^ ConstantNode on: aComputation with: self
 ]
 
 { #category : #converting }

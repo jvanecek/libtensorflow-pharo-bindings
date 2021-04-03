@@ -37,9 +37,9 @@ TFTensor >> isScalar [
 ]
 
 { #category : #'*TFOperationModel' }
-TFTensor >> outputOn: aGraph [
+TFTensor >> outputOn: aComputation [
 
-	^(self asOperationOn: aGraph) outputOn: aGraph
+	^ ( self asOperationOn: aComputation ) value firstOutput
 ]
 
 { #category : #'*TFOperationModel' }

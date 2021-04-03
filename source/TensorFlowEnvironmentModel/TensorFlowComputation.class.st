@@ -44,7 +44,7 @@ TensorFlowComputation >> computeAll: operations feedingInputsWith: aPlaceholderV
 		inputPlaceholders add: (graph operationNamed: placeholderName) firstInput.
 		inputValues add: value].
 
-	outputs := operations collect: [:operation | operation outputOn: graph].
+	outputs := operations collect: [:operation | operation outputOn: self].
 
 	results :=
 		self
@@ -106,7 +106,7 @@ TensorFlowComputation >> gradientsOf: aFunctionCollection withRespectTo: aVariab
 	vectorOutputs :=
 		aCotangentVectors
 			ifNil: [nil]
-			ifNotNil: [aCotangentVectors collect: [:var | var outputOn: graph]].
+			ifNotNil: [aCotangentVectors collect: [:var | var outputOn: self]].
 
 	^graph
 		gradientsOf: (aFunctionCollection collect: [:function | function outputOn: graph])
@@ -153,7 +153,7 @@ TensorFlowComputation >> newOperationOf: anOperationType namePrefixed: anOperati
 		newOperation: anOperationType
 		named: (graph nameFor: anOperationName)
 		described: [:description |
-			graphNodes do: [:node | description addInput: (node outputOn: graph)].
+			graphNodes do: [:node | description addInput: (node outputOn: self)].
 			aBlock value: description]
 ]
 

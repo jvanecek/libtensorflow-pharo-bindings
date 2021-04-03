@@ -1,7 +1,7 @@
 Extension { #name : #Number }
 
 { #category : #'*TFOperationModel' }
-Number >> outputOn: aGraph [
+Number >> outputOn: aComputation [
 
-	^(self asOperationOn: aGraph) firstOutput
+	^ ( self asOperationOn: aComputation ) value firstOutput
 ]
