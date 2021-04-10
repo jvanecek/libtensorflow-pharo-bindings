@@ -21,7 +21,7 @@ TensorFlowCAPISlowTests >> assertCreating: anAmount of: aTensorFlowObjectCreator
 		total := total + anAmount.
 		handles addAll: (
 			(1 to: anAmount) collect: [:i |
-				Smalltalk garbageCollect.
+				2 timesRepeat: [ Smalltalk garbageCollect ].
 				aTensorFlowObjectCreator value getHandle getHandle ]).
 		handles size < total ifTrue: [
 			" Meaning some external addresses where reused, so we're good "
