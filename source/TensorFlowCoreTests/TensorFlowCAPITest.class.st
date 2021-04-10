@@ -149,7 +149,7 @@ TensorFlowCAPITest >> setUp [
 TensorFlowCAPITest >> should: aBlock raiseError: aString [
 	| message |
 	message := 'No Error was signaled'.
-	aBlock ifError: [:description :receiver | message := description].
+	aBlock on: Error do: [:ex | message := ex description].
 	self assert: 'Error: ',aString isEqualSkippingSeparatorsTo: message.
 ]
 
