@@ -71,6 +71,16 @@ TFOperationDescription >> at: attribute putInt: value [
 ]
 
 { #category : #attributes }
+TFOperationDescription >> at: attribute putInts: aListOfIntegers [
+
+	^self library
+		description: self
+		set: attribute asAsciiZ
+		toInts: ( FFIExternalArray externalNewType: 'int64' fromArray: aListOfIntegers ) getHandle
+		size: aListOfIntegers size
+]
+
+{ #category : #attributes }
 TFOperationDescription >> at: attribute putShape: aTensorShape [
 	| status value |
 	value := FFIExternalArray externalNewType: 'int64' fromArray: aTensorShape dimensionSizes.

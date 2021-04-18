@@ -195,6 +195,18 @@ TensorFlowCAPI >> description: desc set: attr_name toInt64: value [
 ]
 
 { #category : #'operation description' }
+TensorFlowCAPI >> description: aTFOperationDescription set: anAttributeName toInts: aCollection size: aCollectionSize [
+	"TF_CAPI_EXPORT extern void TF_SetAttrIntList(TF_OperationDescription* desc,
+                                             const char* attr_name,
+                                             const int64_t* values,
+                                             int num_values);"
+	^ self
+		ffiCall:
+			#(void TF_SetAttrIntList #(TFOperationDescription * aTFOperationDescription , String anAttributeName , int64 * aCollection , int aCollectionSize))
+		module: TensorFlowCAPI
+]
+
+{ #category : #'operation description' }
 TensorFlowCAPI >> description: aTF_OperationDescription set: aString toShape: anInt64Array size: size [
 	"TF_CAPI_EXPORT extern void TF_SetAttrShape(TF_OperationDescription* desc,
                                            const char* attr_name, const int64_t* dims, int num_dims);"

@@ -83,10 +83,10 @@ BaselineOfLibTensorFlowPharoBinding >> machineLearningGroupsIn: spec [
 	spec
 		group: 'MachineLearning-Deployment'
 			with:
-			#('TFVariableSpecificationModel' 'TFRegularizationModel' 'TFDatasetModel' 'TFUtilityModel' 'MLNeuralNetworkLayerModel' 'TFOptimizerModel' 'MLTrainingMetricModel' 'DatasetProviderModel' 'MLTrainingLaboratoryModel');
+			#('TFVariableSpecificationModel' 'TFDatasetModel' 'TFUtilityModel' 'MLNeuralNetworkLayerModel' 'TFOptimizerModel' 'MLTrainingMetricModel' 'DatasetProviderModel' 'MLTrainingLaboratoryModel' 'TFExperimentalOperationModel');
 		group: 'MachineLearning-Development'
 			with:
-			#('MachineLearning-Deployment' 'TFVariableSpecificationModelTests' 'TFRegularizationModelTests' 'TFUtilityModelTests' 'TFOptimizerModelTests' 'TFDatasetModelTests' 'MLNeuralNetworkLayerModelTests' 'MLTrainingMetricModelTests' 'MLTrainingModelTests' 'LibTensorFlowExamplesApp')
+			#('MachineLearning-Deployment' 'TFVariableSpecificationModelTests' 'TFUtilityModelTests' 'TFOptimizerModelTests' 'TFDatasetModelTests' 'MLNeuralNetworkLayerModelTests' 'MLTrainingMetricModelTests' 'MLTrainingModelTests' 'LibTensorFlowExamplesApp' 'TFExperimentalOperationModelTests')
 ]
 
 { #category : #baseline }
