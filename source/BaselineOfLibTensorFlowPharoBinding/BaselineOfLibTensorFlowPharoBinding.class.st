@@ -96,9 +96,9 @@ BaselineOfLibTensorFlowPharoBinding >> machineLearningPackagesIn: spec [
 		package: 'TFVariableSpecificationModel' with: [ spec requires: #('TFOperationModel') ];
 		package: 'TFVariableSpecificationModelTests'
 			with: [ spec requires: #('TensorFlowEnvironmentModelTests' 'TFVariableSpecificationModel') ];
-		package: 'TFRegularizationModel' with: [ spec requires: #('TFOperationModel') ];
-		package: 'TFRegularizationModelTests'
-			with: [ spec requires: #('TensorFlowEnvironmentModelTests' 'TFRegularizationModel') ];
+		package: 'TFExperimentalOperationModel'  with: [ spec requires: #('TFOperationModel') ];
+		package: 'TFExperimentalOperationModelTests'
+			with: [ spec requires: #('TensorFlowEnvironmentModelTests' 'TFExperimentalOperationModel') ];
 		package: 'TFDatasetModel' with: [ spec requires: #('TFOperationModel') ];
 		package: 'TFUtilityModel' with: [ spec requires: #('TFDatasetModel') ];
 		package: 'TFUtilityModelTests'
