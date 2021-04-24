@@ -1,7 +1,7 @@
 Class {
 	#name : #OrdinaryLeastSquareRegressionTest,
 	#superclass : #TestCase,
-	#category : #LibTensorFlowExamplesApp
+	#category : #LibTensorFlowExamplesTestsApp
 }
 
 { #category : #Tests }

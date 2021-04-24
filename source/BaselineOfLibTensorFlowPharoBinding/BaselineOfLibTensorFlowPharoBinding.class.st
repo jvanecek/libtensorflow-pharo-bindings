@@ -60,7 +60,7 @@ BaselineOfLibTensorFlowPharoBinding >> corePackagesIn: spec [
 BaselineOfLibTensorFlowPharoBinding >> experimentingGroupsIn: spec [
 
 	spec
-		group: 'Examples' with: #('LibTensorFlowExamplesApp');
+		group: 'Examples' with: #('LibTensorFlowExamplesApp' 'LibTensorFlowExamplesTestsApp');
 		group: 'MachineLearning-Experimenting' with: #('MLTrainingVisualizationModel' 'Examples')
 ]
 
@@ -69,6 +69,7 @@ BaselineOfLibTensorFlowPharoBinding >> experimentingPackageIn: spec [
 
 	spec
 		package: 'LibTensorFlowExamplesApp' with: [ spec requires: #('TensorFlowCore' 'Roassal2') ];
+		package: 'LibTensorFlowExamplesTestsApp' with: [ spec requires: #('LibTensorFlowExamplesApp' 'TensorFlowEnvironmentModelTests') ];
 		package: 'MLTrainingVisualizationModel' with: [ spec requires: #('MLTrainingModel' 'Roassal2') ]
 ]
 

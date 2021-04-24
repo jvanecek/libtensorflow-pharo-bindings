@@ -1,7 +1,7 @@
 Class {
 	#name : #NearestNeighborNetworkTest,
 	#superclass : #TestCase,
-	#category : #LibTensorFlowExamplesApp
+	#category : #LibTensorFlowExamplesTestsApp
 }
 
 { #category : #Tests }

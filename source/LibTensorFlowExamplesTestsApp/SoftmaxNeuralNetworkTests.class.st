@@ -1,7 +1,7 @@
 Class {
 	#name : #SoftmaxNeuralNetworkTests,
 	#superclass : #TestCase,
-	#category : #LibTensorFlowExamplesApp
+	#category : #LibTensorFlowExamplesTestsApp
 }
 
 { #category : #accessing }

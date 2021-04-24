@@ -1,7 +1,7 @@
 Class {
 	#name : #Rectified3LayerNeuralNetworkTest,
 	#superclass : #TestCase,
-	#category : #LibTensorFlowExamplesApp
+	#category : #LibTensorFlowExamplesTestsApp
 }
 
 { #category : #accessing }
