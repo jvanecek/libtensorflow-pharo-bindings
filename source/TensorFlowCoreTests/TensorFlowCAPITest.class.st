@@ -629,7 +629,7 @@ TensorFlowCAPITest >> testOutputStructureSizeIs16bits [
 TensorFlowCAPITest >> testPlaceholderType: type [
 	| graph var session result tensor abs |
 	graph := TFGraph create.
-	tensor := TFTensor type: type shape: TensorShape scalar.
+	tensor := TFTensor newTyped: type shaped: TensorShape scalar.
 	var := graph placeholder: 'var' type: type.
 	abs := graph newOperation: 'Abs' named: 'abs' described: [ :description | description addInput: (var output: 0) ].
 	session := TFSession on: graph.
@@ -763,73 +763,6 @@ TensorFlowCAPITest >> testStringAsTensor [
 	self assert: tensor dataBytes allButFirst asString equals: template
 ]
 
-{ #category : #'testing strings' }
-TensorFlowCAPITest >> testStringDecode [
-	| size string encoded decoded status |
-	" This test assumes the internal representation of a TensorFlow string. May fail if they change it "
-	string := 'a ver como queda este string encodeado?'.
-	status := TFStatus create.
-	size := library stringEncodedSize: string.
-	encoded := ExternalAddress gcallocate: size + 20.
-	encoded byteAt: size + 1 put: $@ asciiValue.
-	library
-		stringEncode: string
-		len: string size
-		destination: encoded
-		len: size + 20
-		status: status.
-	status check.
-	decoded := library stringDecode: encoded.
-	self deny: decoded = (string , '@').
-	self assert: decoded equals: string
-]
-
-{ #category : #'testing strings' }
-TensorFlowCAPITest >> testStringEncode [
-	| size string encoded encodedSize |
-	" This test assumes the internal representation of a TensorFlow string. May fail if they change it "
-	string := 'a ver como queda este string encodeado?'.
-	size := library stringEncodedSize: string.
-	encoded := ByteArray new: size + 20.
-	encodedSize := library stringEncode: string to: encoded.
-	self assert: encodedSize equals: size.
-	self assert: (encoded byteAt: 1) equals: string size.
-	self assert: (encoded structAt: 2 length: string size) asString equals: string
-]
-
-{ #category : #'testing strings' }
-TensorFlowCAPITest >> testStringEncodeExternal [
-	| size string encoded encodedSize status |
-	" This test assumes the internal representation of a TensorFlow string. May fail if they change it "
-	status := TFStatus create.
-	string := 'a ver como queda este string encodeado?'.
-	size := library stringEncodedSize: string.
-	encoded := ExternalAddress gcallocate: size + 20.
-	encodedSize := library
-		stringEncode: string
-		len: string size
-		destination: encoded
-		len: size + 20
-		status: status.
-	status check.
-	self assert: encodedSize equals: size.
-	self assert: (encoded unsignedByteAt: 1) equals: string size.
-	self assert: (encoded structAt: 2 length: string size) asString equals: string
-]
-
-{ #category : #'testing strings' }
-TensorFlowCAPITest >> testStringSize [
-	self assert: (library primStringEncodedSize: 0) equals: 0 + 1.
-	self assert: (library primStringEncodedSize: 127) equals: 127 + 1.
-	self assert: (library primStringEncodedSize: 128) equals: 128 + 2.
-	self assert: (library primStringEncodedSize: 127 * 127) equals: 127 * 127 + 2.
-	self assert: (library primStringEncodedSize: 127 * 127 + 123) equals: 127 * 127 + 123 + 2.
-	self assert: (library primStringEncodedSize: 127 * 127 * 127) equals: 127 * 127 * 127 + 3.
-	self assert: (library stringEncodedSize: '') equals: 0 + 1.
-	self assert: (library stringEncodedSize: (String new: 127)) equals: 127 + 1.
-	self assert: (library stringEncodedSize: (String new: 128)) equals: 128 + 2
-]
-
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> testTensorAllElements [
 	self assertTensor: -13123213 asInt32Tensor elementsEquals: #(-13123213).
@@ -912,14 +845,14 @@ TensorFlowCAPITest >> testTensorAsStream [
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> testTensorByteSize [
 	| tensor |
-	tensor := TFTensor type: TFTensor typeInt64 shape: (TensorShape matrixSized: 2 by: 3).
+	tensor := TFTensor newTyped: TFTensor typeInt64 shaped: (TensorShape matrixSized: 2 by: 3).
 	self assert: tensor byteSize equals: 8 * 2 * 3
 ]
 
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> testTensorData [
 	| tensor |
-	tensor := TFTensor type: TFTensor typeInt64 shape: (TensorShape matrixSized: 2 by: 3).
+	tensor := TFTensor newTyped: TFTensor typeInt64 shaped: (TensorShape matrixSized: 2 by: 3).
 	self assert: tensor rank equals: 2.
 	self deny: tensor data getHandle asInteger = 0.
 	self deny: tensor data getHandle isNil
@@ -1184,7 +1117,7 @@ TensorFlowCAPITest >> testTensorFromStringsShape [
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> testTensorNewScalar [
 	| tensor |
-	tensor := TFTensor type: TFTensor typeInt64 shape: TensorShape scalar.
+	tensor := TFTensor newTyped: TFTensor typeInt64 shaped: TensorShape scalar.
 	tensor ignoreFinalization.
 	self deny: tensor isNull.
 	tensor delete.
@@ -1214,7 +1147,7 @@ TensorFlowCAPITest >> testTensorShape2D [
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> testTensorShape: anArray [
 	| tensor shape size |
-	tensor := TFTensor type: TFTensor typeInt64 shape: (TensorShape withDimensionsSized: anArray).
+	tensor := TFTensor newTyped: TFTensor typeInt64 shaped: (TensorShape withDimensionsSized: anArray).
 	self assert: tensor rank equals: anArray size.
 	anArray
 		withIndexDo: [ :each :index | self assert: (tensor sizeOn: index - 1) equals: (anArray at: index) ].
@@ -1229,9 +1162,9 @@ TensorFlowCAPITest >> testTensorShape: anArray [
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> testTensorType [
 	| tensor |
-	tensor := TFTensor type: TFTensor typeInt64 shape: TensorShape scalar.
+	tensor := TFTensor newTyped: TFTensor typeInt64 shaped: TensorShape scalar.
 	self assert: tensor type equals: tensor class typeInt64.
-	tensor := TFTensor type: TFTensor typeFloat shape: TensorShape scalar.
+	tensor := TFTensor newTyped: TFTensor typeFloat shaped: TensorShape scalar.
 	self assert: tensor type equals: tensor class typeFloat
 ]
 

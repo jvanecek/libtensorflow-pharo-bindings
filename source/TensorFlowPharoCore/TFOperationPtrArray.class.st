@@ -1,7 +1,7 @@
 Class {
 	#name : #TFOperationPtrArray,
 	#superclass : #FFIExternalArray,
-	#category : #TensorFlowCore
+	#category : #TensorFlowPharoCore
 }
 
 { #category : #'instance creation' }

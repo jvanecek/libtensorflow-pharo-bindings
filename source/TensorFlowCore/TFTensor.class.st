@@ -76,10 +76,11 @@ TFTensor class >> fromFloats: values shape: shape [
 
 { #category : #'instance creation' }
 TFTensor class >> fromInt32: value [
-	| answer |
-	answer := self type: self typeInt32 shape: TensorShape scalar.
-	answer data getHandle signedLongAt: 1 put: value.
-	^ answer
+
+	^ self
+		newTyped: self typeInt32
+		shaped: TensorShape scalar
+		thenDo: [ :tensor | tensor data getHandle signedLongAt: 1 put: value ]
 ]
 
 { #category : #'instance creation' }
@@ -94,10 +95,11 @@ TFTensor class >> fromInt32s: values shape: shape [
 
 { #category : #'instance creation' }
 TFTensor class >> fromInt64: value [
-	| answer |
-	answer := self type: self typeInt64 shape: TensorShape scalar.
-	answer data getHandle signedLongLongAt: 1 put: value.
-	^ answer
+
+	^ self
+		newTyped: self typeInt64
+		shaped: TensorShape scalar
+		thenDo: [ :tensor | tensor data getHandle signedLongLongAt: 1 put: value ]
 ]
 
 { #category : #'instance creation' }
@@ -120,29 +122,22 @@ TFTensor class >> fromNumbers: values type: type [
 { #category : #acccessing }
 TFTensor class >> fromNumbers: values type: type shape: shape [
 
-	| answer size count |
+	| size count |
 
 	size := self sizeOf: values.
 	count := shape totalAmountOfElements.
 	count = size
 		ifFalse: [ Error signal: 'Inferred size and real size don''t match.' ].
-	answer := self type: type shape: shape.
-	self array: values type: type into: answer data getHandle.
-	^ answer
+	^ self
+		newTyped: type
+		shaped: shape
+		thenDo: [ :tensor | self array: values type: type into: tensor data getHandle ]
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> fromString: aString [
-	| answer bytesize |
-	bytesize := TensorFlowCAPI current stringEncodedSize: aString.
-	bytesize := bytesize.
-	answer := self type: self typeString shape: TensorShape scalar bytesize: bytesize.
 	
-	TensorFlowCAPI current
-		stringEncode: aString
-		to: answer data getHandle
-		size: bytesize.
-	^ answer
+	^ TensorFlowCAPI current tensorFromString: aString
 ]
 
 { #category : #'instance creation' }
@@ -153,32 +148,8 @@ TFTensor class >> fromStringArray: aStringArray [
 
 { #category : #'instance creation' }
 TFTensor class >> fromStringArray: aStringArray shape: shape [
-	| answer sizes offsets offsetSize bytesize |
-	sizes := aStringArray collect: [:each | self sizeOfString: each].
-	offsetSize := self sizeForType: self typeInt64.
-	bytesize := offsetSize * aStringArray size + sizes sum.
-	offsets := OrderedCollection new: sizes size.
-	
-	sizes inject: 0 into: [:prev :each |
-		offsets add: prev.
-		each + prev].
-	
-	answer := self
-		type: self typeString
-		shape: shape
-		bytesize: bytesize.
-		
-	self int64Array: offsets into: answer data getHandle.	
-	
-	aStringArray withIndexDo: [:each :index |
-		| offset |
-		offset := offsetSize * aStringArray size + (offsets at: index).
-		TensorFlowCAPI current
-			stringEncode: each
-			to: answer data getHandle + offset
-			size: bytesize - offset].
-	^ answer
 
+	^ TensorFlowCAPI current tensorFromStrings: aStringArray shaped: shape
 ]
 
 { #category : #'instance creation' }
@@ -217,6 +188,46 @@ TFTensor class >> int64Array: values into: anExternalAddressOrByteArray [
 TFTensor class >> new [
 
 	^super new initialize
+]
+
+{ #category : #'instance creation' }
+TFTensor class >> newTyped: anInteger shaped: aTensorShape [
+
+	^ self newTyped: anInteger shaped: aTensorShape thenDo: [ :tensor |  ]
+]
+
+{ #category : #'instance creation' }
+TFTensor class >> newTyped: aTensorType shaped: aTensorShape bytesize: bytesizeInteger thenDo: aBlock [
+
+	| tensor |
+
+	tensor := TensorFlowCAPI current
+		allocateTensorOf: ( TensorDomain of: aTensorType withShape: aTensorShape )
+		length: bytesizeInteger.
+	aBlock value: tensor.
+	^ tensor
+]
+
+{ #category : #'instance creation' }
+TFTensor class >> newTyped: anInteger shaped: aTensorShape thenDo: aBlock [ 
+
+	" I understand dimenssions are:
+		#()		-> Scalar
+		#(7)		-> Unidimensional array of 7 elements
+		#(7 4)		-> 7x4 elements matrix
+		#(2 5 9)	-> 2x5x9 elements cube
+		etc.
+	"
+
+	| bytesize elementSize |
+
+	elementSize := self sizeForType: anInteger.
+	bytesize := aTensorShape totalAmountOfElements * elementSize.
+	^ self
+		newTyped: anInteger
+		shaped: aTensorShape
+		bytesize: bytesize
+		thenDo: aBlock 
 ]
 
 { #category : #'instance creation' }
@@ -265,50 +276,9 @@ TFTensor class >> shapeOf: aMultidimensionalTensor [
 ]
 
 { #category : #types }
-TFTensor class >> sizeForType: anInteger [
-	self typeFloat = anInteger ifTrue: [^4].
-	self typeInt64 = anInteger ifTrue: [^8].
-	self typeInt32 = anInteger ifTrue: [^4].
-	self typeUInt8 = anInteger ifTrue: [^1].
-	self typeDouble = anInteger ifTrue: [^8].
-	self typeBoolean = anInteger ifTrue: [^1].
+TFTensor class >> sizeForType: aTypeNumber [
 
-"
-8
-		UInt8 4
-		Int8 6
-		QInt8 11
-		QUInt8 12
-
-16
-		Int16 5
-		BFloat16 14
-		QInt16 15
-		QUInt16 16
-		UInt16 17
-		Half 19
-
-32
-		Float 1
-		Int32 3
-		QInt32 13
-
-64
-		Double 2
-		Complex64 8
-		Int64 9
-
-128
-		Complex128 18
-
-		String 7
-		Resource 20).
-
-		Bool 10
-"
-
-
-	^ self shouldBeImplemented.
+	^TensorFlowCAPI current sizeOfDataType: aTypeNumber
 ]
 
 { #category : #utils }
@@ -325,46 +295,6 @@ TFTensor class >> sizeOf: aMultidimensionalArray [
 { #category : #utils }
 TFTensor class >> sizeOfString: aString [
 	^ TensorFlowCAPI current stringEncodedSize: aString
-]
-
-{ #category : #'instance creation' }
-TFTensor class >> type: anInteger shape: aTensorShape [
-	" I understand dimenssions are:
-		#()		-> Scalar
-		#(7)		-> Unidimensional array of 7 elements
-		#(7 4)		-> 7x4 elements matrix
-		#(2 5 9)	-> 2x5x9 elements cube
-		etc.
-	"
-
-	| bytesize elementSize |
-	elementSize := self sizeForType: anInteger.
-	bytesize := aTensorShape totalAmountOfElements * elementSize.
-	^ self type: anInteger shape: aTensorShape bytesize: bytesize
-]
-
-{ #category : #'instance creation' }
-TFTensor class >> type: anInteger shape: aTensorShape bytesize: bytesizeInteger [
-
-	" I understand dimensions are:
-		#()		-> Scalar
-		#(7)		-> Unidimensional array of 7 elements
-		#(7 4)		-> 7x4 elements matrix
-		#(2 5 9)	-> 2x5x9 elements cube
-		etc.
-	"
-
-	| externalized answer |
-
-	externalized := FFIExternalArray externalNewType: 'int64' fromArray: aTensorShape dimensionSizes.
-
-	answer := TensorFlowCAPI current
-		allocateTensorType: anInteger
-		shape: externalized getHandle
-		rank: aTensorShape size
-		length: bytesizeInteger.
-	answer autoRelease.
-	^ answer
 ]
 
 { #category : #types }
@@ -507,18 +437,8 @@ TFTensor >> allInt64s [
 
 { #category : #converting }
 TFTensor >> allStrings [
-	| total answer bytes data |
-	total := self size.
-	answer := WriteStream on: (Array new: total).
-	bytes := self dataBytes.
-	data := self data getHandle + (8 * total).
-	1 to: total do: [:i |
-		| offset str |
-		offset := bytes unsignedLongLongAt: i - 1 * 8 + 1.
-		str := self library stringDecode: data + offset.
-		answer nextPut: str].
-	
-	^ answer contents
+
+	^ self library allStringsOf: self
 ]
 
 { #category : #converting }
@@ -567,7 +487,7 @@ TFTensor >> byteSize [
 
 { #category : #accessing }
 TFTensor >> data [
-	^ self library tensorData: self
+	^ self library tensorDataOf: self
 ]
 
 { #category : #iterating }
@@ -686,6 +606,7 @@ TFTensor >> size [
 
 { #category : #accessing }
 TFTensor >> sizeOn: dimension [
+
 	^ self library tensor: self sizeOn: dimension
 ]
 

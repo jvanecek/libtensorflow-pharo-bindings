@@ -38,7 +38,7 @@ BaselineOfLibTensorFlowPharoBinding >> coreGroupsIn: spec [
 
 	spec
 		group: 'Core'
-			with: #('TensorFlowCore' 'TensorFlowEnvironmentModel' 'VAST-Compatibility-Model' 'MLMathExtensions');
+			with: #('TensorFlowCore' 'TensorFlowPharoCore' 'TensorFlowEnvironmentModel' 'VAST-Compatibility-Model' 'MLMathExtensions');
 		group: 'Core-Development' with: #('Core' 'TensorFlowCoreTests' 'TensorFlowEnvironmentModelTests')
 ]
 
@@ -48,6 +48,7 @@ BaselineOfLibTensorFlowPharoBinding >> corePackagesIn: spec [
 	spec
 		package: 'TensorFlowCore' with: [ spec requires: #(IdxReader) ];
 		package: 'TensorFlowCoreTests' with: [ spec requires: #('TensorFlowCore') ];
+		package: 'TensorFlowPharoCore' with: [  ];
 		package: 'TensorFlowEnvironmentModel'
 			with: [ spec requires: #('TensorFlowCore' 'VAST-Compatibility-Model') ];
 		package: 'TensorFlowEnvironmentModelTests'

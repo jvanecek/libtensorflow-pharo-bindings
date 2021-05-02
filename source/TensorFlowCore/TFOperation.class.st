@@ -27,25 +27,14 @@ TFOperation >> asOperationOn: aTF_Graph [
 
 { #category : #attributes }
 TFOperation >> attrMetadata: nameString [
-	| status answer |
-	status := TFStatus create.
-	answer := self library operation: self getMetadataFor: nameString asAsciiZ status: status.
-	status check.
-	^ answer
+
+	^ self library operation: self getMetadataFor: nameString asAsciiZ
 ]
 
 { #category : #attributes }
 TFOperation >> boolAt: nameString [
-	| value status |
-	status := TFStatus create.
-	value := ByteArray new: 1.
-	self library
-		operation: self
-		attr: nameString asAsciiZ
-		getBool: value
-		status: status.
-	status check.
-	^ value booleanAt: 1
+
+	^self library operation: self getBoolAt: nameString asAsciiZ
 ]
 
 { #category : #accessing }
@@ -68,16 +57,8 @@ TFOperation >> firstOutput [
 
 { #category : #attributes }
 TFOperation >> floatAt: nameString [
-	| value status |
-	status := TFStatus create.
-	value := ByteArray new: 8.
-	self library
-		operation: self
-		attr: nameString asAsciiZ
-		getFloat: value
-		status: status.
-	status check.
-	^ value floatAt: 1
+
+	^self library operation: self getFloatAt: nameString asAsciiZ
 ]
 
 { #category : #accessing }
@@ -108,13 +89,8 @@ TFOperation >> inputsCount [
 
 { #category : #attributes }
 TFOperation >> intAt: nameString [
-	| value status |
-	status := TFStatus create.
-	value := ByteArray new: 8.
-	self library operation: self attr: nameString asAsciiZ getInt64: value status: status.
-	status check.
-	^ value unsignedLongLongAt: 1
 
+	^ self library operation: self getInt64At: nameString asAsciiZ
 ]
 
 { #category : #accessing }
@@ -164,77 +140,26 @@ TFOperation >> printOn: stream [
 
 { #category : #attributes }
 TFOperation >> shapeAt: nameString [
-	| value status size answer |
-	size := (self attrMetadata: nameString) total_size.
-	(size = -1) ifTrue:[^#()].
-	status := TFStatus create.
-	value := FFIExternalArray externalNewType: 'int64' size: size.
-	
-	self library
-		operation: self
-		attr: nameString asAsciiZ
-		getShape: value getHandle
-		size: size
-		status: status.
-	status check.
 
-	answer := (1 to: size) collect: [:i | value at: i].
-	^ TensorShape withDimensionsSized: answer
+	^self library operation: self getShapeAt: nameString asAsciiZ
 ]
 
 { #category : #attributes }
 TFOperation >> stringAt: nameString [
-	| metadata value status |
-	metadata := self attrMetadata: nameString.
-	status := TFStatus create.
-	value := ByteArray new: metadata total_size.
-	self library
-		operation: self
-		attr: nameString asAsciiZ
-		getString: value
-		size: metadata total_size 
-		status: status.
-	status check.
-	^ value asString
 
+	^ self library operation: self getStringAt: nameString asAsciiZ
 ]
 
 { #category : #attributes }
 TFOperation >> stringsAt: nameString [
-	| status pointers sizes spaceRequired storage metadata valuesCount |
-	metadata := self attrMetadata: nameString.
-	spaceRequired := metadata totalSize.
-	valuesCount := metadata listSize.
-	pointers := ByteArray new: Smalltalk wordSize * valuesCount.
-	sizes := (FFIExternalArray externalNewType: 'int64' size: valuesCount) autoRelease.
-	storage := ExternalAddress gcallocate: spaceRequired.
-	status := TFStatus create.
-	self library
-		operation: self
-		attr: nameString asAsciiZ 
-		getStrings: pointers
-		sizes: sizes getHandle
-		maxCount: valuesCount
-		storage: storage
-		size: spaceRequired
-		status: status.
-	status check.
-	^ (1 to: valuesCount) collect: [:i |
-		| one |
-		one := pointers pointerAt: i-1*Smalltalk wordSize+1.
-		one := one structAt: 1 length: (sizes at: i).
-		one asString]
+
+	^self library operation: self getStringsAt: nameString asAsciiZ
 ]
 
 { #category : #attributes }
 TFOperation >> tensorAt: nameString [
-	| value status |
-	status := TFStatus create.
-	value := ByteArray new: ExternalAddress wordSize.
-	self library operation: self attr: nameString asAsciiZ getTensor: value status: status.
-	status check.
-	^ TFTensor fromHandle: (value pointerAt: 1)
 
+	^self library operation: self getTensorAt: nameString asAsciiZ
 ]
 
 { #category : #accessing }
@@ -246,13 +171,8 @@ TFOperation >> type [
 
 { #category : #attributes }
 TFOperation >> typeAt: nameString [
-	| value status |
-	status := TFStatus create.
-	value := ByteArray new: 8.
-	self library operation: self attr: nameString asAsciiZ getType: value status: status.
-	status check.
-	^ value unsignedLongLongAt: 1
 
+	^self library operation: self getTypeAt: nameString asAsciiZ
 ]
 
 { #category : #accessing }

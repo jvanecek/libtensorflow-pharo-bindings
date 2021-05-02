@@ -6,36 +6,23 @@ Class {
 
 { #category : #'instance creation' }
 TFSession class >> finalizeResourceData: handle [
-	| status |
+
 	handle isNull
 		ifTrue: [ ^ self ].
-	status := TFStatus create.
-	(TensorFlowCAPI current) closeSession: handle status: status.
-	status check.
-	status := TFStatus create.
-	(TensorFlowCAPI current) deleteSession: handle status: status.
-	status check
+	TensorFlowCAPI current closeSession: handle.
+	TensorFlowCAPI current deleteSession: handle
 ]
 
 { #category : #'instance creation' }
-TFSession class >> on: aTF_Graph [
-	| options status answer session |
-	options := TFSessionOptions create.
-	status := TFStatus create.
-	answer := TensorFlowCAPI current newSession: aTF_Graph options: options status: status.
-	status check.
-	session := answer autoRelease.
-	aTF_Graph initializeOn:session.
-	^ session
+TFSession class >> on: aTFGraph [
+
+	^ TensorFlowCAPI current newAutoreleaseSessionOn: aTFGraph
 ]
 
 { #category : #release }
 TFSession >> close [
-"deprecated"
-	| status |
-	status := TFStatus create.
-	self library closeSession: self status: status.
-	status check
+	" deprecated "
+	self library closeSession: self
 ]
 
 { #category : #release }
@@ -45,48 +32,14 @@ TFSession >> library [
 
 { #category : #running }
 TFSession >> run [
-	| status |
-	status := TFStatus create.
-	self library
-		runSession: self
-		options: nil
-		inputs: nil
-		values: nil
-		count: 0
-		outputs: nil
-		values: nil
-		count: 0
-		targets: nil
-		count: 0
-		metadata: nil
-		status: status.
-	status check
+
+	self library runSession: self
 ]
 
 { #category : #running }
 TFSession >> runInputs: inArrayOfTFInputs values: inArrayOfTFTensor outputs: outArrayOfTFOutputs [
-	| inputs invalues outputs outvalues status |
-	status := TFStatus create.
-	inputs := TFInputArray fromCollection: inArrayOfTFInputs.
-	invalues := TFTensorPtrArray fromCollection: inArrayOfTFTensor.
-	outputs := TFOutputArray externalFromArray: outArrayOfTFOutputs.
-	outvalues := TFTensorPtrArray externalNew: outArrayOfTFOutputs size.
 	
-	self library
-		runSession: self
-		options: nil
-		inputs: inputs getHandle
-		values: invalues getHandle
-		count: inArrayOfTFInputs size
-		outputs: outputs getHandle
-		values: outvalues getHandle
-		count: outArrayOfTFOutputs size
-		targets: nil
-		count: 0
-		metadata: nil
-		status: status.
-	status check.
-	^ outvalues asArray
+	^ self library runSession: self inputs: inArrayOfTFInputs values: inArrayOfTFTensor outputs: outArrayOfTFOutputs
 ]
 
 { #category : #running }
@@ -97,52 +50,11 @@ TFSession >> runOperation: aTFOperation [
 { #category : #release }
 TFSession >> runOperations: anArrayOfTFOperations [
 
-	| status operations |
-
-	status := TFStatus create.
-	operations := TFOperationPtrArray
-		fromCollection: ( anArrayOfTFOperations collect: [ :op | op getHandle getHandle ] ).
-	self library
-		runSession: self
-		options: nil
-		inputs: nil
-		values: nil
-		count: 0
-		outputs: nil
-		values: nil
-		count: 0
-		targets: operations getHandle
-		count: anArrayOfTFOperations size
-		metadata: nil
-		status: status.
-	status check
+	^ self library runSession: self operations: anArrayOfTFOperations
 ]
 
 { #category : #running }
 TFSession >> runOutputs: anArrayOfTFOutputs [
-	| outputs |
-	outputs := TFOutputArray fromCollection: anArrayOfTFOutputs.
-	^ self runOutputs: outputs size: anArrayOfTFOutputs size
-]
-
-{ #category : #running }
-TFSession >> runOutputs: aTFOutputArray size: anInteger [
-	| status outvalues |
-	status := TFStatus create.
-	outvalues := TFTensorPtrArray externalNew: anInteger.
-	self library
-		runSession: self
-		options: nil
-		inputs: nil
-		values: nil
-		count: 0
-		outputs: aTFOutputArray getHandle
-		values: outvalues getHandle
-		count: anInteger
-		targets: nil
-		count: 0
-		metadata: nil
-		status: status.
-	status check.
-	^ outvalues asArray
+	
+	^self library runSession: self outputs: anArrayOfTFOutputs
 ]

@@ -19,14 +19,6 @@ TFOperationDescription class >> finalizeResourceData: handle [
 
 ]
 
-{ #category : #accessing }
-TFOperationDescription >> add: input [
-	"To be removed maybe ?"
-
-	self halt.
-	self addInput: input
-]
-
 { #category : #inputs }
 TFOperationDescription >> addControlInput: aTFOutputOrInput [
 	^ self library description: self addControlInput: aTFOutputOrInput
@@ -47,9 +39,8 @@ TFOperationDescription >> addInputFromOutput: indexInteger of: aTFOperation [
 
 { #category : #inputs }
 TFOperationDescription >> addInputs: anArrayOfTFOutput [
-	| inputs |
-	inputs := TFOutputArray fromCollection: anArrayOfTFOutput.
-	self library description: self addInputs: inputs size: anArrayOfTFOutput size
+
+	self library description: self addInputs: anArrayOfTFOutput
 ]
 
 { #category : #attributes }
@@ -59,10 +50,8 @@ TFOperationDescription >> at: attribute putBoolean: value [
 
 { #category : #attributes }
 TFOperationDescription >> at: attribute putFloat: value [
-	self library
-		description: self
-		set: attribute asAsciiZ
-		toFloat: value asFloat
+
+	self library description: self set: attribute asAsciiZ toFloat: value asFloat
 ]
 
 { #category : #attributes }
@@ -73,93 +62,37 @@ TFOperationDescription >> at: attribute putInt: value [
 { #category : #attributes }
 TFOperationDescription >> at: attribute putInts: aListOfIntegers [
 
-	^self library
-		description: self
-		set: attribute asAsciiZ
-		toInts: ( FFIExternalArray externalNewType: 'int64' fromArray: aListOfIntegers ) getHandle
-		size: aListOfIntegers size
+	^ self library description: self set: attribute asAsciiZ toInts: aListOfIntegers
 ]
 
 { #category : #attributes }
 TFOperationDescription >> at: attribute putShape: aTensorShape [
-	| status value |
-	value := FFIExternalArray externalNewType: 'int64' fromArray: aTensorShape dimensionSizes.
-	status := TFStatus create.
-	self library
-		description: self
-		set: attribute asAsciiZ
-		toShape: value getHandle
-		size: aTensorShape dimensionSizes size.
-	status check
+
+	self library description: self set: attribute asAsciiZ toShape: aTensorShape
 ]
 
 { #category : #attributes }
 TFOperationDescription >> at: aString putShapes: aListOfShapes [
 
-	| status pointers shapes shapeSizes |
-
-	shapes := aListOfShapes
-		collect:
-			[ :shape | ( FFIExternalArray externalNewType: 'int64' fromArray: shape dimensionSizes ) autoRelease ].
-	pointers := ByteArray new: Smalltalk wordSize * shapes size.
-	shapes
-		withIndexDo: [ :each :index | pointers pointerAt: ( index - 1 ) * Smalltalk wordSize + 1 put: each getHandle ].
-
-	shapeSizes := aListOfShapes collect: #rank.
-	status := TFStatus create.
-	self library
-		description: self
-		set: aString asAsciiZ
-		toShapes: pointers 
-		sizesOfEach: ( FFIExternalArray externalNewType: 'int32' fromArray: shapeSizes ) getHandle
-		size: aListOfShapes size.
-	status check
+	self library description: self set: aString asAsciiZ toShapes: aListOfShapes
 ]
 
 { #category : #attributes }
 TFOperationDescription >> at: attribute putString: aString [
-	| status |
-	status := TFStatus create.
-	self library
-		description: self
-		set: attribute asAsciiZ
-		toString: aString
-		size: aString size.
-	status check
+
+	self library description: self set: attribute asAsciiZ toString: aString
 ]
 
 { #category : #attributes }
 TFOperationDescription >> at: attribute putStrings: anArrayOfStrings [
-	| status sizes strings pointers |
-	sizes := anArrayOfStrings collect: [:str | str size].
-	sizes := FFIExternalArray externalNewType: 'int64' fromArray: sizes.
-	sizes autoRelease.
-	strings := anArrayOfStrings collect: [:each | (self library externalizeString: each) autoRelease].
-	pointers := ByteArray new: Smalltalk wordSize * strings size.
-	strings withIndexDo: [:each :index |
-		pointers pointerAt: index-1*Smalltalk wordSize+1 put: each].
-	 
-	status := TFStatus create.
-	self library
-		description: self
-		set: attribute asAsciiZ
-		toStrings: pointers
-		sizes: sizes getHandle
-		count: anArrayOfStrings size.
-	status check
-	
+
+	self library description: self set: attribute asAsciiZ toStrings: anArrayOfStrings
 ]
 
 { #category : #attributes }
 TFOperationDescription >> at: attribute putTensor: aTFTensor [
-	| status |
-	status := TFStatus create.
-	self library
-		description: self
-		set: attribute asAsciiZ
-		toTensor: aTFTensor
-		status: status.
-	status check
+
+	self library description: self set: attribute asAsciiZ toTensor: aTFTensor
 ]
 
 { #category : #attributes }
@@ -170,15 +103,7 @@ TFOperationDescription >> at: attribute putType: value [
 { #category : #attributes }
 TFOperationDescription >> at: anAttributeName putTypes: aListOfTypes [
 
-	| status |
-
-	status := TFStatus create.
-	self library
-		description: self
-		set: anAttributeName
-		toTypes: ( FFIExternalArray externalNewType: 'int32' fromArray: aListOfTypes ) getHandle
-		size: aListOfTypes size.
-	status check
+	self library description: self set: anAttributeName toTypes: aListOfTypes
 ]
 
 { #category : #attributes }
@@ -188,15 +113,17 @@ TFOperationDescription >> device: aString [
 
 { #category : #accessing }
 TFOperationDescription >> finish [
-	| answer status |
-	status := TFStatus create.
-	answer := self library finishOperation: self status: status.
-	"handle := nil."
-	status check.
-	^ answer
+
+	^ self library finishOperation: self
 ]
 
 { #category : #attributes }
 TFOperationDescription >> library [
 	^ TensorFlowCAPI current
+]
+
+{ #category : #accessing }
+TFOperationDescription >> makeNull [
+	
+	"handle := nil."
 ]

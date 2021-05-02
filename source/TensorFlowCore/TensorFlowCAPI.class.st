@@ -1,898 +1,649 @@
 Class {
 	#name : #TensorFlowCAPI,
-	#superclass : #FFILibrary,
+	#superclass : #Object,
+	#instVars : [
+		'platformLibrary'
+	],
 	#classInstVars : [
 		'current'
 	],
 	#category : #TensorFlowCore
 }
 
-{ #category : #accessing }
+{ #category : #Accessing }
 TensorFlowCAPI class >> current [
-	^ current ifNil: [ current := self uniqueInstance ]
+
+	current ifNil: [ self error: 'No tensorflow binding for this smalltalk platform was set' ].
+	^ current
 ]
 
-{ #category : #examples }
-TensorFlowCAPI class >> example1 [
-	"Add two float numbers"
+{ #category : #'Instance Creation' }
+TensorFlowCAPI class >> setCurrentPlatformLibraryTo: aTensorFlowSmalltalkPlatformLibrary [
 
-	| graph c1 c2 sum session result |
-	graph := TFGraph create.
-	c1 := graph const: 'c1' value: 3.0 asTensor.
-	c2 := graph const: 'c2' value: 4.0 asTensor.
-	sum := c1 + c2.
-	session := TFSession on: graph.
-	result := session runOutput: (sum output: 0).
-	result asNumbers
+	current := self wrapping: aTensorFlowSmalltalkPlatformLibrary
 ]
 
-{ #category : #examples }
-TensorFlowCAPI class >> example2 [
-	"Multiply two float matrices"
+{ #category : #'Instance Creation' }
+TensorFlowCAPI class >> wrapping: aTensorFlowLibrary [
 
-	| graph t1 t2 c1 c2 mult session result |
-	graph := TFGraph create.
-	t1 := TFTensor fromFloats: #(#(1 2) #(3 4)).
-	t2 := TFTensor fromFloats: #(#(5 6) #(7 8)).
-	c1 := graph const: 'c1' value: t1.
-	c2 := graph const: 'c2' value: t2.
-	mult := c1 * c2.
-	session := TFSession on: graph.
-	result := session runOutput: (mult output: 0).
-	result asNumbers
+	
+	^ self new initializeWrapping: aTensorFlowLibrary
 ]
 
-{ #category : #examples }
-TensorFlowCAPI class >> example3 [
-	"Return a 3D tensor with 1 million elements filled with 0"
+{ #category : #strings }
+TensorFlowCAPI >> allStringsOf: aTFTensor [
 
-	| graph zeros session result |
-	graph := TFGraph create.
-	zeros := graph zerosShaped: #(100 100 100).
-	session := TFSession on: graph.
-	result := session runOutput: (zeros output: 0).
-	result asNumbers
+	^ platformLibrary allStringsOf: aTFTensor
 ]
 
 { #category : #tensor }
-TensorFlowCAPI >> allocateTensorType: anInteger shape: aLongLongArray rank: dimCount length: len [
-	"TF_CAPI_EXPORT extern TF_Tensor* TF_AllocateTensor(TF_DataType,
-                                                   const int64_t* dims, int num_dims, size_t len);"
+TensorFlowCAPI >> allocateTensorOf: aTensorDomain length: aSmallInteger [
 
-	^ self
-		ffiCall: #(
-		#TFTensor * TF_AllocateTensor #(
-			int anInteger,
-			int64 * aLongLongArray,
-			int dimCount,
-			size_t len))
-		module: TensorFlowCAPI
+	
+	^ platformLibrary allocateTensorOf: aTensorDomain length: aSmallInteger 
 ]
 
-{ #category : #session }
-TensorFlowCAPI >> closeSession: aTF_Session status: aTF_Status [
-	"TF_CAPI_EXPORT extern void TF_CloseSession(TF_Session*, TF_Status* status);"
+{ #category : #deleting }
+TensorFlowCAPI >> closeSession: aTFSession [
 
-	^ self ffiCall: #(void TF_CloseSession #(TFSession * aTF_Session, TFStatus * aTF_Status)) module: TensorFlowCAPI
+	platformLibrary checkStatusAfter: [:status | platformLibrary closeSession: aTFSession status: status]
 ]
 
 { #category : #buffer }
-TensorFlowCAPI >> deleteBuffer: aTF_Buffer [
-	"<cdecl: void 'TF_DeleteBuffer' (TF_Buffer*)>"
+TensorFlowCAPI >> deleteBuffer: aTFBuffer [
 
-	^ self
-		ffiCall: #(void TF_DeleteBuffer #(#TFBuffer * aTF_Buffer))
-		module: TensorFlowCAPI
+	^ platformLibrary deleteBuffer: aTFBuffer
 ]
 
-{ #category : #graph }
-TensorFlowCAPI >> deleteGraph: aTF_Graph [
-	"<cdecl: void 'TF_DeleteGraph' (TF_Graph*)>"
+{ #category : #'device list' }
+TensorFlowCAPI >> deleteDeviceList: aTFDeviceList [
 
-	^ self ffiCall: #(void TF_DeleteGraph #(TFGraph * aTF_Graph)) module: TensorFlowCAPI
+
+	^ platformLibrary deleteDeviceList: aTFDeviceList 
 ]
 
-{ #category : #options }
-TensorFlowCAPI >> deleteImportGraphDefOptions: aTF_ImportGraphDefOptions [
-	"<cdecl: void 'TF_DeleteImportGraphDefOptions' (TF_ImportGraphDefOptions*)>"
+{ #category : #deleting }
+TensorFlowCAPI >> deleteGraph: aTFGraph [
 
-	^ self ffiCall: #(void TF_DeleteImportGraphDefOptions #(#TFImportGraphDefOptions * aTF_ImportGraphDefOptions)) module: TensorFlowCAPI
-]
-
-{ #category : #session }
-TensorFlowCAPI >> deleteSession: aTF_Session status: aTF_Status [
-	"TF_CAPI_EXPORT extern void TF_DeleteSession(TF_Session*, TF_Status* status);"
-
-	^ self
-		ffiCall:
-			#(void TF_DeleteSession #(TFSession * aTF_Session , TFStatus * aTF_Status))
-		module:
-			TensorFlowCAPI
+	^platformLibrary deleteGraph: aTFGraph
 ]
 
 { #category : #options }
-TensorFlowCAPI >> deleteSessionOptions: aTF_SessionOptions [
-	"<cdecl: void 'TF_DeleteSessionOptions' (TF_SessionOptions*)>"
+TensorFlowCAPI >> deleteImportGraphDefOptions: aTFImportGraphDefOptions [
 
-	^ self ffiCall: #(void TF_DeleteSessionOptions #(TFSessionOptions * aTF_SessionOptions)) module: TensorFlowCAPI
-]
-
-{ #category : #status }
-TensorFlowCAPI >> deleteStatus: aTF_Status [
-	"<cdecl: void 'TF_DeleteStatus' (TF_Status*)>"
-
-	^ self ffiCall: #(void TF_DeleteStatus #(TFStatus * aTF_Status)) module: TensorFlowCAPI
-]
-
-{ #category : #tensor }
-TensorFlowCAPI >> deleteTensor: aTF_Tensor [
-	"<cdecl: void 'TF_DeleteTensor' (TF_Tensor*)>"
-
-	^ self
-		ffiCall: #(void TF_DeleteTensor #(#TFTensor * aTF_Tensor))
-		module: TensorFlowCAPI
-]
-
-{ #category : #'operation description' }
-TensorFlowCAPI >> description: aTF_OperationDescription addControlInput: aTF_Output [
-
-	"<cdecl: void 'TF_AddControlInput' (TF_OperationDescription* desc, TF_Operation* input)>"
-
-	^ self
-		ffiCall:
-			#(void TF_AddControlInput #(TFOperationDescription * aTF_OperationDescription , TFOperation * aTF_Output))
-		module: TensorFlowCAPI
-]
-
-{ #category : #'operation description' }
-TensorFlowCAPI >> description: aTF_OperationDescription addInput: aTF_Output [
-	"<cdecl: void 'TF_AddInput' (TF_OperationDescription* TF_Output)>"
 	
-	^ self
-		ffiCall:
-			#(void TF_AddInput #(TFOperationDescription * aTF_OperationDescription , TFOutput aTF_Output))
-		module: TensorFlowCAPI
+	^ platformLibrary deleteImportGraphDefOptions: aTFImportGraphDefOptions 
+]
+
+{ #category : #deleting }
+TensorFlowCAPI >> deleteSession: aTFSession [
+
+	platformLibrary checkStatusAfter: [:status | platformLibrary deleteSession: aTFSession status: status]
+]
+
+{ #category : #deleting }
+TensorFlowCAPI >> deleteSessionOptions: aTFSessionOptions [
+
+	^platformLibrary deleteSessionOptions: aTFSessionOptions
+]
+
+{ #category : #deleting }
+TensorFlowCAPI >> deleteStatus: aTFStatus [
+
+	^platformLibrary deleteStatus: aTFStatus
+]
+
+{ #category : #deleting }
+TensorFlowCAPI >> deleteTensor: aTFTensor [
+
+	^platformLibrary deleteTensor: aTFTensor
 ]
 
 { #category : #'operation description' }
-TensorFlowCAPI >> description: aTF_OperationDescription addInputs: aTF_OutputArray size: anInteger [
+TensorFlowCAPI >> description: aTFOperationDescription addControlInput: aTFOperation [
 
-	"<TF_CAPI_EXPORT extern void TF_AddInputList(TF_OperationDescription* desc,
-                                           const TF_Output* inputs, int num_inputs);>"
-
-	^ self
-		ffiCall:
-			#(void TF_AddInputList #(#TFOperationDescription * aTF_OperationDescription , #TFOutputArray * aTF_OutputArray , int anInteger))
-		module: TensorFlowCAPI
-]
-
-{ #category : #'operation description' }
-TensorFlowCAPI >> description: desc set: attr_name toBool: value [
-	"TF_CAPI_EXPORT extern void TF_SetAttrBool(TF_OperationDescription* desc,
-                                          const char* attr_name, unsigned char value);"
-
-	^ self
-		ffiCall: #(void TF_SetAttrBool #(TFOperationDescription * desc , String attr_name , bool value))
-		module: TensorFlowCAPI
-]
-
-{ #category : #'operation description' }
-TensorFlowCAPI >> description: aTF_OperationDescription set: aString toFloat: valueFloat [
-	"TF_CAPI_EXPORT extern void TF_SetAttrFloat(TF_OperationDescription* desc, const char* attr_name, float value);"
-
-	^ self
-		ffiCall: #(void TF_SetAttrFloat #(#TFOperationDescription * aTF_OperationDescription , String aString , float valueFloat))
-		module: TensorFlowCAPI
-]
-
-{ #category : #'operation description' }
-TensorFlowCAPI >> description: desc set: attr_name toInt64: value [
-	"TF_CAPI_EXPORT extern void TF_SetAttrInt(TF_OperationDescription* desc, const char* attr_name, int64_t value);"
-
-	^ self
-		ffiCall: #(void TF_SetAttrInt #(#TFOperationDescription * desc , String attr_name , int64 value))
-		module: TensorFlowCAPI
-]
-
-{ #category : #'operation description' }
-TensorFlowCAPI >> description: aTFOperationDescription set: anAttributeName toInts: aCollection size: aCollectionSize [
-	"TF_CAPI_EXPORT extern void TF_SetAttrIntList(TF_OperationDescription* desc,
-                                             const char* attr_name,
-                                             const int64_t* values,
-                                             int num_values);"
-	^ self
-		ffiCall:
-			#(void TF_SetAttrIntList #(TFOperationDescription * aTFOperationDescription , String anAttributeName , int64 * aCollection , int aCollectionSize))
-		module: TensorFlowCAPI
-]
-
-{ #category : #'operation description' }
-TensorFlowCAPI >> description: aTF_OperationDescription set: aString toShape: anInt64Array size: size [
-	"TF_CAPI_EXPORT extern void TF_SetAttrShape(TF_OperationDescription* desc,
-                                           const char* attr_name, const int64_t* dims, int num_dims);"
 	
+	^ platformLibrary description: aTFOperationDescription addControlInput: aTFOperation 
+]
+
+{ #category : #'operation description' }
+TensorFlowCAPI >> description: aTFOperationDescription addInput: aTFOutput [
+
 	
-	^ self ffiCall: #(void TF_SetAttrShape #(TFOperationDescription * aTF_OperationDescription, String aString, int64 * anInt64Array, int size)) module: TensorFlowCAPI
-]
-
-{ #category : #'operations-description' }
-TensorFlowCAPI >> description: aTFOperationDescription set: anAttributeName toShapes: aShapeCollection sizesOfEach: aShapeSizes size: aNumberOfShapes [
-
-	" // `dims` and `num_dims` must point to arrays of length `num_shapes`.
-	// Set `num_dims[i]` to -1 to represent 'unknown rank'.  Otherwise,
-	// `dims[i]` points to an array of length `num_dims[i]`.  `dims[i][j]`
-	// must be >= -1, with -1 meaning 'unknown dimension'.
-	TF_CAPI_EXPORT extern void TF_SetAttrShapeList(TF_OperationDescription* desc,
-                                               const char* attr_name,
-                                               const int64_t* const* dims,
-                                               const int* num_dims,
-                                               int num_shapes);"
-
-	self
-		ffiCall:
-			#(void TF_SetAttrShapeList #(#TFOperationDescription * aTFOperationDescription , String anAttributeName , int64 * aShapeCollection , int32 * aShapeSizes , int aNumberOfShapes))
-		module: TensorFlowCAPI
+	^ platformLibrary description: aTFOperationDescription addInput: aTFOutput 
 ]
 
 { #category : #'operation description' }
-TensorFlowCAPI >> description: desc set: attr_name toString: value size: size [
-	"TF_CAPI_EXPORT extern void TF_SetAttrString(TF_OperationDescription* desc,
-                                            const char* attr_name, const void* value, size_t length);"
+TensorFlowCAPI >> description: aTFOperationDescription addInputs: anArray [
 
-	^ self
-		ffiCall:
-			#(void TF_SetAttrString #(#TFOperationDescription * desc , String attr_name , String value , size_t size))
-		module: TensorFlowCAPI
+	^ platformLibrary description: aTFOperationDescription addInputs: anArray
 ]
 
 { #category : #'operation description' }
-TensorFlowCAPI >> description: aTF_OperationDescription set: aString toStrings: anArrayOfString sizes: sizes count: count [
-	"TF_CAPI_EXPORT extern void TF_SetAttrStringList(TF_OperationDescription* desc,
-                                                const char* attr_name,
-                                                const void* const* values,
-                                                const size_t* lengths,
-															  int num_values);"
-
-	^ self
-		ffiCall:
-			#(void TF_SetAttrStringList #(#TFOperationDescription * aTF_OperationDescription , String aString , void * anArrayOfString , int64 * sizes , int count))
-		module: TensorFlowCAPI
+TensorFlowCAPI >> description: aTFOperationDescription set: anAttributeName toBool: aBoolean [
+	
+	^ platformLibrary description: aTFOperationDescription set: anAttributeName toBool: aBoolean
 ]
 
 { #category : #'operation description' }
-TensorFlowCAPI >> description: aTF_OperationDescription set: aString toTensor: aTF_Tensor status: aTF_Status [
-	"<cdecl: void 'TF_SetAttrTensor' (TF_OperationDescription* char* TF_Tensor* TF_Status*)>"
-	^ self
-		ffiCall:
-			#(void TF_SetAttrTensor #(TFOperationDescription * aTF_OperationDescription , String aString , TFTensor * aTF_Tensor, TFStatus * aTF_Status))
-		module: TensorFlowCAPI
+TensorFlowCAPI >> description: aTFOperationDescription set: anAttributeName toFloat: aFloat [
+
+	
+	^ platformLibrary description: aTFOperationDescription set: anAttributeName toFloat: aFloat 
 ]
 
 { #category : #'operation description' }
-TensorFlowCAPI >> description: aTF_OperationDescription set: aString toType: anInt [
-	"TF_CAPI_EXPORT extern void TF_SetAttrType(TF_OperationDescription* desc,
-                                          const char* attr_name, TF_DataType value);"
+TensorFlowCAPI >> description: aTFOperationDescription set: anAttributeName toInt64: anInteger [
 
-	^ self
-		ffiCall:
-			#(void TF_SetAttrType #(TFOperationDescription * aTF_OperationDescription , String aString , int anInt))
-		module: TensorFlowCAPI
+	^ platformLibrary description: aTFOperationDescription set: anAttributeName toInt64: anInteger
 ]
 
 { #category : #'operation description' }
-TensorFlowCAPI >> description: aTFOperationDescription set: anAttributeName toTypes: aCollection size: aCollectionSize [ 
-	" TF_CAPI_EXPORT extern void TF_SetAttrTypeList(TF_OperationDescription* desc,
-                                              const char* attr_name,
-                                              const TF_DataType* values,
-                                              int num_values); "
-	^ self
-		ffiCall:
-			#(void TF_SetAttrTypeList #(TFOperationDescription * aTFOperationDescription , String anAttributeName , int32 * aCollection, int aCollectionSize))
-		module: TensorFlowCAPI
+TensorFlowCAPI >> description: aTFOperationDescription set: anAttributeName toInts: aListOfIntegers [
+
+	^ platformLibrary description: aTFOperationDescription set: anAttributeName toInts: aListOfIntegers
 ]
 
 { #category : #'operation description' }
-TensorFlowCAPI >> description: aTF_OperationDescription setDevice: aString [
-	"<cdecl: void 'TF_SetDevice' (TF_OperationDescription* char*)>"
+TensorFlowCAPI >> description: aTFOperationDescription set: anAttributeName toShape: aTensorShape [
 
-	^ self
-		ffiCall:
-			#(void TF_SetDevice #(#TFOperationDescription * aTF_OperationDescription , String aString))
-		module: TensorFlowCAPI
+	^ platformLibrary description: aTFOperationDescription set: anAttributeName toShape: aTensorShape
 ]
 
-{ #category : #utils }
+{ #category : #'operation description' }
+TensorFlowCAPI >> description: aTFOperationDescription set: anAttributeName toShapes: aListOfShapes [
+
+
+	platformLibrary description: aTFOperationDescription set: anAttributeName toShapes: aListOfShapes
+]
+
+{ #category : #'operation description' }
+TensorFlowCAPI >> description: aTFOperationDescription set: anAttributeName toString: aString [
+
+	platformLibrary checkStatusAfter: [:status |
+		platformLibrary
+			description: aTFOperationDescription
+			set: anAttributeName asAsciiZ
+			toString: aString
+			size: aString size]
+]
+
+{ #category : #'operation description' }
+TensorFlowCAPI >> description: aTFOperationDescription set: anAttributeName toStrings: aStringCollection [
+
+	
+	^ platformLibrary description: aTFOperationDescription set: anAttributeName toStrings: aStringCollection 
+]
+
+{ #category : #'operation description' }
+TensorFlowCAPI >> description: aTFOperationDescription set: anAttributeName toTensor: aTFTensor [
+
+	platformLibrary checkStatusAfter: [:status |
+		platformLibrary
+			description: aTFOperationDescription
+			set: anAttributeName asAsciiZ
+			toTensor: aTFTensor
+			status: status]
+]
+
+{ #category : #'operation description' }
+TensorFlowCAPI >> description: aTFOperationDescription set: anAttributeName toType: aTensorType [
+	
+	^ platformLibrary description: aTFOperationDescription set: anAttributeName toType: aTensorType
+]
+
+{ #category : #'operation description' }
+TensorFlowCAPI >> description: aTFOperationDescription set: anAttributeName toTypes: aListOfTypes [
+
+	platformLibrary description: aTFOperationDescription set: anAttributeName toTypes: aListOfTypes
+]
+
+{ #category : #'operation description' }
+TensorFlowCAPI >> description: aTFOperationDescription setDevice: aString [
+
+
+	^ platformLibrary description: aTFOperationDescription setDevice: aString 
+]
+
+{ #category : #'device list' }
+TensorFlowCAPI >> deviceList: aTFDeviceList incarnationAt: anIndex [
+
+	^platformLibrary checkStatusAfter: [:status |
+		platformLibrary deviceList: aTFDeviceList incarnationAt: anIndex status: status]
+]
+
+{ #category : #'device list' }
+TensorFlowCAPI >> deviceList: aTFDeviceList memoryAt: anIndex [
+
+	^platformLibrary checkStatusAfter: [:status |
+		platformLibrary deviceList: aTFDeviceList memoryAt: anIndex status: status]
+]
+
+{ #category : #'device list' }
+TensorFlowCAPI >> deviceList: aTFDeviceList nameAt: anIndex [
+
+	^platformLibrary checkStatusAfter: [:status |
+		platformLibrary deviceList: aTFDeviceList nameAt: anIndex status: status]
+]
+
+{ #category : #'device list' }
+TensorFlowCAPI >> deviceList: aTFDeviceList typeAt: anIndex [
+
+	^platformLibrary checkStatusAfter: [:status |
+		platformLibrary deviceList: aTFDeviceList typeAt: anIndex status: status]
+]
+
+{ #category : #'device list' }
+TensorFlowCAPI >> deviceListCount: aTFDeviceList [
+
+	^platformLibrary deviceListCount: aTFDeviceList
+]
+
+{ #category : #'device list' }
+TensorFlowCAPI >> deviceListForSession: aTFSession [
+
+	^platformLibrary checkStatusAfter: [:status | platformLibrary deviceListForSession: aTFSession status: status]
+]
+
+{ #category : #strings }
 TensorFlowCAPI >> externalizeString: aString [
-	| answer |
-	answer := ExternalAddress allocate: aString size + 1.
-	answer byteAt: aString size + 1 put: 0.
-	aString withIndexDo: [:char :index |
-		answer byteAt:  index put: char asciiValue].
-	^ answer
-]
 
-{ #category : #'operation description' }
-TensorFlowCAPI >> finishOperation: aTF_OperationDescription status: aTF_Status [
-	| answer |
 	
-	answer := self finishOperationAsVoid: aTF_OperationDescription status: aTF_Status.
-	aTF_OperationDescription handle: nil.
-	"answer handle: answer getHandle getHandle."
-	^answer
-]
-
-{ #category : #'operation description' }
-TensorFlowCAPI >> finishOperationAsVoid: desc status: status [
-	"TF_CAPI_EXPORT extern TF_Operation* TF_FinishOperation(TF_OperationDescription* desc, TF_Status* status);"
-"// If this function succeeds:
-//   * *status is set to an OK value,
-//   * a TF_Operation is added to the graph,
-//   * a non-null value pointing to the added operation is returned --
-//     this value is valid until the underlying graph is deleted.
-// Otherwise:
-//   * *status is set to a non-OK value,
-//   * the graph is not modified,
-//   * a null value is returned.
-// In either case, it deletes `desc`."
-	
-	^ self
-		ffiCall:
-			#(#TFOperation * TF_FinishOperation #(#TFOperationDescription * desc , #TFStatus * status))
-		module: TensorFlowCAPI
+	^ platformLibrary externalizeString: aString 
 ]
 
 { #category : #operation }
-TensorFlowCAPI >> forGraph: aTF_Graph outputDims: aTF_Output status: aTF_Status [
-	"<cdecl: ulonglong 'TF_GraphGetTensorNumDims' (TF_Graph* TF_Output TF_Status*)>"
+TensorFlowCAPI >> finishOperation: aTFOperationDescription [
 
-"Returns the number of dimensions of the Tensor referenced by `output`
-in `graph`.
+	^platformLibrary checkStatusAfter: [:status | | answer |
+		answer := platformLibrary finishOperation: aTFOperationDescription status: status.
+		aTFOperationDescription makeNull.
+		answer]
+]
 
-If the number of dimensions in the shape is unknown, returns -1.
+{ #category : #graph }
+TensorFlowCAPI >> forGraph: aTFGraph outputDims: aTFOutput [
 
-Returns an error into `status` if:
-   * `output` is not in `graph`."
-
-	^ self
-		ffiCall:
-			#(int TF_GraphGetTensorNumDims #(#TFGraph * aTF_Graph , #TFOutput aTF_Output , #TFStatus * aTF_Status))
-		module: TensorFlowCAPI
+	^platformLibrary
+		checkStatusAfter: [:status | platformLibrary forGraph: aTFGraph outputDims: aTFOutput status: status]
 ]
 
 { #category : #utils }
 TensorFlowCAPI >> getAllOps [
-	"<cdecl: TF_Buffer* 'TF_GetAllOpList' (void)>"
-
-	^ self ffiCall: #(#TFBuffer * TF_GetAllOpList #()) module: TensorFlowCAPI
-]
-
-{ #category : #status }
-TensorFlowCAPI >> getCode: aTF_Status [
-	"<cdecl: ulong 'TF_GetCode' (TF_Status*)>"
-
-	^ self ffiCall: #(ulong TF_GetCode #(TFStatus * aTF_Status)) module: TensorFlowCAPI
-]
-
-{ #category : #graph }
-TensorFlowCAPI >> getGraphVersionsOf: aTF_Graph buffer: aTF_Buffer status: aTF_Status [
-	"// Returns the serialized VersionDef proto for this graph.
-TF_CAPI_EXPORT extern void TF_GraphVersions(TF_Graph* graph,
-                                            TF_Buffer* output_version_def, TF_Status* status);"
-
-	^ self ffiCall: #(void TF_GraphVersions #(#TFGraph * aTF_Graph , #TFBuffer * aTF_Buffer , #TFStatus * aTF_Status)) module: TensorFlowCAPI
-]
-
-{ #category : #graph }
-TensorFlowCAPI >> graph: aTF_Graph getOperationNamed: aString [
-	| answer |
-	answer := self graph: aTF_Graph getOperationNamedAsVoid: aString.
-	answer := TFOperation fromHandle: answer.
-	answer graph: aTF_Graph.
-	^ answer
-]
-
-{ #category : #graph }
-TensorFlowCAPI >> graph: aTF_Graph getOperationNamedAsVoid: aString [
-	"<cdecl: void* 'TF_GraphOperationByName' (TF_Graph* char*)>"
-
-
-	^ self ffiCall: #(void * TF_GraphOperationByName #(TFGraph * aTF_Graph, String aString)) module: TensorFlowCAPI
-]
-
-{ #category : #graph }
-TensorFlowCAPI >> graph: aTF_Graph getRankOf: aTF_OutputOrInput status: status [
-	"<cdecl: ulonglong 'TF_GraphGetTensorNumDims' (TF_Graph* TF_Output TF_Status*)>"
-
-	^ self ffiCall: #(int TF_GraphGetTensorNumDims #(TFGraph * aTF_Graph, TFOutput aTF_OutputOrInput, TFStatus * status)) module: TensorFlowCAPI
-]
-
-{ #category : #graph }
-TensorFlowCAPI >> graph: aTF_Graph getShapeOf: aTF_OutputOrInput into: anInt64Array size: anInteger status: status [
-	"TF_CAPI_EXPORT extern void TF_GraphGetTensorShape(TF_Graph* graph,
-                                                  TF_Output output,
-                                                  int64_t* dims, int num_dims,
-																TF_Status* status);"
 	
-^ self ffiCall: #(void TF_GraphGetTensorShape #(TFGraph * aTF_Graph, TFOutput aTF_OutputOrInput, int64 * anInt64Array, int anInteger, TFStatus * status)) module: TensorFlowCAPI
+	^ platformLibrary getAllOps
 ]
 
-{ #category : #operation }
-TensorFlowCAPI >> graph: aTF_Graph operationAt: contextULongLongPtr [
-	| answer |
-	answer := self graph: aTF_Graph operationAtAsVoid: contextULongLongPtr.
-	answer handle: answer getHandle.
-	answer graph: aTF_Graph.
-	^ answer
+{ #category : #initialization }
+TensorFlowCAPI >> getCodeOf: aTFStatus [
+
+	^platformLibrary getCode: aTFStatus
 ]
 
-{ #category : #operation }
-TensorFlowCAPI >> graph: aTF_Graph operationAtAsVoid: contextULongLongPtr [
-	"TF_CAPI_EXPORT extern TF_Operation* TF_GraphNextOperation(TF_Graph* graph, size_t* pos);"
+{ #category : #gradients }
+TensorFlowCAPI >> gradientsOf: yArrayOfTFOutput withRespectTo: xArrayOfTFOutput product: dxArrayOfOutput in: aTFGraph [
 
-	^ self ffiCall: #(#TFOperation * TF_GraphNextOperation #(TFGraph * aTF_Graph, size_t * contextULongLongPtr)) module: TensorFlowCAPI
-]
-
-{ #category : #graph }
-TensorFlowCAPI >> graph: aTF_Graph setShapeOf: aTF_OutputOrInput to: anInt64Array size: anInteger status: status [
-	"<cdecl: void 'TF_GraphSetTensorShape' (TF_Graph* TF_Output Int64Array* ulonglong TF_Status*)>"
-
-^ self ffiCall: #(void TF_GraphSetTensorShape #(#TFGraph * aTF_Graph, #TFOutput aTF_OutputOrInput, int64 * anInt64Array, int anInteger, #TFStatus * status)) module: TensorFlowCAPI
+	^ platformLibrary
+		gradientsOf: yArrayOfTFOutput
+		withRespectTo: xArrayOfTFOutput
+		product: dxArrayOfOutput
+		in: aTFGraph
 ]
 
 { #category : #graph }
-TensorFlowCAPI >> graph: aTF_Graph toGraphDef: aTF_Buffer status: aTF_Status [
-	"<cdecl: void 'TF_GraphToGraphDef' (TF_Graph* TF_Buffer* TF_Status*)>"
-
-	^ self
-		ffiCall: #(void TF_GraphToGraphDef #(#TFGraph * aTF_Graph , #TFBuffer * aTF_Buffer , #TFStatus * aTF_Status))
-		module: TensorFlowCAPI
-]
-
-{ #category : #accessing }
-TensorFlowCAPI >> graph: aTFGraph y: yTFOutputArray yCount: yCount x: xTFOutputArray xCount: xCount dx: dxTFOutputArray status: aTFStatus into: dyTFOutputArray [
-
-	" void TF_AddGradients(TF_Graph* g, TF_Output* y, int ny,
-						   TF_Output* x, int nx, TF_Output* dx,
-						   TF_Status* status, TF_Output* dy); "
-
-	^ self
-		ffiCall:
-			#(void * TF_AddGradients #(TFGraph * aTFGraph , TFOutputArray * yTFOutputArray , int yCount , TFOutputArray * xTFOutputArray , int xCount , TFOutputArray * dxTFOutputArray , TFStatus * aTFStatus , TFOutputArray * dyTFOutputArray))
-		module: TensorFlowCAPI
+TensorFlowCAPI >> graph: aTFGraph getOperationNamed: anOperationName [
+	
+		^ platformLibrary graph: aTFGraph getOperationNamed: anOperationName
 ]
 
 { #category : #graph }
-TensorFlowCAPI >> importGraphDefInto: aTF_Graph from: aTF_Buffer options: aTF_ImportGraphDefOptions status: aTF_Status [
-	"<cdecl: void 'TF_GraphImportGraphDef' (TF_Graph* TF_Buffer* TF_ImportGraphDefOptions* TF_Status*)>"
+TensorFlowCAPI >> graph: aTFGraph getRankOf: aTFOutputOrInput [
 
-	^ self ffiCall: #(void TF_GraphImportGraphDef #(#TFGraph * aTF_Graph, #TFBuffer * aTF_Buffer, #TFImportGraphDefOptions * aTF_ImportGraphDefOptions, #TFStatus * aTF_Status)) module: TensorFlowCAPI
+	^platformLibrary checkStatusAfter: [:status |
+		platformLibrary graph: aTFGraph getRankOf: aTFOutputOrInput status: status]
 ]
 
-{ #category : #'accessing platform' }
-TensorFlowCAPI >> macModuleName [
-	^ '/usr/local/Cellar/libtensorflow/1.14.0/lib/libtensorflow.so'
+{ #category : #graph }
+TensorFlowCAPI >> graph: aTFGraph getShapeOf: aTFOutput [
+
+	
+	^ platformLibrary graph: aTFGraph getShapeOf: aTFOutput 
+]
+
+{ #category : #graph }
+TensorFlowCAPI >> graph: aTFGraph operationAt: contextULongLongPtr [
+
+	^platformLibrary graph: aTFGraph operationAt: contextULongLongPtr
+]
+
+{ #category : #graph }
+TensorFlowCAPI >> graph: aTFGraph setShapeOf: aTFOutput to: aShape [
+
+
+	^ platformLibrary graph: aTFGraph setShapeOf: aTFOutput to: aShape 
+]
+
+{ #category : #graph }
+TensorFlowCAPI >> graphDefinitionOf: aTFGraph [
+
+	"Return the protobuff serialisation of the graph"
+
+	| buffer |
+
+	buffer := TFBuffer new.
+	platformLibrary checkStatusAfter: [:status | platformLibrary graph: aTFGraph toGraphDef: buffer status: status].
+	^buffer dataBytes asString
+]
+
+{ #category : #graph }
+TensorFlowCAPI >> importGraphDefFrom: aTFBuffer into: aTFGraph [
+
+	platformLibrary checkStatusAfter: [:status | | options |
+		options := TFImportGraphDefOptions create.
+		platformLibrary importGraphDefInto: aTFGraph from: aTFBuffer options: options status: status.
+		options delete]
+]
+
+{ #category : #initialization }
+TensorFlowCAPI >> initializeWrapping: aTensorFlowPharoLibrary [
+
+	
+	platformLibrary := aTensorFlowPharoLibrary 
 ]
 
 { #category : #status }
-TensorFlowCAPI >> message: aTF_Status [
-	"<cdecl: char* 'TF_Message' (TF_Status*)>"
+TensorFlowCAPI >> message: aTFStatus [
 
-	^ self ffiCall: #(String TF_Message #(#TFStatus * aTF_Status)) module: TensorFlowCAPI 
+
+	^ platformLibrary message: aTFStatus 
+]
+
+{ #category : #session }
+TensorFlowCAPI >> newAutoreleaseSessionOn: aTFGraph [
+
+
+	^ platformLibrary newAutoreleaseSessionOn: aTFGraph
+]
+
+{ #category : #options }
+TensorFlowCAPI >> newAutoreleaseSessionOptions [
+	
+	^ platformLibrary newAutoreleaseSessionOptions
+	
+]
+
+{ #category : #status }
+TensorFlowCAPI >> newAutoreleaseStatus [
+
+	^platformLibrary newAutoreleaseStatus
 ]
 
 { #category : #buffer }
-TensorFlowCAPI >> newBufferFromString: aString size: anInteger [
-	"<cdecl: TF_Buffer* 'TF_NewBufferFromString' (char* size_t)>"
+TensorFlowCAPI >> newBuffer [
 
-	^ self
-		ffiCall: #(#TFBuffer * TF_NewBufferFromString #(String aString , size_t anInteger))
-		module: TensorFlowCAPI
+	^ platformLibrary newBuffer
 ]
 
-{ #category : #'instance creation' }
+{ #category : #buffer }
+TensorFlowCAPI >> newBufferFromString: aString [
+
+	
+	^ platformLibrary newBufferFromString: aString size: aString size 
+]
+
+{ #category : #graph }
 TensorFlowCAPI >> newGraph [
-	| answer |
-	answer := self newGraphAsVoid.
-	answer := TFGraph fromHandle: answer getHandle.
-	^ answer
-]
-
-{ #category : #'instance creation' }
-TensorFlowCAPI >> newGraphAsVoid [
-	"F_CAPI_EXPORT extern TF_Graph* TF_NewGraph();"
-
-	^ self ffiCall: #(#TFGraph * TF_NewGraph #()) module: TensorFlowCAPI
+	
+	^ platformLibrary newGraph 
 ]
 
 { #category : #options }
 TensorFlowCAPI >> newImportGraphDefOptions [
-	"<cdecl: TF_ImportGraphDefOptions* 'TF_NewImportGraphDefOptions' (void)>"
-
-	^ self ffiCall: #(#TFImportGraphDefOptions * TF_NewImportGraphDefOptions #()) module: TensorFlowCAPI
+	
+	^ platformLibrary newImportGraphDefOptions
 ]
 
-{ #category : #operation }
-TensorFlowCAPI >> newOperationDescriptionOn: graph type: type named: aName [
-	"<cdecl: TF_OperationDescription* 'TF_NewOperation' (TF_Graph* char* char*)>"
-
-	^ self
-		ffiCall:
-			#(#TFOperationDescription * TF_NewOperation #(TFGraph * graph , String type , String aName))
-		module: TensorFlowCAPI
+{ #category : #'operation description' }
+TensorFlowCAPI >> newOperationDescriptionOn: aTFGraph type: aTensorType named: anOperationName [
+	
+	^ platformLibrary newOperationDescriptionOn: aTFGraph type: aTensorType named: anOperationName
 ]
 
-{ #category : #session }
-TensorFlowCAPI >> newSession: aTF_Graph options: aTF_SessionOptions status: aTF_Status [
-	"<cdecl: TF_Session* 'TF_NewSession' (TF_Graph* TF_SessionOptions* TF_Status*)>"
-
-	^ self
-		ffiCall: #(#TFSession * TF_NewSession #(TFGraph * aTF_Graph, #TFSessionOptions * aTF_SessionOptions, #TFStatus * aTF_Status))
-		module: TensorFlowCAPI
+{ #category : #status }
+TensorFlowCAPI >> newPersistentStatus [
+	
+	^ platformLibrary newPersistentStatus
 ]
 
 { #category : #options }
 TensorFlowCAPI >> newSessionOptions [
-	"<cdecl: TF_SessionOptions* 'TF_NewSessionOptions' (void)>"
-
-	^ self ffiCall: #(#TFSessionOptions * TF_NewSessionOptions #()) module: TensorFlowCAPI
+	
+	^ platformLibrary newSessionOptions
 ]
 
 { #category : #status }
 TensorFlowCAPI >> newStatus [
-	"<cdecl: TF_Status* 'TF_NewStatus' (void)>"
-
-	^ self ffiCall: #(#TFStatus * TF_NewStatus #()) module: TensorFlowCAPI
+	
+	^ platformLibrary newStatus
 ]
 
-{ #category : #tensor }
-TensorFlowCAPI >> newTensorType: anInteger shape: aLongLongArray rank: dimCount data: aData length: len deallocator: deallocator args: args [
-	"TF_CAPI_EXPORT extern TF_Tensor* TF_NewTensor(
-    	TF_DataType, const int64_t* dims, int num_dims, void* data, size_t len,
-    	void (*deallocator)(void* data, size_t len, void* arg),
-    	void* deallocator_arg);"
+{ #category : #'operation attribute' }
+TensorFlowCAPI >> operation: aTFOperation getBoolAt: anAttributeName [
 
-	^ self
-		ffiCall: #(
-		#TFTensor * TF_NewTensor #(
-			int anInteger,
-			int64 * aLongLongArray,
-			int dimCount,
-			void* aData,
-			size_t len,
-			void* deallocator,
-			void* args
-			))
-		module: TensorFlowCAPI
+	^ platformLibrary operation: aTFOperation getBoolAt: anAttributeName
 ]
 
-{ #category : #operation }
-TensorFlowCAPI >> operation: aTF_Operation attr: nameZString getBool: valueBoolPtr status: status [
-	"<cdecl: void 'TF_OperationGetAttrBool' (TF_Operation* char* ulonglong* TF_Status*)>"
+{ #category : #'operation attribute' }
+TensorFlowCAPI >> operation: aTFOperation getFloatAt: anAttributeName [
 
-	^ self
-		ffiCall:
-			#(void TF_OperationGetAttrBool #(#TFOperation * aTF_Operation , String nameZString , ulonglong * valueBoolPtr , #TFStatus * status))
-		module: TensorFlowCAPI
+	^ platformLibrary operation: aTFOperation getFloatAt: anAttributeName
 ]
 
-{ #category : #operation }
-TensorFlowCAPI >> operation: aTF_Operation attr: nameZString getFloat: valueFloatPtr status: status [
-	"<cdecl: void 'TF_OperationGetAttrFloat' (TF_Operation* char* float* TF_Status*)>"
+{ #category : #'operation attribute' }
+TensorFlowCAPI >> operation: aTFOperation getInt64At: anAttributeName [
 
-	^ self
-		ffiCall:
-			#(void TF_OperationGetAttrFloat #(#TFOperation * aTF_Operation , String nameZString , float * valueFloatPtr , #TFStatus * status))
-		module: TensorFlowCAPI
+
+	^platformLibrary operation: aTFOperation getInt64At: anAttributeName
 ]
 
-{ #category : #operation }
-TensorFlowCAPI >> operation: aTF_Operation attr: nameZString getInt64: valueLongPtr status: status [
-	"TF_CAPI_EXPORT extern void TF_OperationGetAttrInt(TF_Operation* oper,
-                                                  const char* attr_name,
-                                                  int64_t* value, TF_Status* status);"
+{ #category : #'operation attribute' }
+TensorFlowCAPI >> operation: aTFOperation getMetadataFor: anAttributeName [
 
-	^ self
-		ffiCall: #(void TF_OperationGetAttrInt #(#TFOperation * aTF_Operation , String nameZString , int64 * valueLongPtr , #TFStatus * status))
-		module: TensorFlowCAPI
+	
+	^  platformLibrary operation: aTFOperation getMetadataFor: anAttributeName
 ]
 
-{ #category : #operation }
-TensorFlowCAPI >> operation: aTF_Operation attr: nameZString getShape: int64array size: maxSize status: status [
-	"TF_CAPI_EXPORT extern void TF_OperationGetAttrShape(TF_Operation* oper,
-                                                    const char* attr_name,
-                                                    int64_t* value,
-                                                    int num_dims, TF_Status* status);"
+{ #category : #'operation attribute' }
+TensorFlowCAPI >> operation: aTFOperation getShapeAt: anAttributeName [
 
-	^ self
-		ffiCall: #(void TF_OperationGetAttrShape #(#TFOperation * aTF_Operation , String nameZString , int64 * int64array , int maxSize, #TFStatus * status))
-		module: TensorFlowCAPI
+	^ platformLibrary operation: aTFOperation getShapeAt: anAttributeName
+]
+
+{ #category : #'operation attribute' }
+TensorFlowCAPI >> operation: aTFOperation getStringAt: anAttributeName [
+
+	^ platformLibrary operation: aTFOperation getStringAt: anAttributeName
+]
+
+{ #category : #'operation attribute' }
+TensorFlowCAPI >> operation: aTFOperation getStringsAt: anAttributeName [
+
+	^ platformLibrary operation: aTFOperation getStringsAt: anAttributeName
+]
+
+{ #category : #'operation attribute' }
+TensorFlowCAPI >> operation: aTFOperation getTensorAt: anAttributeName [
+
+
+	^ platformLibrary operation: aTFOperation getTensorAt: anAttributeName 
+]
+
+{ #category : #'operation attribute' }
+TensorFlowCAPI >> operation: aTFOperation getTypeAt: anAttributeName [
+
+	
+	^ platformLibrary operation: aTFOperation getTypeAt: anAttributeName
 ]
 
 { #category : #operation }
-TensorFlowCAPI >> operation: aTF_Operation attr: nameZString getString: valueString size: maxSize status: status [
-	"TF_CAPI_EXPORT extern void TF_OperationGetAttrString(TF_Operation* oper,
-                                                     const char* attr_name,
-                                                     void* value,
-                                                     size_t max_length,
-																	TF_Status* status);"
+TensorFlowCAPI >> operationName: aTFOperation [
 
-	^ self
-		ffiCall: #(void TF_OperationGetAttrString #(#TFOperation * aTF_Operation , String nameZString , void * valueString , size_t maxSize , #TFStatus * status))
-		module: TensorFlowCAPI
+	
+	^ platformLibrary operationName: aTFOperation 
 ]
 
 { #category : #operation }
-TensorFlowCAPI >> operation: aTF_Operation attr: nameZString getStrings: valueStringArray sizes: sizesArray maxCount: maxCount storage: aByteArray size: storageSize status: status [
-	"TF_CAPI_EXPORT extern void TF_OperationGetAttrStringList(
-    TF_Operation* oper, const char* attr_name, void** values, size_t* lengths,
-int max_values, void* storage, size_t storage_size, TF_Status* status);"
+TensorFlowCAPI >> operationNumInputs: aTFOperation [
 
-	^ self
-		ffiCall:
-			#(void TF_OperationGetAttrStringList #(#TFOperation * aTF_Operation , String nameZString , void * valueStringArray , int64 * sizesArray , int maxCount , void * aByteArray , size_t storageSize , #TFStatus * status))
-		module: TensorFlowCAPI
+
+	^ platformLibrary operationNumInputs: aTFOperation 
 ]
 
 { #category : #operation }
-TensorFlowCAPI >> operation: aTF_Operation attr: nameZString getTensor: valueLongPtr status: status [
-	"<cdecl: void 'TF_OperationGetAttrTensor' (TF_Operation* char* void* TF_Status*)>"
+TensorFlowCAPI >> operationNumOutputs: aTFOperation [
 
-	^ self
-		ffiCall:
-			#(void TF_OperationGetAttrTensor #(TFOperation * aTF_Operation , String nameZString , void * valueLongPtr, TFStatus * status))
-		module: TensorFlowCAPI
+	
+	^ platformLibrary operationNumOutputs: aTFOperation 
 ]
 
 { #category : #operation }
-TensorFlowCAPI >> operation: aTF_Operation attr: nameZString getType: valueLongPtr status: status [
-	"<cdecl: void 'TF_OperationGetAttrType' (TF_Operation* char* ulonglong* TF_Status*)>"
+TensorFlowCAPI >> operationOpType: aTFOperation [
 
-	^ self
-		ffiCall: #(void TF_OperationGetAttrType #(#TFOperation * aTF_Operation , String nameZString , ulonglong * valueLongPtr , #TFStatus * status))
-		module: TensorFlowCAPI
+
+	^ platformLibrary operationOpType: aTFOperation 
 ]
 
 { #category : #operation }
-TensorFlowCAPI >> operation: aTF_Operation getMetadataFor: nameZString status: status [
-	"<cdecl: TF_AttrMetadata 'TF_OperationGetAttrMetadata' (TF_Operation* char* TF_Status*)>"
+TensorFlowCAPI >> operationOutputType: aTFOutput [
 
-	^ self
-		ffiCall:
-			#(#TFAttrMetadata TF_OperationGetAttrMetadata #(#TFOperation * aTF_Operation , String nameZString , #TFStatus * status))
-		module: TensorFlowCAPI
-]
 
-{ #category : #operation }
-TensorFlowCAPI >> operationDevice: aTF_Operation [
-	"<cdecl: char* 'TF_OperationDevice' (TF_Operation*)>"
-
-	^ self ffiCall: #(String TF_OperationDevice #(#TFOperation * aTF_Operation)) module: TensorFlowCAPI
-]
-
-{ #category : #operation }
-TensorFlowCAPI >> operationInput: aTF_Input [
-	"TF_CAPI_EXPORT extern TF_Output TF_OperationInput(TF_Input oper_in);"
-
-	^ self ffiCall: #(#TFOutput TF_OperationInput #(#TFInput aTF_Input)) module: TensorFlowCAPI
-]
-
-{ #category : #operation }
-TensorFlowCAPI >> operationName: aTF_Operation [
-	"<cdecl: char* 'TF_OperationName' (TF_Operation*)>"
-
-	^ self ffiCall: #(String TF_OperationName #(TFOperation * aTF_Operation)) module: TensorFlowCAPI
-]
-
-{ #category : #operation }
-TensorFlowCAPI >> operationNumInputs: aTF_Operation [
-	"TF_CAPI_EXPORT extern int TF_OperationNumInputs(TF_Operation* oper);"
-
-	^ self
-		ffiCall: #(int TF_OperationNumInputs #(#TFOperation * aTF_Operation))
-		module: TensorFlowCAPI
-]
-
-{ #category : #operation }
-TensorFlowCAPI >> operationNumOutputs: aTF_Operation [
-	"TF_CAPI_EXPORT extern int TF_OperationNumOutputs(TF_Operation* oper)"
-
-	^ self
-		ffiCall: #(int TF_OperationNumOutputs #(#TFOperation * aTF_Operation))
-		module: TensorFlowCAPI
-]
-
-{ #category : #operation }
-TensorFlowCAPI >> operationOpType: aTF_Operation [
-	"<cdecl: char* 'TF_OperationOpType' (TF_Operation*)>"
-
-	^ self ffiCall: #(String TF_OperationOpType #(TFOperation * aTF_Operation)) module: TensorFlowCAPI 
-]
-
-{ #category : #operation }
-TensorFlowCAPI >> operationOutputType: aTF_Output [
-	"<cdecl: TF_DataType 'TF_OperationOutputType' (TF_Output)>"
-
-	^ self
-		ffiCall: #(int TF_OperationOutputType #(TFOutput aTF_Output))
-		module: TensorFlowCAPI
-]
-
-{ #category : #strings }
-TensorFlowCAPI >> primStringEncodedSize: anInteger [
-	"TF_CAPI_EXPORT extern size_t TF_StringEncodedSize(size_t len)"
-
-	^ self ffiCall: #(size_t TF_StringEncodedSize #(size_t anInteger)) module: TensorFlowCAPI
+	^ platformLibrary operationOutputType: aTFOutput 
 ]
 
 { #category : #session }
-TensorFlowCAPI >> runSession: aTF_Session options: opsTF_Buffer inputs: inTF_OutputArray values: inTF_TensorArray count: inCount outputs: outTF_OutputArray values: outTF_TensorArrayPtr count: outCount targets: aTF_OperationArray count: targetCount metadata: metaTF_Buffer status: aTF_Status [
-	"F_CAPI_EXPORT extern void TF_SessionRun(
-    TF_Session* session,
-    // RunOptions
-    const TF_Buffer* run_options,
-    // Input tensors
-    const TF_Output* inputs, TF_Tensor* const* input_values, int ninputs,
-    // Output tensors
-    const TF_Output* outputs, TF_Tensor** output_values, int noutputs,
-    // Target operations
-    const TF_Operation* const* target_opers, int ntargets,
-    // RunMetadata
-    TF_Buffer* run_metadata,
-    // Output status
-TF_Status*);"
+TensorFlowCAPI >> runSession: aTFSession [
 
-	^ self
-		ffiCall:
-			#(void TF_SessionRun #(TFSession * aTF_Session , TFBuffer * opsTF_Buffer , void * inTF_OutputArray , void * inTF_TensorArray , int inCount , void * outTF_OutputArray , void * outTF_TensorArrayPtr , int outCount , void * aTF_OperationArray , int targetCount , TFBuffer * metaTF_Buffer , TFStatus * aTF_Status))
-		module:
-			TensorFlowCAPI
+	platformLibrary checkStatusAfter: [:status |
+		platformLibrary
+			runSession: aTFSession
+			options: nil
+			inputs: nil
+			values: nil
+			count: 0
+			outputs: nil
+			values: nil
+			count: 0
+			targets: nil
+			count: 0
+			metadata: nil
+			status: status]
+]
+
+{ #category : #session }
+TensorFlowCAPI >> runSession: aTFSession inputs: anArrayOfPlaceholders values: anArrayOfTensors outputs: anArrayOfOutputs [
+	
+	^ platformLibrary runSession: aTFSession inputs: anArrayOfPlaceholders values: anArrayOfTensors outputs: anArrayOfOutputs
+]
+
+{ #category : #session }
+TensorFlowCAPI >> runSession: aTFSession operation: aTFOperation output: aTFOutput [
+
+	
+	^ platformLibrary runSession: aTFSession operation: aTFOperation output: aTFOutput 
+]
+
+{ #category : #session }
+TensorFlowCAPI >> runSession: aTFSession operations: anArrayOfTFOperations [
+	
+	^ platformLibrary runSession: aTFSession operations: anArrayOfTFOperations
+]
+
+{ #category : #session }
+TensorFlowCAPI >> runSession: aTFSession outputs: aTFOutputArray [
+
+	
+	^ platformLibrary runSession: aTFSession outputs: aTFOutputArray
 ]
 
 { #category : #options }
-TensorFlowCAPI >> sessionOptions: aTF_SessionOptions setConfig: aString configSize: anInteger status: aTF_Status [
-	" not sure how to use this. Best information found in http://devdocs.io/tensorflow~python/contrib.learn#RunConfig"
+TensorFlowCAPI >> sessionOptions: aTFSessionOptions setConfig: aString [
 
-	"<TF_CAPI_EXPORT extern void TF_SetConfig(TF_SessionOptions* options,
-                                        const void* proto, size_t proto_len,
-													TF_Status* status);>"
-
-	^ self
-		ffiCall: #(void TF_SetConfig #(#TFSessionOptions * aTF_SessionOptions , String aString , size_t anInteger , #TFStatus * aTF_Status))
-		module: TensorFlowCAPI
+	platformLibrary checkStatusAfter: [:status |
+		platformLibrary
+			sessionOptions: aTFSessionOptions
+			setConfig: aString
+			configSize: aString size
+			status: status]
 ]
 
 { #category : #options }
-TensorFlowCAPI >> sessionOptions: aTF_SessionOptions setTarget: aString [
-	"<cdecl: void 'TF_SetTarget' (TF_SessionOptions* char*)>"
+TensorFlowCAPI >> sessionOptions: aTFSessionOptions setTarget: aString [
 
-	^ self
-		ffiCall: #(void TF_SetTarget #(#TFSessionOptions * aTF_SessionOptions , String aString))
-		module: TensorFlowCAPI
+	platformLibrary sessionOptions: aTFSessionOptions setTarget: (platformLibrary externalizeString: aString)
 ]
 
 { #category : #status }
-TensorFlowCAPI >> setStatus: aTF_Status code: anInteger message: anExternalString [
-	"TF_CAPI_EXPORT extern void TF_SetStatus(TF_Status* s, TF_Code code, const char* msg);"
+TensorFlowCAPI >> setStatus: aTFStatus code: aTFCode message: aString [
 
-	^ self ffiCall: #(void TF_SetStatus #(#TFStatus * aTF_Status , ulong anInteger , String anExternalString)) module: TensorFlowCAPI
+	| externalized |
+
+	externalized := platformLibrary externalizeString: aString.
+	^ platformLibrary setStatus: aTFStatus code: aTFCode message: externalized
 ]
 
-{ #category : #strings }
-TensorFlowCAPI >> stringDecode: src [
-	| destination status answer dstSize |
-	destination := ByteArray new: 8.
-	dstSize := ByteArray new: 8.
-	status := TFStatus create.
-	answer := self stringDecode: src len: src size destination: destination len: dstSize status: status.
-	status check.
-	dstSize := dstSize unsignedLongLongAt: 1.
-	destination := destination pointerAt: 1.
-	answer := (destination structAt: 1 length: dstSize) asString.
-	^ answer
-]
+{ #category : #utils }
+TensorFlowCAPI >> sizeOfDataType: aSmallInteger [
 
-{ #category : #strings }
-TensorFlowCAPI >> stringDecode: srcString len: srcLen destination: dstPointer len: dstLenPointer status: status [
-	"TF_CAPI_EXPORT extern size_t TF_StringDecode(const char* src, size_t src_len,
-                                             const char** dst, size_t* dst_len,
-TF_Status* status);"
-
-	^ self
-		ffiCall:
-			#(size_t TF_StringDecode #(String srcString , size_t srcLen , String dstPointer , size_t * dstLenPointer, #TFStatus * status))
-		module: TensorFlowCAPI
-]
-
-{ #category : #strings }
-TensorFlowCAPI >> stringEncode: srcString len: srcLen destination: dstString len: dstLen status: status [
-	"TF_CAPI_EXPORT extern size_t TF_StringEncode(const char* src, size_t src_len,
-                                             char* dst, size_t dst_len,
-													TF_Status* status);"
-
-	^ self
-		ffiCall:
-			#(size_t TF_StringEncode #(String srcString , size_t srcLen , String dstString , size_t dstLen, #TFStatus * status))
-		module: TensorFlowCAPI
-]
-
-{ #category : #strings }
-TensorFlowCAPI >> stringEncode: src to: dst [
-	^ self stringEncode: src to: dst size: dst size
-]
-
-{ #category : #strings }
-TensorFlowCAPI >> stringEncode: src to: dst size: dstSize [
-	| status answer |
-	status := TFStatus create.
-	answer := self
-		stringEncode: src
-		len: src size
-		destination: dst
-		len: dstSize
-		status: status.
-	status check.
-	^ answer
-]
-
-{ #category : #strings }
-TensorFlowCAPI >> stringEncodedSize: aString [
-	^ self primStringEncodedSize: aString size
+	^ platformLibrary sizeOfDataType: aSmallInteger
 ]
 
 { #category : #tensor }
-TensorFlowCAPI >> tensor: aTF_Tensor sizeOn: dimension [
-	"TF_CAPI_EXPORT extern int64_t TF_Dim(const TF_Tensor* tensor, int dim_index);"
+TensorFlowCAPI >> tensor: aTFTensor sizeOn: aDimension [
+
+	^ platformLibrary tensor: aTFTensor sizeOn: aDimension
+]
+
+{ #category : #tensor }
+TensorFlowCAPI >> tensorByteSize: aTFTensor [
+
 	
-	^ self
-		ffiCall: #(int64 TF_Dim #(TFTensor * aTF_Tensor , int dimension))
-		module: TensorFlowCAPI
+	^ platformLibrary tensorByteSize: aTFTensor 
 ]
 
 { #category : #tensor }
-TensorFlowCAPI >> tensorByteSize: aTF_Tensor [
-	"TF_CAPI_EXPORT extern size_t TF_TensorByteSize(const TF_Tensor*);"
+TensorFlowCAPI >> tensorDataOf: aTFTensor [
 
-	^ self ffiCall: #(size_t TF_TensorByteSize #(#TFTensor * aTF_Tensor)) module: TensorFlowCAPI
+	^platformLibrary tensorDataOf: aTFTensor
 ]
 
 { #category : #tensor }
-TensorFlowCAPI >> tensorData: aTF_Tensor [
-	"TF_CAPI_EXPORT extern void* TF_TensorData(const TF_Tensor*)"
+TensorFlowCAPI >> tensorFromString: aString [
 
-	^ self
-		ffiCall: #(void * TF_TensorData #(TFTensor * aTF_Tensor))
-		module: TensorFlowCAPI
+
+	^ platformLibrary tensorFromString: aString
 ]
 
 { #category : #tensor }
-TensorFlowCAPI >> tensorRank: aTF_Tensor [
-	"<cdecl: longlong 'TF_NumDims' (TF_Tensor*)>"
+TensorFlowCAPI >> tensorFromStrings: anArray shaped: aTensorShape [
 
-	^ self
-		ffiCall: #(int TF_NumDims #(TFTensor * aTF_Tensor))
-		module: TensorFlowCAPI
+
+	^ platformLibrary tensorFromStrings: anArray shaped: aTensorShape 
 ]
 
 { #category : #tensor }
-TensorFlowCAPI >> tensorType: aTF_Tensor [
-	"<cdecl: ulonglong 'TF_TensorType' (TF_Tensor*)>"
-^ self
-		ffiCall: #(ulonglong TF_TensorType #(TFTensor * aTF_Tensor))
-		module: TensorFlowCAPI
+TensorFlowCAPI >> tensorRank: aTFTensor [
+
+	^ platformLibrary tensorRank: aTFTensor
 ]
 
-{ #category : #'accessing platform' }
-TensorFlowCAPI >> unixModuleName [
-	^ '/usr/local/lib/libtensorflow.so'
+{ #category : #tensor }
+TensorFlowCAPI >> tensorType: aTFTensor [
+
+	^platformLibrary tensorType: aTFTensor
 ]
 
 { #category : #utils }
 TensorFlowCAPI >> version [
-	"TF_Version returns a string describing version information of the
-	TensorFlow library. TensorFlow using semantic versioning."
-
-	"TF_CAPI_EXPORT extern const char* TF_Version();"
-
-
-	^ self ffiCall: #(String TF_Version #()) module: TensorFlowCAPI
+	
+	^ platformLibrary version
 ]

@@ -1,6 +1,6 @@
 Extension { #name : #FFIExternalArray }
 
-{ #category : #'*TensorFlowCore' }
+{ #category : #'*TensorFlowPharoCore' }
 FFIExternalArray class >> externalNewType: aType fromArray: anArray [
 	| answer |
 	answer := self externalNewType: aType size: anArray size.

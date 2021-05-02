@@ -14,7 +14,8 @@ Class {
 
 { #category : #'instance creation' }
 TFGraph class >> create [
-	^ TensorFlowCAPI current newGraph initialize autoRelease
+
+	^ TensorFlowCAPI current newGraph
 ]
 
 { #category : #'instance creation' }
@@ -76,13 +77,8 @@ TFGraph >> asRoassalView [
 
 { #category : #accessing }
 TFGraph >> definition [
-"Return the protobuff serialisation of the graph"
-	| buffer status |
-	status := TFStatus create.
-	buffer := TFBuffer new.
-	self library graph: self toGraphDef: buffer status: status.
-	status check.
-	^ buffer dataBytes asString
+	
+	^ self library graphDefinitionOf: self 
 ]
 
 { #category : #gtInspector }
@@ -132,16 +128,8 @@ TFGraph >> gtInspectorGraphIn: composite [
 
 { #category : #'initialize-release' }
 TFGraph >> import: aTFBuffer [
-	| options status |
-	status := TFStatus create.
-	options := TFImportGraphDefOptions create.
-	self library
-		importGraphDefInto: self
-		from: aTFBuffer
-		options: options
-		status: status.
-	options delete.
-	status check
+
+	self library importGraphDefFrom: aTFBuffer into: self
 ]
 
 { #category : #'initialize-release' }
@@ -291,24 +279,15 @@ TFGraph >> operationsSelect: conditionBlock thenDo: actionBlock [
 ]
 
 { #category : #outputs }
-TFGraph >> outputDimensionsCount: aTF_Output [
-	| status answer |
-	status := TFStatus create.
-	answer := self library forGraph: self outputDims: aTF_Output status: status.
-	status check.
-	^ answer
+TFGraph >> outputDimensionsCount: aTFOutput [
+
+	^  self library forGraph: self outputDims: aTFOutput
 ]
 
 { #category : #outputs }
 TFGraph >> rankOf: aTFOutputOrInput [
-	| status answer |
-	status := TFStatus create.
-	answer := self library
-		graph: self
-		getRankOf: aTFOutputOrInput
-		status: status.
-	status check.
-	^ answer
+
+	^ self library graph: self getRankOf: aTFOutputOrInput
 ]
 
 { #category : #running }
@@ -329,19 +308,8 @@ TFGraph >> runOutputs: anArrayOfTFOutputs [
 
 { #category : #outputs }
 TFGraph >> shapeOf: aTFOutputOrInput [
-	| status value size answer |
-	size := self rankOf: aTFOutputOrInput.
-	value := FFIExternalArray externalNewType: 'int64' size: size.
-	status := TFStatus create.
-	self library
-		graph: self
-		getShapeOf: aTFOutputOrInput
-		into: value getHandle
-		size: size
-		status: status.
-	status check.
-	answer := (1 to: size) collect: [ :i | value at: i ].
-	^ answer asTensorShape
+
+	^self library graph: self getShapeOf: aTFOutputOrInput
 ]
 
 { #category : #debugging }

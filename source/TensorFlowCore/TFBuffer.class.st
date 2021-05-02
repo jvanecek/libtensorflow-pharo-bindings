@@ -45,7 +45,8 @@ TFBuffer class >> fromFileNamed: aString [
 
 { #category : #'instance creation' }
 TFBuffer class >> fromString: aString [
-	^ TensorFlowCAPI current newBufferFromString: aString size: aString size
+
+	^ TensorFlowCAPI current newBufferFromString: aString
 ]
 
 { #category : #'accessing structure variables' }

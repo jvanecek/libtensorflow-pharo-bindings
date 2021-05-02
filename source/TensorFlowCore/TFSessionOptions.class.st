@@ -6,7 +6,7 @@ Class {
 
 { #category : #'instance creation' }
 TFSessionOptions class >> create [
-	^ TensorFlowCAPI current newSessionOptions autoRelease
+	^ TensorFlowCAPI current newAutoreleaseSessionOptions
 ]
 
 { #category : #'instance creation' }
@@ -30,11 +30,18 @@ TFSessionOptions class >> onTarget: aString [
 ]
 
 { #category : #'initialize-release' }
-TFSessionOptions >> config: aString [
-	| status |
-	status := TFStatus create.
-	self library sessionOptions: self setConfig: aString configSize: aString size status: status.
-	status check
+TFSessionOptions >> config: aByteObject [
+	"Set the config in TF_SessionOptions.options.
+	 config should be a serialized tensorflow.ConfigProto proto.
+	 If config was not parsed successfully as a ConfigProto, record the
+	 error information in *status.
+	 
+	 Arguments:
+		aByteObject - <String | ByteArray>
+	 Answers:
+		<TFStatus>"
+
+	self library sessionOptions: self setConfig: aByteObject
 ]
 
 { #category : #'initialize-release' }

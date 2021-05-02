@@ -1,7 +1,7 @@
 Class {
 	#name : #TFOutputArray,
 	#superclass : #FFIExternalArray,
-	#category : #TensorFlowCore
+	#category : #TensorFlowPharoCore
 }
 
 { #category : #accessing }

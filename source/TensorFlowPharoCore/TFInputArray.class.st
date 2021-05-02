@@ -4,7 +4,7 @@ An array of TF_Input structure
 Class {
 	#name : #TFInputArray,
 	#superclass : #FFIExternalArray,
-	#category : #TensorFlowCore
+	#category : #TensorFlowPharoCore
 }
 
 { #category : #accessing }

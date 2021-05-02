@@ -31,8 +31,7 @@ NearestNeighbor >> decodeCSV: csvLines graphRun: description [
 	
 	session := TFSession on: graph.
 	results := session
-		runOperations: {output}
-		inputs: {records}
+		runInputs: {records}
 		values: {values}
 		outputs: {
 			(output output: 0).

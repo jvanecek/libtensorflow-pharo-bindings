@@ -2,7 +2,7 @@ Extension { #name : #TensorFlowCAPITest }
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
 TensorFlowCAPITest >> addGraphTwoInputsInt64 [
-	| graph in1 in2 |
+	"| graph in1 in2 |
 	graph := TFGraph create.
 	in1 := graph placeholder: 'in1' type: TFTensor typeInt64.
 	in2 := graph placeholder: 'in2' type: TFTensor typeInt64.
@@ -11,7 +11,15 @@ TensorFlowCAPITest >> addGraphTwoInputsInt64 [
 		described: [ :description | 
 			description addInput: (in1 output: 0).
 			description addInput: (in2 output: 0) ].
-	^ graph
+	^ graph"
+
+	^TFGraph fromString:
+		#[10 46 10 3 105 110 49 18 11 80 108 97 99 101 104 111 108 100 101 114 42 13 10 5 115 104 97
+		112 101 18 4 58 2 24 1 42 11 10 5 100 116 121 112 101 18 2 48 9 10 46 10 3 105 110 50 18 11
+		80 108 97 99 101 104 111 108 100 101 114 42 13 10 5 115 104 97 112 101 18 4 58 2 24 1 42 11
+		10 5 100 116 121 112 101 18 2 48 9 10 29 10 3 97 100 100 18 3 65 100 100 26 3 105 110 49 26 3
+		105 110 50 42 7 10 1 84 18 2 48 9 18 0 34 3 8 184 3]
+			asString
 ]
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
@@ -229,7 +237,6 @@ TensorFlowCAPITest >> runFloatAsStringGraph [
 { #category : #'*TensorFlowDeprecatedCoreTests' }
 TensorFlowCAPITest >> testAddControlInput [
 	| graph in op result |
-	self skip. 
 	graph := TFGraph create.
 	in := graph const: 'const' value: (TFTensor fromInt64: 12345678).
 	op := graph
@@ -239,7 +246,7 @@ TensorFlowCAPITest >> testAddControlInput [
 			description
 				addInput: (in output: 0);
 				addInput: (in output: 0);
-				addControlInput: (in output: 0) ].
+				addControlInput: in  ].
 	result := (TFSession on: graph) runOutput: (op output: 0).
 	self assert: 12345678 * 12345678 equals: result allInt64s first
 ]
@@ -365,6 +372,21 @@ TensorFlowCAPITest >> testAttrGetString [
 		named: 'out'
 		described: [ :description | description addInput: (in output: 0) ].
 	self assert: (op stringAt: 'fill') equals: ''
+]
+
+{ #category : #'*TensorFlowDeprecatedCoreTests' }
+TensorFlowCAPITest >> testAttrGetStringNotEmpty [
+	| graph in op |
+	graph := TFGraph create.
+	in := graph placeholder: 'in' type: TFTensor typeDouble.
+	op := graph
+		newOperation: 'AsString'
+		named: 'out'
+		described: [ :description |
+			description
+				at: 'fill' putString: 'hola';
+				addInput: (in output: 0) ].
+	self assert: (op stringAt: 'fill') equals: 'hola'
 ]
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
@@ -657,7 +679,7 @@ TensorFlowCAPITest >> testGetAllOps [
 	| ops |
 
 	ops := library getAllOps.
-	self assert: (ops data fromCString includesSubstring: 'tensor').
+	self assert: (ops dataBytes asString includesSubstring: 'tensor').
 	ops delete
 ]
 
@@ -782,8 +804,7 @@ TFGraph>>#delete is not even available anymore'.
 	"graph ignoreFinalization."
 	graph delete.
 	results := session
-		runOperations: (Array with: add)
-		inputs: inputs
+		runInputs: inputs
 		values: inputValues
 		outputs: (Array with: output).
 	self deny: results isNull.
@@ -936,42 +957,12 @@ TensorFlowCAPITest >> testGraphOperationsSelectEmpty [
 ]
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
-TensorFlowCAPITest >> testGraphRunInputsOutputs [
-	| graph output result input |
-	graph := TFGraph create.
-	
-	output := graph fromBlock: [:a |
-		input := a.
-		a @* TFTensor pi].
-
-	result := graph
-		runInputs: {input input: 0}
-		values: {7.23 asTensor}
-		outputs: {output output}.	
-	self assert: Float pi * 7.23 closeTo: result first asNumbers.
-]
-
-{ #category : #'*TensorFlowDeprecatedCoreTests' }
 TensorFlowCAPITest >> testGraphRunOutput [
 	| graph output result |
 	graph := TFGraph create.
 	output := graph const: TFTensor pi.
 	result := graph runOutput: output output.
 	self assert: Float pi closeTo: result asNumbers
-]
-
-{ #category : #'*TensorFlowDeprecatedCoreTests' }
-TensorFlowCAPITest >> testGraphRunOutputs [
-	| graph output1 output2 results |
-	graph := TFGraph create.
-	output1 := graph const: TFTensor pi.
-	output2 := output1 @/ 2.0 asTensor.
-	results := graph
-		runOutputs:
-			{output1 output.
-			output2 output}.
-	self assert: Float pi closeTo: results first asNumbers.
-	self assert: Float pi / 2 closeTo: results second asNumbers
 ]
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
@@ -1446,16 +1437,6 @@ TensorFlowCAPITest >> testTensorArrayNumbersAt [
 		outputs: (Array with: output).
 	numbers := results first allElements at: 1.
 	self assert: numbers equals: 16r4242424242424242
-]
-
-{ #category : #'*TensorFlowDeprecatedCoreTests' }
-TensorFlowCAPITest >> testTensorAsOperation [
-	| graph a b result |
-	graph := TFGraph create.
-	a := graph const: 3.14 asTensor.
-	b := a + 1.234 asTensor.
-	result := (TFSession on: graph) runOutput: b output.
-	self assert: 3.14 + 1.234 closeTo: result asNumbers
 ]
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }

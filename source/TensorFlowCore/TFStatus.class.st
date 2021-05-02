@@ -9,7 +9,7 @@ Class {
 
 { #category : #'instance creation' }
 TFStatus class >> create [
-	^ TensorFlowCAPI current newStatus autoRelease
+	^ TensorFlowCAPI current newAutoreleaseStatus
 ]
 
 { #category : #'finalize resources' }
@@ -27,15 +27,15 @@ TFStatus >> check [
 
 { #category : #accessing }
 TFStatus >> code [
-	^ self library getCode: self
+
+	^self library getCodeOf: self
 ]
 
 { #category : #accessing }
-TFStatus >> code: aTF_Code message: aString [
-	| externalized |
-	self assert: aTF_Code ~= 0.
-	externalized := self library externalizeString: aString.
-	self library setStatus: self code: aTF_Code message: externalized
+TFStatus >> code: aTFCode message: aString [
+
+	self assert: aTFCode ~= 0.
+	self library setStatus: self code: aTFCode message: aString
 ]
 
 { #category : #accessing }
