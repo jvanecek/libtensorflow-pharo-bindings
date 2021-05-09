@@ -48,7 +48,7 @@ BaselineOfLibTensorFlowPharoBinding >> corePackagesIn: spec [
 	spec
 		package: 'TensorFlowCore' with: [ spec requires: #(IdxReader) ];
 		package: 'TensorFlowCoreTests' with: [ spec requires: #('TensorFlowCore') ];
-		package: 'TensorFlowPharoCore' with: [  ];
+		package: 'TensorFlowPharoCore' with: [ spec requires: #('TensorFlowCore' ) ];
 		package: 'TensorFlowEnvironmentModel'
 			with: [ spec requires: #('TensorFlowCore' 'VAST-Compatibility-Model') ];
 		package: 'TensorFlowEnvironmentModelTests'
