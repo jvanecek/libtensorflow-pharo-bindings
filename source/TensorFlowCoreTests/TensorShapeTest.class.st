@@ -1,8 +1,17 @@
 Class {
 	#name : #TensorShapeTest,
 	#superclass : #TensorFlowTestCase,
-	#category : 'TensorFlowCoreTests'
+	#category : #TensorFlowCoreTests
 }
+
+{ #category : #Tests }
+TensorShapeTest >> testCantCreateShapeWithBigNegativeNumbers [
+
+	self
+		should: [ TensorShape withDimensionsSized: #( -2 10 ) ]
+		raise: AssertionFailure
+		withDescription: 'Dimensions sizes should be a greater or equal than -1 integer array'
+]
 
 { #category : #Tests }
 TensorShapeTest >> testMatrixShape [

@@ -8,12 +8,23 @@ Class {
 }
 
 { #category : #'Instance Creation' }
+TensorShape class >> assertHasValidDimensionsSize: aDimensionsSizeArray [
+
+	((aDimensionsSizeArray isA: Array) and: [ 
+		 aDimensionsSizeArray allSatisfy: [ :dimensionSize | 
+			 (dimensionSize isA: Integer) and: [ dimensionSize >= -1 ] ] ]) 
+		ifFalse: [ 
+			AssertionFailure signal:
+				#'Dimensions sizes should be a greater or equal than -1 integer array' ]
+]
+
+{ #category : #'Instance Creation' }
 TensorShape class >> matrixSized: aNumberOfRows by: aNumberOfColumns [
 
 	^self withDimensionsSized: (Array with: aNumberOfRows with: aNumberOfColumns)
 ]
 
-{ #category : #'instance creation' }
+{ #category : #'Instance Creation' }
 TensorShape class >> numberOfBatches: anInteger height: aHeight width: aWidth channels: anAmountOfChannels [
 
 	^self withDimensionsSized:
@@ -47,9 +58,8 @@ TensorShape class >> vectorSized: anInteger [
 { #category : #'Instance Creation' }
 TensorShape class >> withDimensionsSized: aDimensionsSizeArray [
 
-	(aDimensionsSizeArray isA: Array)
-		ifFalse: [AssertionFailure signal: #'Dimensions sizes should be an array'].
-	^self new initializeDimensionSized: aDimensionsSizeArray
+	self assertHasValidDimensionsSize: aDimensionsSizeArray.
+	^ self new initializeDimensionSized: aDimensionsSizeArray
 ]
 
 { #category : #Comparing }

@@ -5,7 +5,7 @@ Class {
 		'tf',
 		'errorTolerance'
 	],
-	#category : 'TensorFlowEnvironmentModelTests'
+	#category : #TensorFlowEnvironmentModelTests
 }
 
 { #category : #'Not categorized' }
@@ -240,42 +240,12 @@ TensorFlowComputationBasedTest >> assertOutputOf: anOperation isMatrixCloseTo: a
 	self assert: (tf compute: anOperation) isMatrixCloseTo: aFloatMatrix
 ]
 
-{ #category : #'Test Support' }
-TensorFlowComputationBasedTest >> executeShould: aBlock inScopeOf: anException withSignalDo: anotherBlock [
-
-	^[
-		aBlock value.
-		false]
-			sunitOn: anException
-			do: [:aSignal |
-				anotherBlock value: aSignal.
-				aSignal sunitExitWith: true]
-]
-
 { #category : #Initialization }
 TensorFlowComputationBasedTest >> setUp [
 
 	tf := TensorFlowComputation new. 
 	
 	self tolerateErrorsLowerThan: 0.00001
-]
-
-{ #category : #'Test Support' }
-TensorFlowComputationBasedTest >> should: aBlock raise: anException withDescription: aString [
-
-	self
-		should: aBlock
-		raise: anException
-		withSignalDo: [:exception |
-			self assert: exception messageText isEqualSkippingSeparatorsTo: aString]
-]
-
-{ #category : #'Test Support' }
-TensorFlowComputationBasedTest >> should: aBlock raise: anException withSignalDo: anotherBlock [
-
-	^self
-		assert: (self executeShould: aBlock inScopeOf: anException withSignalDo: anotherBlock)
-		description: ('Expected exception (<1p>) wasn''t raised' expandMacrosWith: anException)
 ]
 
 { #category : #'Test Support' }
