@@ -113,6 +113,12 @@ TensorFlowPharoLibrary >> allocateTensorType: anInteger shape: aLongLongArray ra
 		module: TensorFlowPharoLibrary
 ]
 
+{ #category : #converting }
+TensorFlowPharoLibrary >> calloutAPIClass [ 
+
+	^ FFICalloutAPI
+]
+
 { #category : #status }
 TensorFlowPharoLibrary >> checkStatusAfter: aBlock [
 
