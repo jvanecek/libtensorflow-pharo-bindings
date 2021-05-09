@@ -625,20 +625,6 @@ TensorFlowCAPITest >> testOutputStructureSizeIs16bits [
 	self assert: TFOutput byteSize equals: 16
 ]
 
-{ #category : #'testing operation' }
-TensorFlowCAPITest >> testPlaceholderType: type [
-	| graph var session result tensor abs |
-	graph := TFGraph create.
-	tensor := TFTensor newTyped: type shaped: TensorShape scalar.
-	var := graph placeholder: 'var' type: type.
-	abs := graph newOperation: 'Abs' named: 'abs' described: [ :description | description addInput: (var output: 0) ].
-	session := TFSession on: graph.
-	result := session
-		runInputs: {var input: 0}
-		values: {tensor}
-		outputs: {abs output: 0}.
-]
-
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> testRanks [
 	self assertRankOf: -13123213 is: 0.
@@ -1154,7 +1140,7 @@ TensorFlowCAPITest >> testTensorShape: anArray [
 	shape := tensor shape.
 	size := anArray isEmpty
 		ifTrue: [ 1 ]
-		ifFalse: [ anArray product ].
+		ifFalse: [ anArray inject: 1 into: [:prev :next | prev*next] ].
 	self assert: shape equals: anArray.
 	self assert: tensor size equals: size
 ]

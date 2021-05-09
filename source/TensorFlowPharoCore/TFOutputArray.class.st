@@ -38,7 +38,13 @@ TFOutputArray >> at: index put: aTFOutput [
 	^ super at: index put: aTFOutput withNormalizedHandle
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
+TFOutputArray >> outputOn: aGraph [
+
+	^self
+]
+
+{ #category : #accessing }
 TFOutputArray >> withNormalizedHandle [
 
 	^ self

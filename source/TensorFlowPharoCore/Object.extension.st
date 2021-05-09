@@ -1,17 +1,17 @@
 Extension { #name : #Object }
 
-{ #category : #'*TensorFlowCore' }
+{ #category : #'*TensorFlowPharoCore' }
 Object >> byteSize [
 
 ^8
 ]
 
-{ #category : #'*TensorFlowCore' }
+{ #category : #'*TensorFlowPharoCore' }
 Object >> ignoreFinalization [
 	self finalizationRegistry remove: self ifAbsent: [  ]
 ]
 
-{ #category : #'*TensorFlowCore' }
+{ #category : #'*TensorFlowPharoCore' }
 Object >> useFinalization [
 	self finalizationRegistry add: self
 ]

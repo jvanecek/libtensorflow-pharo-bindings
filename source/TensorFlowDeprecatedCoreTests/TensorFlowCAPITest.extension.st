@@ -1166,6 +1166,20 @@ TensorFlowCAPITest >> testOperationEquals [
 ]
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
+TensorFlowCAPITest >> testPlaceholderType: type [
+	| graph var session result tensor abs |
+	graph := TFGraph create.
+	tensor := TFTensor newTyped: type shaped: TensorShape scalar.
+	var := graph placeholder: 'var' type: type.
+	abs := graph newOperation: 'Abs' named: 'abs' described: [ :description | description addInput: (var output: 0) ].
+	session := TFSession on: graph.
+	result := session
+		runInputs: {var input: 0}
+		values: {tensor}
+		outputs: {abs output: 0}.
+]
+
+{ #category : #'*TensorFlowDeprecatedCoreTests' }
 TensorFlowCAPITest >> testPlaceholderTypes [
 	self testPlaceholderType: TFTensor typeInt64.
 	self testPlaceholderType: TFTensor typeInt32.

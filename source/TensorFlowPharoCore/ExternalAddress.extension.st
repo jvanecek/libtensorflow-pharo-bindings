@@ -1,6 +1,6 @@
 Extension { #name : #ExternalAddress }
 
-{ #category : #'*TensorFlowCore' }
+{ #category : #'*TensorFlowPharoCore' }
 ExternalAddress >> getHandle [
 
 	^ self

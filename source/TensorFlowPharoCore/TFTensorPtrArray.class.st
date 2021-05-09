@@ -38,3 +38,9 @@ TFTensorPtrArray >> numbersAt: index [
 	tensor := self at: index.
 	^ tensor asNumbers
 ]
+
+{ #category : #accessing }
+TFTensorPtrArray >> outputOn: aGraph [
+
+	^self
+]

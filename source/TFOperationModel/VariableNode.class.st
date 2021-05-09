@@ -30,8 +30,9 @@ VariableNode class >> on: aComputation named: aName of: aType shaped: aShape ini
 		initializedWith: aVariableInitializer
 ]
 
-{ #category : #configuring }
+{ #category : #Configuring }
 VariableNode >> assign: anOperation [
+
 
 	currentValueAssigned := currentComputation
 		newOperationOf: 'Assign'

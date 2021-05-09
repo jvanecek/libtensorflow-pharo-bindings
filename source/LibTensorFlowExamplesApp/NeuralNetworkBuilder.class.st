@@ -30,7 +30,7 @@ NeuralNetworkBuilder >> buildBasedOn: aModel toFitPredictionFrom: aFeaturesColle
 		doing: [:trainedModel | aModel updateWeightsToFitPredictionFrom: aFeaturesCollection to: aTarget]
 ]
 
-{ #category : #'Not categorized' }
+{ #category : #Accessing }
 NeuralNetworkBuilder >> epochsTrained [
 
 	^epoch

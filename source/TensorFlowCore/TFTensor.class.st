@@ -24,11 +24,6 @@ TFTensor class >> array: values type: type into: anExternalAddressOrByteArray [
 			index := index + 1 ]
 ]
 
-{ #category : #converting }
-TFTensor class >> asExternalTypeOn: aFFICallout [ 
-	^ FFIOpaqueObjectType objectClass: self
-]
-
 { #category : #utils }
 TFTensor class >> elementsOf: aMultidimensionalTensor [
 	| answer |
@@ -530,11 +525,6 @@ TFTensor >> finalize [
 	self delete
 ]
 
-{ #category : #iterating }
-TFTensor >> floatsDo: oneArgBlock [
-	self dataAndOffsetsCollect: [ :data :offset | data floatAt: offset ] thenDo: oneArgBlock
-]
-
 { #category : #accessing }
 TFTensor >> getHandle [
 
@@ -547,16 +537,6 @@ TFTensor >> getterBlock [
 	^ self class getterBlockFor: self type
 ]
 
-{ #category : #iterating }
-TFTensor >> int32sDo: oneArgBlock [
-	self dataAndOffsetsCollect: [ :data :offset | data signedLongAt: offset ] thenDo: oneArgBlock
-]
-
-{ #category : #iterating }
-TFTensor >> int64sDo: oneArgBlock [
-	self dataAndOffsetsCollect: [ :data :offset | data signedLongLongAt: offset ] thenDo: oneArgBlock
-]
-
 { #category : #converting }
 TFTensor >> library [
 	^ TensorFlowCAPI current
@@ -566,12 +546,6 @@ TFTensor >> library [
 TFTensor >> numBytes [
 	
 	 ^ self byteSize
-]
-
-{ #category : #'not categorized' }
-TFTensor >> numDims [
-
-	^self rank
 ]
 
 { #category : #accessing }

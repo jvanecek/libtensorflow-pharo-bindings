@@ -69,8 +69,8 @@ TFOperation >> graph [
 ]
 
 { #category : #accessing }
-TFOperation >> graph: aTF_Graph [
-	graph := aTF_Graph
+TFOperation >> graph: aTFGraph [
+	graph := aTFGraph
 ]
 
 { #category : #accessing }
@@ -90,7 +90,7 @@ TFOperation >> inputsCount [
 { #category : #attributes }
 TFOperation >> intAt: nameString [
 
-	^ self library operation: self getInt64At: nameString asAsciiZ
+	^self library operation: self getInt64At: nameString asAsciiZ
 ]
 
 { #category : #accessing }
@@ -103,14 +103,6 @@ TFOperation >> name [
 	"The full name of this operation"
 	
 	^ self library operationName: self
-]
-
-{ #category : #initialization }
-TFOperation >> output [
-	"The list of Tensor objects representing the outputs of this op."
-
-	output ifNil: [ output := 0 ].
-	^ self output: output
 ]
 
 { #category : #accessing }
@@ -130,7 +122,7 @@ TFOperation >> outputsCount [
 { #category : #printing }
 TFOperation >> printOn: stream [
 	super printOn: stream.
-	handle isNull
+	self isNull
 		ifFalse: [ stream
 				space;
 				print: self type;
@@ -147,7 +139,7 @@ TFOperation >> shapeAt: nameString [
 { #category : #attributes }
 TFOperation >> stringAt: nameString [
 
-	^ self library operation: self getStringAt: nameString asAsciiZ
+	^self library operation: self getStringAt: nameString asAsciiZ
 ]
 
 { #category : #attributes }
