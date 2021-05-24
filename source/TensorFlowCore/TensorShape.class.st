@@ -40,7 +40,7 @@ TensorShape class >> scalar [
 { #category : #'Instance Creation' }
 TensorShape class >> unknown [
 
-	^self new initializeDimensionSized: -1
+	^self new initializeDimensionSized: #(-1)
 ]
 
 { #category : #'Instance Creation' }
