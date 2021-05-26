@@ -24,6 +24,37 @@ TFTensor class >> array: values type: type into: anExternalAddressOrByteArray [
 			index := index + 1 ]
 ]
 
+{ #category : #types }
+TFTensor class >> descriptionOf: aType [
+
+	^ Dictionary new
+		at: self typeBFloat16 put: 'BFloat16';
+		at: self typeBoolean put: 'Bool';
+		at: self typeComplex put: 'Complex';
+		at: self typeComplex128 put: 'Complex128';
+		at: self typeComplex64 put: 'Complex64';
+		at: self typeDouble put: 'Double';
+		at: self typeFloat put: 'Float';
+		at: self typeHalf put: 'Half';
+		at: self typeInt16 put: 'Int16';
+		at: self typeInt32 put: 'Int32';
+		at: self typeInt64 put: 'Int64';
+		at: self typeInt8 put: 'Int8';
+		at: self typeQint16 put: 'QInt16';
+		at: self typeQint32 put: 'QInt32';
+		at: self typeQint8 put: 'QInt8';
+		at: self typeQuint16 put: 'QUInt16';
+		at: self typeQuint8 put: 'QUInt8';
+		at: self typeResource put: 'Resource';
+		at: self typeString put: 'String';
+		at: self typeUint16 put: 'UInt16';
+		at: self typeUint32 put: 'Uint32';
+		at: self typeUint64 put: 'Uint64';
+		at: self typeUint8 value put: 'Uint8';
+		at: self typeVariant put: 'Variant';
+		at: aType
+]
+
 { #category : #utils }
 TFTensor class >> elementsOf: aMultidimensionalTensor [
 	| answer |
@@ -287,11 +318,6 @@ TFTensor class >> sizeOf: aMultidimensionalArray [
 		ifFalse: [ 1 ]
 ]
 
-{ #category : #utils }
-TFTensor class >> sizeOfString: aString [
-	^ TensorFlowCAPI current stringEncodedSize: aString
-]
-
 { #category : #types }
 TFTensor class >> typeBFloat16 [
 	^ 14
@@ -302,6 +328,12 @@ TFTensor class >> typeBoolean [
 	"TF_BOOL = 10"
 
 	^ 10
+]
+
+{ #category : #types }
+TFTensor class >> typeComplex [
+	
+	^ 8
 ]
 
 { #category : #types }
@@ -377,6 +409,36 @@ TFTensor class >> typeQUInt8 [
 ]
 
 { #category : #types }
+TFTensor class >> typeQint16 [
+	
+	^ 15
+]
+
+{ #category : #types }
+TFTensor class >> typeQint32 [
+	
+	^ 13
+]
+
+{ #category : #types }
+TFTensor class >> typeQint8 [
+	
+	^ 11
+]
+
+{ #category : #types }
+TFTensor class >> typeQuint16 [
+	
+	^ 16
+]
+
+{ #category : #types }
+TFTensor class >> typeQuint8 [
+	
+	^ 12
+]
+
+{ #category : #types }
 TFTensor class >> typeResource [
 	^20
 ]
@@ -394,6 +456,30 @@ TFTensor class >> typeUInt16 [
 { #category : #types }
 TFTensor class >> typeUInt8 [
 	^4
+]
+
+{ #category : #types }
+TFTensor class >> typeUint16 [
+	
+	^ 17
+]
+
+{ #category : #types }
+TFTensor class >> typeUint32 [
+	
+	^ 22
+]
+
+{ #category : #types }
+TFTensor class >> typeUint64 [
+	
+	^ 23
+]
+
+{ #category : #types }
+TFTensor class >> typeUint8 [
+	
+	^ 4
 ]
 
 { #category : #acccessing }
