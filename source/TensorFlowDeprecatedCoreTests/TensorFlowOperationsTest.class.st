@@ -1,6 +1,6 @@
 Class {
 	#name : #TensorFlowOperationsTest,
-	#superclass : #TestCase,
+	#superclass : #TensorFlowTestCase,
 	#instVars : [
 		'library'
 	],
@@ -67,14 +67,6 @@ TensorFlowOperationsTest >> percentile: percent from: collection [
 { #category : #initialization }
 TensorFlowOperationsTest >> setUp [
 	library := TensorFlowCAPI current
-]
-
-{ #category : #initialization }
-TensorFlowOperationsTest >> should: aBlock raiseError: aString [
-	| message |
-	message := 'No Error was signaled'.
-	aBlock ifError: [ :description :receiver | message := description ].
-	self assert: 'Error: ' , aString equals: message
 ]
 
 { #category : #'other operations' }
@@ -539,7 +531,7 @@ TensorFlowOperationsTest >> testOperationCastTo [
 	input := graph const: template asFloatTensor.
 	cast := input castTo: TFTensor typeInt32.
 
-	result := graph runOutput: cast output.
+	result := graph runOutput: cast firstOutput.
 
 	self assert: template truncated equals: result asNumbers.
 ]
@@ -575,22 +567,6 @@ TensorFlowOperationsTest >> testOperationDescentRate [
 	graph initializeOn: session.
 	result := session runOutput: (output output: 0).
 	self assert: (1 - (Float pi * 0.7) closeTo: result allFloats first)
-]
-
-{ #category : #'other operations' }
-TensorFlowOperationsTest >> testOperationDescentRateConstants [
-	| graph var output pi result session rate |
-	graph := TFGraph create.
-	var := graph variable: 'var' initialValue: 1.0 asTensor.
-	pi := Float pi asTensor.
-	rate := 0.7 asTensor.
-	output := var descent: pi rate: rate.
-	
-	session := TFSession on: graph.
-	graph initializeOn: session.
-	result := session runOutput: (output output: 0).
-	
-	self assert: (1-(Float pi * 0.7) closeTo: result allFloats first)
 ]
 
 { #category : #'binary operations' }
@@ -871,42 +847,6 @@ TensorFlowOperationsTest >> testOperationMatrixInverse [
 ]
 
 { #category : #'binary operations' }
-TensorFlowOperationsTest >> testOperationMeanOn [
-	| graph a session mean0 mean01 mean1 results meanNone |
-	
-	graph := TFGraph create.
-	a := graph const: #(
-		(1.1 1.2)
-		(2.1 2.2)
-		(3.1 0.2)
-	) asFloatTensor.
-		
-	mean0 := a meanOn: #(0) asInt32Tensor.
-	mean1 := a meanOn: #(1) asInt32Tensor.
-	mean01 := a meanOn: #(0 1) asInt32Tensor.
-	meanNone := a meanOn: #() asInt32Tensor.
-		
-	session := TFSession on: graph.
-	results := session runOutputs: {mean0 output: 0. mean1 output: 0. mean01 output: 0. meanNone output: 0}." mean01bis output: 0}."
-	
-	self assert: (TensorShape vectorSized: 2) equals: results first shape.
-	self assert: (TensorShape vectorSized: 3) equals: results second shape.
-	self assert: TensorShape scalar equals: results third shape.
-	self assert: (TensorShape matrixSized: 3 by: 2) equals: results fourth shape.
-
-	self assertAll: #(2.1 1.2) closeTo: results first allFloats.
-	self assertAll: #(1.15 2.15 1.65) closeTo: results second allFloats.
-	self assertAll: #(1.65) closeTo: results third allFloats.
-	self
-		assertAll: #(
-			1.1 1.2
-			2.1 2.2
-			3.1 0.2)
-		closeTo: results fourth allFloats.
-	
-]
-
-{ #category : #'binary operations' }
 TensorFlowOperationsTest >> testOperationMinus [
 	| graph a b session constA constB result sum template |
 	
@@ -1135,35 +1075,6 @@ TensorFlowOperationsTest >> testOperationRelu [
 ]
 
 { #category : #'unary operations' }
-TensorFlowOperationsTest >> testOperationReluGrad [
-	| graph template session result previousGradient rectifiedGrad expected previousGradientTemplate |
-	
-	template := #(
-		(-1.1	1.2)
-		(-2.1	2.2)
-		(0		-0)) asFloatTensor.
-		
-
-	graph := TFGraph create.
-	
-	previousGradientTemplate := #(
-		(0	1)
-		(1	0)
-		(1		1)) asFloatTensor.
-		
-	previousGradient := previousGradientTemplate asOperationOn: graph.
-	rectifiedGrad := previousGradient timesRectifiedGradOf: template.
-	
-	session := TFSession on: graph.
-	result := session runOutput: rectifiedGrad output.
-	
-	self assert: result shape equals: template shape.
-	expected := template allFloats with: previousGradientTemplate allFloats collect:[:x :y| (x sign max: 0) * y].
-	self assert: result allFloats equals: expected.
-
-]
-
-{ #category : #'unary operations' }
 TensorFlowOperationsTest >> testOperationShape [
 	| graph template session const result shape |
 	
@@ -1171,7 +1082,7 @@ TensorFlowOperationsTest >> testOperationShape [
 	graph := TFGraph create.
 	
 	const := graph const: 'const' value: template.
-	shape := const shape output.
+	shape := const shape firstOutput.
 	
 	session := TFSession on: graph.
 	result := session runOutput: shape.
@@ -1221,53 +1132,6 @@ TensorFlowOperationsTest >> testOperationSin [
 		self assert: (res closeTo: temp)]
 ]
 
-{ #category : #'other operations' }
-TensorFlowOperationsTest >> testOperationSizeOn [
-	| t3x1x4 |
-	t3x1x4 := #(	"shape: (3 1 3)"
-		((1 2 3 0))
-		((4 5 6 0))
-		((7 8 9 0))
-	).
-	self assert: #(1 2 3 4 5 6 7) sizeOn: 0 is: #(7).
-	self assert: t3x1x4 sizeOn: 0 is: #(3).
-	self assert: t3x1x4 sizeOn: 1 is: #(1).
-	self assert: t3x1x4 sizeOn: 2 is: #(4).
- 
-
-]
-
-{ #category : #'other operations' }
-TensorFlowOperationsTest >> testOperationSlice [
-	| m3x3 |
-	m3x3 := #(	"shape: (3 1 3)"
-		((1 2 3))
-		((4 5 6))
-		((7 8 9))
-	).
-	self assertSlice: #(1 2 3 4 5 6 7) from: #(0) size: #(1) is: #(1).
-	self assertSlice: m3x3 from: #(0 0 0) size: #(1 1 1) is: #(((1))).
-	self assertSlice: m3x3 from: #(1 0 1) size: #(1 1 1) is: #(((5))).
-	self assertSlice: m3x3 from: #(1 0 1) size: #(1 -1 1) is: #(((5))).
-	self assertSlice: m3x3 from: #(1 0 1) size: #(1 1 -1) is: #(((5 6))).
-	self assertSlice: m3x3 from: #(1 0 1) size: #(1 -1 -1) is: #(((5 6))).
-	self assertSlice: m3x3 from: #(1 0 1) size: #(-1 1 -1) is: #(((5 6)) ((8 9))).
-
-]
-
-{ #category : #'other operations' }
-TensorFlowOperationsTest >> testOperationSliceSimple [
-	| graph session const result slice |
-	graph := TFGraph create.
-	const := graph const: #(1 2 3 4 5 6 7) asInt32Tensor.
-	slice := const sliceFrom: #(0) asInt32Tensor size: #(1) asInt32Tensor.
-
-	session := TFSession on: graph.
-	result := session runOutput: slice output.
-	
-	self assert: #(1) equals: result asNumbers.
-]
-
 { #category : #'binary operations' }
 TensorFlowOperationsTest >> testOperationSparseSoftmaxCrossEntropyWithLogits [
 	| graph label prediction results session xentropy gradient lastVector loss|
@@ -1314,7 +1178,7 @@ TensorFlowOperationsTest >> testOperationSparseSoftmaxCrossEntropyWithLogitsUseO
 	xentropy := prediction sparseSoftmaxCrossEntropyWithLogits: label.
 	
 	session := TFSession on: graph.
-	results := session runOutputs: {xentropy output. (xentropy useOutput: 1) output}.
+	results := session runOutputs: {xentropy firstOutput. (xentropy useOutput: 1) firstOutput}.
 	
 	loss := results first.
 	self assert: (TensorShape vectorSized: 3) equals: loss shape.
@@ -1471,7 +1335,7 @@ TensorFlowOperationsTest >> testSoftmax [
 	graph := TFGraph create.
 	
 	const := graph const: 'const' value: template.
-	output := const softmax output.
+	output := const softmax firstOutput.
 	
 	session := TFSession on: graph.
 	result := session runOutput: output.

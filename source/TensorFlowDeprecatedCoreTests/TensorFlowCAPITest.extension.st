@@ -961,7 +961,7 @@ TensorFlowCAPITest >> testGraphRunOutput [
 	| graph output result |
 	graph := TFGraph create.
 	output := graph const: TFTensor pi.
-	result := graph runOutput: output output.
+	result := graph runOutput: output firstOutput.
 	self assert: Float pi closeTo: result asNumbers
 ]
 

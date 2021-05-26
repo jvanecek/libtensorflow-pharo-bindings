@@ -96,6 +96,24 @@ TFGraph >> multinomialShaped: shapeConstant numSamples: aNumber [
 ]
 
 { #category : #'*TensorFlowDeprecatedCore' }
+TFGraph >> newOperationOf: aString namePrefixed: anOperationPreffix withAll: anInputCollection describedBy: aBlockClosure [
+
+	^ self
+		newOperation: aString
+		named: anOperationPreffix
+		described: [ :description | 
+			anInputCollection
+				do: [ :each | 
+					| input |
+
+					input := ( each asOperationOn: self ) firstOutput.
+					description addInput: input
+					].
+			aBlockClosure value: description
+			]
+]
+
+{ #category : #'*TensorFlowDeprecatedCore' }
 TFGraph >> parametrizedTruncatedNormalShaped: shapeArray means: means stdevs: stdevs minVals:minVals maxVals:maxVals [
 	| shape meansTensor stdevsTensor minValsTensor maxValsTensor |
 	shape := self const: shapeArray asInt32Tensor.

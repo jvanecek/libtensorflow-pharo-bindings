@@ -18,15 +18,9 @@ TensorFlowTestCase >> assertAll: aCollection closeTo: anotherCollection [
 ]
 
 { #category : #Accessing }
-TensorFlowTestCase >> dispatcher [
-
-	^TFLibraryDispatcher default
-]
-
-{ #category : #Accessing }
 TensorFlowTestCase >> garbageCollect [
-	System globalGarbageCollect.
-	[Processor finalizeCycle] whileTrue: [].
+
+	Smalltalk garbageCollect
 ]
 
 { #category : #Asserting }
@@ -42,8 +36,8 @@ TensorFlowTestCase >> number: aNumber isCloseTo: anotherNumber [
 TensorFlowTestCase >> should: aBlock raiseError: aString [
 	| message |
 	message := 'No Error was signaled'.
-	aBlock on: Error do: [ :error | message := error arguments first ].
-	self assert: (message includesSubstring: aString)
+	aBlock on: Error do: [ :error | message := error messageText ].
+	self assert: aString isEqualSkippingSeparatorsTo: message.
 ]
 
 { #category : #Asserting }

@@ -1,6 +1,6 @@
 Class {
 	#name : #TensorFlowCAPITest,
-	#superclass : #TestCase,
+	#superclass : #TensorFlowTestCase,
 	#instVars : [
 		'library'
 	],
@@ -143,14 +143,6 @@ TensorFlowCAPITest >> emptyGraphDef [
 TensorFlowCAPITest >> setUp [
 	super setUp.
 	library := TensorFlowCAPI current
-]
-
-{ #category : #initialization }
-TensorFlowCAPITest >> should: aBlock raiseError: aString [
-	| message |
-	message := 'No Error was signaled'.
-	aBlock on: Error do: [:ex | message := ex description].
-	self assert: 'Error: ',aString isEqualSkippingSeparatorsTo: message.
 ]
 
 { #category : #'testing tensor' }

@@ -1,6 +1,6 @@
 Class {
 	#name : #TensorFlowCAPISlowTests,
-	#superclass : #TestCase,
+	#superclass : #TensorFlowTestCase,
 	#category : #TensorFlowCoreTests
 }
 
@@ -21,7 +21,7 @@ TensorFlowCAPISlowTests >> assertCreating: anAmount of: aTensorFlowObjectCreator
 		total := total + anAmount.
 		handles addAll: (
 			(1 to: anAmount) collect: [:i |
-				2 timesRepeat: [ Smalltalk garbageCollect ].
+				2 timesRepeat: [ self garbageCollect ].
 				aTensorFlowObjectCreator value getHandle getHandle ]).
 		handles size < total ifTrue: [
 			" Meaning some external addresses where reused, so we're good "
