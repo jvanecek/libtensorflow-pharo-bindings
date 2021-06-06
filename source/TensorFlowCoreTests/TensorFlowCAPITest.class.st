@@ -258,7 +258,7 @@ TensorFlowCAPITest >> testAttrMetadataStructureSizeIs32bits [
 { #category : #'testing operation' }
 TensorFlowCAPITest >> testAttrSetShape [
 	self testAttrSetShape: TensorShape scalar.
-	self testAttrSetShape: (TensorShape vectorSized: 16r1234567890ABCDEF).
+	self testAttrSetShape: (TensorShape vectorSized: 16r7FFFFFFFFFFFFFFF).
 	self testAttrSetShape: (TensorShape withDimensionsSized: #(1 2 3 4)).
 	self testAttrSetShape: (TensorShape withDimensionsSized: (1 to: 16) asArray)
 ]
@@ -1056,7 +1056,7 @@ TensorFlowCAPITest >> testTensorFromInt64Shape [
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> testTensorFromInt64s [
 	| tensor template values |
-	template := #(16r1234567812345678 0 -12345678910111213).
+	template := #(16r7FFFFFFFFFFFFFFF 0 -12345678910111213).
 	tensor := TFTensor fromInt64s: template.
 	values := tensor allInt64s.
 	self assert: tensor shape equals: #(3).
