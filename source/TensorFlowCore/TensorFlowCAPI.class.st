@@ -78,19 +78,22 @@ TensorFlowCAPI >> deleteImportGraphDefOptions: aTFImportGraphDefOptions [
 { #category : #deleting }
 TensorFlowCAPI >> deleteSession: aTFSession [
 
-	platformLibrary checkStatusAfter: [:status | platformLibrary deleteSession: aTFSession status: status]
+	platformLibrary checkStatusAfter: [:status | platformLibrary deleteSession: aTFSession status: status]. 
+	aTFSession beNull
 ]
 
 { #category : #deleting }
 TensorFlowCAPI >> deleteSessionOptions: aTFSessionOptions [
 
-	^platformLibrary deleteSessionOptions: aTFSessionOptions
+	platformLibrary deleteSessionOptions: aTFSessionOptions.
+	aTFSessionOptions beNull
 ]
 
 { #category : #deleting }
 TensorFlowCAPI >> deleteStatus: aTFStatus [
 
-	^platformLibrary deleteStatus: aTFStatus
+	platformLibrary deleteStatus: aTFStatus. 
+	aTFStatus beNull
 ]
 
 { #category : #deleting }

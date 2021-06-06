@@ -54,7 +54,7 @@ TensorFlowComputation >> computeAll: operations feedingInputsWith: aPlaceholderV
 
 	resultsByName := Dictionary new.
 	operations
-		doWithIndex: [:operation :index | resultsByName at: operation put: (results at: index)].
+		withIndexDo: [:operation :index | resultsByName at: operation put: (results at: index)].
 	^resultsByName
 ]
 

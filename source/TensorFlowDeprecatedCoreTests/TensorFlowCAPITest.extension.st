@@ -1386,10 +1386,10 @@ TensorFlowCAPITest >> testShapeOfOutputSet [
 	shape := graph shapeOf: output.
 	self assert: shape equals: #(3 -1 -1).
 
-	graph shapeOf: output set: #(-1 3 -1).
+	graph shapeOf: output set: #(-1 3 -1) asTensorShape.
 
 	shape := graph shapeOf: output.
-	self assert: shape equals: #(3 3 -1).
+	self assert: shape equals: #(3 3 -1) asTensorShape.
 
 ]
 
@@ -1405,7 +1405,7 @@ TensorFlowCAPITest >> testShapeOfOutputSetInvalid [
 	output := const output: 0.
 	
 	self
-		should: [graph shapeOf: output set: #(1 2 3)] 
+		should: [graph shapeOf: output set: #(1 2 3) asTensorShape] 
 		raiseError: 'INVALID_ARGUMENT: Dimension 0 in both shapes must be equal, but are 2 and 1. Shapes are [2,3,1] and [1,2,3].'.
 
 ]
@@ -1422,7 +1422,7 @@ TensorFlowCAPITest >> testShapeOfOutputSetInvalidRank [
 	output := const output: 0.
 	
 	self
-		should: [graph shapeOf: output set: #(1 2 3 -1)]
+		should: [graph shapeOf: output set: #(1 2 3 -1) asTensorShape]
 		raiseError: 'INVALID_ARGUMENT: Shapes must be equal rank, but are 3 and 4'.
 ]
 

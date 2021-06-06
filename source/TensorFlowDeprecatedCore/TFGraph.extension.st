@@ -100,7 +100,7 @@ TFGraph >> newOperationOf: aString namePrefixed: anOperationPreffix withAll: anI
 
 	^ self
 		newOperation: aString
-		named: anOperationPreffix
+		named: ( self nameFor: anOperationPreffix )
 		described: [ :description | 
 			anInputCollection
 				do: [ :each | 

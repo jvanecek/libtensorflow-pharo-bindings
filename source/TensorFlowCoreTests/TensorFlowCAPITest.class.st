@@ -653,6 +653,16 @@ TensorFlowCAPITest >> testSessionOptionsFromProtoBufValid [
 	TFSessionOptions fromProtoBuf: config
 ]
 
+{ #category : #tests }
+TensorFlowCAPITest >> testSessionOptionsSetTarget [
+	| options |
+	options := library newSessionOptions.
+	self deny: options isNull.
+	options target: 'local'.
+	options class finalizeResourceData: options getHandle.
+	self assert: options isNull.
+]
+
 { #category : #'testing session' }
 TensorFlowCAPITest >> testSessionRunOutputOnGraph: graph [
 	| operation session output tensor |

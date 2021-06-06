@@ -16,7 +16,7 @@ TFStatus class >> create [
 TFStatus class >> finalizeResourceData: handle [
 
 	handle isNull ifTrue: [ ^ self ].
-	(TensorFlowCAPI current) deleteStatus: handle
+	TensorFlowCAPI current deleteStatus: handle
 ]
 
 { #category : #testing }

@@ -113,6 +113,17 @@ TensorFlowPharoLibrary >> allocateTensorType: anInteger shape: aLongLongArray ra
 		module: TensorFlowPharoLibrary
 ]
 
+{ #category : #'operation description' }
+TensorFlowPharoLibrary >> arrayWithPointerToEach: elements [
+
+	| pointers |
+
+	pointers := ByteArray new: Smalltalk wordSize * elements size.
+	elements
+		withIndexDo: [ :each :index | pointers pointerAt: ( index - 1 ) * Smalltalk wordSize + 1 put: each getHandle ].
+	^ pointers
+]
+
 { #category : #converting }
 TensorFlowPharoLibrary >> calloutAPIClass [ 
 
@@ -325,21 +336,17 @@ TensorFlowPharoLibrary >> description: aTF_OperationDescription set: aString toS
 { #category : #'operation description' }
 TensorFlowPharoLibrary >> description: aTFOperationDescription set: anAttributeName toShapes: aListOfShapes [
 
-	| status pointers shapes shapeSizes |
+	| status shapes shapeSizes |
 
 	shapes := aListOfShapes
 		collect:
 			[ :shape | ( FFIExternalArray externalNewType: 'int64' fromArray: shape dimensionSizes ) autoRelease ].
-	pointers := ByteArray new: Smalltalk wordSize * shapes size.
-	shapes
-		withIndexDo: [ :each :index | pointers pointerAt: ( index - 1 ) * Smalltalk wordSize + 1 put: each getHandle ].
-
 	shapeSizes := aListOfShapes collect: #rank.
 	status := TFStatus create.
 	self
 		description: aTFOperationDescription
 		set: anAttributeName
-		toShapes: pointers
+		toShapes: ( self arrayWithPointerToEach: shapes )
 		sizesOfEach: ( FFIExternalArray externalNewType: 'int32' fromArray: shapeSizes ) getHandle
 		size: aListOfShapes size.
 	status check
@@ -379,21 +386,16 @@ TensorFlowPharoLibrary >> description: desc set: attr_name toString: value size:
 { #category : #'operation description' }
 TensorFlowPharoLibrary >> description: aTFOperationDescription set: anAttributeName toStrings: anArrayOfStrings [
 
-	| status sizes strings pointers |
+	| status sizes strings |
 
 	sizes := anArrayOfStrings collect: [ :str | str size ].
-	sizes := FFIExternalArray externalNewType: 'int64' fromArray: sizes.
-	sizes autoRelease.
+	sizes := ( FFIExternalArray externalNewType: 'int64' fromArray: sizes ) autoRelease.
 	strings := anArrayOfStrings collect: [ :each | ( self externalizeString: each ) autoRelease ].
-	pointers := ByteArray new: Smalltalk wordSize * strings size.
-	strings
-		withIndexDo: [ :each :index | pointers pointerAt: ( index - 1 ) * Smalltalk wordSize + 1 put: each ].
-
 	status := TFStatus create.
 	self
 		description: aTFOperationDescription
 		set: anAttributeName
-		toStrings: pointers
+		toStrings: ( self arrayWithPointerToEach: strings )
 		sizes: sizes getHandle
 		count: anArrayOfStrings size.
 	status check

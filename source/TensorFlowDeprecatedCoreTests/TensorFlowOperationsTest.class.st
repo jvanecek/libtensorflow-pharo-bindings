@@ -24,7 +24,7 @@ TensorFlowOperationsTest >> assert: integers sizeOn: dimension is: expected [
 	size := const sizeOn: dimension.
 
 	session := TFSession on: graph.
-	result := session runOutput: size output.
+	result := session runOutput: size firstOutput.
 	
 	self assert: expected equals: result asNumbers.
 ]
@@ -42,7 +42,7 @@ TensorFlowOperationsTest >> assertSlice: integers from: begin size: size is: exp
 	const := graph const: integers asInt32Tensor.
 	slice := const sliceFrom: begin asInt32Tensor size: size asInt32Tensor.
 	session := TFSession on: graph.
-	result := session runOutput: slice output.
+	result := session runOutput: slice firstOutput.
 	self assert: expected equals: result asNumbers
 ]
 
@@ -1130,6 +1130,53 @@ TensorFlowOperationsTest >> testOperationSin [
 	self assert: result shape equals: intput shape.
 	result allFloats with: template do: [:res :temp |
 		self assert: (res closeTo: temp)]
+]
+
+{ #category : #'other operations' }
+TensorFlowOperationsTest >> testOperationSizeOn [
+	| t3x1x4 |
+	t3x1x4 := #(	"shape: (3 1 3)"
+		((1 2 3 0))
+		((4 5 6 0))
+		((7 8 9 0))
+	).
+	self assert: #(1 2 3 4 5 6 7) sizeOn: 0 is: #(7).
+	self assert: t3x1x4 sizeOn: 0 is: #(3).
+	self assert: t3x1x4 sizeOn: 1 is: #(1).
+	self assert: t3x1x4 sizeOn: 2 is: #(4).
+ 
+
+]
+
+{ #category : #'other operations' }
+TensorFlowOperationsTest >> testOperationSlice [
+	| m3x3 |
+	m3x3 := #(	"shape: (3 1 3)"
+		((1 2 3))
+		((4 5 6))
+		((7 8 9))
+	).
+	self assertSlice: #(1 2 3 4 5 6 7) from: #(0) size: #(1) is: #(1).
+	self assertSlice: m3x3 from: #(0 0 0) size: #(1 1 1) is: #(((1))).
+	self assertSlice: m3x3 from: #(1 0 1) size: #(1 1 1) is: #(((5))).
+	self assertSlice: m3x3 from: #(1 0 1) size: #(1 -1 1) is: #(((5))).
+	self assertSlice: m3x3 from: #(1 0 1) size: #(1 1 -1) is: #(((5 6))).
+	self assertSlice: m3x3 from: #(1 0 1) size: #(1 -1 -1) is: #(((5 6))).
+	self assertSlice: m3x3 from: #(1 0 1) size: #(-1 1 -1) is: #(((5 6)) ((8 9))).
+
+]
+
+{ #category : #'other operations' }
+TensorFlowOperationsTest >> testOperationSliceSimple [
+	| graph session const result slice |
+	graph := TFGraph create.
+	const := graph const: #(1 2 3 4 5 6 7) asInt32Tensor.
+	slice := const sliceFrom: #(0) asInt32Tensor size: #(1) asInt32Tensor.
+
+	session := TFSession on: graph.
+	result := session runOutput: slice output.
+	
+	self assert: #(1) equals: result asNumbers.
 ]
 
 { #category : #'binary operations' }
