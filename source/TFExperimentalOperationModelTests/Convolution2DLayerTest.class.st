@@ -36,7 +36,7 @@ Convolution2DLayerTest >> testInitializingKernelWithFixedTensor [
 			OrderedCollection new
 				addAll: #(53.660004 54.32 56.300003 57 58.940002 59.68);
 				addAll: #(80.06 81.12 82.700005 83.8 85.34 86.48);
-				addAll: #(106.46001 107.92 109.100006 110.600006 111.740005 113.28);
+				addAll: #(106.46 107.92 109.100006 110.600006 111.740005 113.28);
 				yourself)
 ]
 
