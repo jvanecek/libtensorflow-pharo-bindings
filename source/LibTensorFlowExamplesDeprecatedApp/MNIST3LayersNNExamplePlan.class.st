@@ -108,7 +108,7 @@ MNIST3LayersNNExamplePlan >> initializeLearningGraph [
 			
 	learn := graph newOperation: 'Identity' named: 'learn' described: [:description |
 		description
-			addInput: loss output;
+			addInput: loss firstOutput;
 			addControlInput: learnWeights1;
 			addControlInput: learnBiases1;
 			addControlInput: learnWeights2;
@@ -184,7 +184,7 @@ MNIST3LayersNNExamplePlan >> predict: inputs [
 	results := session
 		runInputs: {input input: 0}
 		values: {inputs asFloatTensor}
-		outputs: {prediction output}.
+		outputs: {prediction firstOutput}.
 	^ results first
 ]
 
@@ -194,7 +194,7 @@ MNIST3LayersNNExamplePlan >> predict: inputs andCompareTo: label [
 	results := session
 		runInputs: {input input: 0. expectedLabel input: 0}
 		values: {inputs asFloatTensor. label asInt32Tensor}
-		outputs: {prediction output. loss output}.
+		outputs: {prediction firstOutput. loss firstOutput}.
 	^ results
 ]
 
@@ -204,6 +204,6 @@ MNIST3LayersNNExamplePlan >> predict: inputs andLearnFrom: label [
 	results := session
 		runInputs: {input input: 0. expectedLabel input: 0}
 		values: {inputs asFloatTensor. label asInt32Tensor}
-		outputs: {loss output. learn output}.
+		outputs: {loss firstOutput. learn firstOutput}.
 	^ results
 ]

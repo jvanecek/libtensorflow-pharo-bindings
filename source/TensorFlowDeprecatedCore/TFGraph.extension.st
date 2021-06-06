@@ -96,6 +96,16 @@ TFGraph >> multinomialShaped: shapeConstant numSamples: aNumber [
 ]
 
 { #category : #'*TensorFlowDeprecatedCore' }
+TFGraph >> newOperationOf: aString namePrefixed: anOperationPreffix with: anArgumentOne with: anArgumentTwo [
+
+	^ self
+		newOperationOf: aString
+		namePrefixed: anOperationPreffix
+		withAll: ( Array with: anArgumentOne with: anArgumentTwo )
+		describedBy: [ :desc |  ]
+]
+
+{ #category : #'*TensorFlowDeprecatedCore' }
 TFGraph >> newOperationOf: aString namePrefixed: anOperationPreffix withAll: anInputCollection describedBy: aBlockClosure [
 
 	^ self

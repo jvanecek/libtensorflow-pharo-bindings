@@ -176,7 +176,7 @@ RegressionNNExample >> initializeLearningGraph [
 
 	learn := graph newOperation: 'Identity' named: 'learn' described: [:description |
 		description
-			addInput: loss output;
+			addInput: loss firstOutput;
 			addControlInput: learnWeights1;
 			addControlInput: learnBiases1;
 			addControlInput: learnWeights2;
@@ -275,6 +275,6 @@ RegressionNNExample >> predict: inputs andLearnFrom: label [
 	results := session
 		runInputs: {input input: 0. expectedLabel input: 0}
 		values: {inputs asFloatTensor. label asFloatTensor}
-		outputs: {loss output:0. learn output}.
+		outputs: {loss firstOutput. learn firstOutput}.
 	^ results
 ]

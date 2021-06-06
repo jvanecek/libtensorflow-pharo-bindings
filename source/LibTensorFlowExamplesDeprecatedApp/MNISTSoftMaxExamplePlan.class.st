@@ -114,7 +114,7 @@ MNISTSoftMaxExamplePlan >> predict: inputs andCompareTo: label [
 	results := session
 		runInputs: {input input: 0. expectedLabel input: 0}
 		values: {inputs asFloatTensor. label asInt32Tensor}
-		outputs: {prediction output. loss output}.
+		outputs: {prediction firstOutput. loss firstOutput}.
 	^ results
 ]
 
@@ -124,6 +124,6 @@ MNISTSoftMaxExamplePlan >> predict: inputs andLearnFrom: label [
 	results := session
 		runInputs: {input input: 0. expectedLabel input: 0}
 		values: {inputs asFloatTensor. label asInt32Tensor}
-		outputs: {loss output. learnWeights output. learnBiases output}.
+		outputs: {loss firstOutput. learnWeights firstOutput. learnBiases firstOutput}.
 	^ results
 ]
