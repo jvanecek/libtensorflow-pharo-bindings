@@ -225,12 +225,6 @@ TFGraph >> runInputs: inArrayOfTFOutputs values: inArrayOfTFTensor outputs: outA
 ]
 
 { #category : #'*TensorFlowDeprecatedCore' }
-TFGraph >> shapeOf: aTFOutputOrInput set: shape [
-
-	self library graph: self setShapeOf: aTFOutputOrInput to: shape
-]
-
-{ #category : #'*TensorFlowDeprecatedCore' }
 TFGraph >> truncatedNormalRandomShaped: shapeArray [
 	| shape |
 	shape := self const: shapeArray asInt32Tensor.
