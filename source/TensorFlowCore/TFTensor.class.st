@@ -623,6 +623,11 @@ TFTensor >> getterBlock [
 	^ self class getterBlockFor: self type
 ]
 
+{ #category : #testing }
+TFTensor >> isScalar [
+	^self rank = 0
+]
+
 { #category : #converting }
 TFTensor >> library [
 	^ TensorFlowCAPI current

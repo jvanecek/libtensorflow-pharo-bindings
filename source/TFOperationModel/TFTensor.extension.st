@@ -1,11 +1,6 @@
 Extension { #name : #TFTensor }
 
 { #category : #'*TFOperationModel' }
-TFTensor >> isScalar [
-	^self rank = 0
-]
-
-{ #category : #'*TFOperationModel' }
 TFTensor >> outputOn: aComputation [
 
 	^ ( self asOperationOn: aComputation ) value firstOutput
