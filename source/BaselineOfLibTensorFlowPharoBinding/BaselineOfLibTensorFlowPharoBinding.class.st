@@ -85,10 +85,10 @@ BaselineOfLibTensorFlowPharoBinding >> machineLearningGroupsIn: spec [
 	spec
 		group: 'MachineLearning-Deployment'
 			with:
-			#('TFVariableSpecificationModel' 'TFDatasetModel' 'TFUtilityModel' 'MLNeuralNetworkLayerModel' 'TFOptimizerModel' 'MLTrainingMetricModel' 'DatasetProviderModel' 'MLTrainingLaboratoryModel' 'TFExperimentalOperationModel');
+			#('TFVariableSpecificationModel' 'TFDatasetModel' 'MLNeuralNetworkLayerModel' 'TFOptimizerModel' 'MLTrainingMetricModel' 'DatasetProviderModel' 'MLTrainingLaboratoryModel' 'TFExperimentalOperationModel');
 		group: 'MachineLearning-Development'
 			with:
-			#('MachineLearning-Deployment' 'TFVariableSpecificationModelTests' 'TFUtilityModelTests' 'TFOptimizerModelTests' 'TFDatasetModelTests' 'MLNeuralNetworkLayerModelTests' 'MLTrainingMetricModelTests' 'MLTrainingModelTests' 'LibTensorFlowExamplesApp' 'TFExperimentalOperationModelTests')
+			#('MachineLearning-Deployment' 'TFVariableSpecificationModelTests' 'TFOptimizerModelTests' 'TFDatasetModelTests' 'MLNeuralNetworkLayerModelTests' 'MLTrainingMetricModelTests' 'MLTrainingModelTests' 'LibTensorFlowExamplesApp' 'TFExperimentalOperationModelTests')
 ]
 
 { #category : #baseline }
@@ -102,9 +102,6 @@ BaselineOfLibTensorFlowPharoBinding >> machineLearningPackagesIn: spec [
 		package: 'TFExperimentalOperationModelTests'
 			with: [ spec requires: #('TensorFlowEnvironmentModelTests' 'TFExperimentalOperationModel') ];
 		package: 'TFDatasetModel' with: [ spec requires: #('TFOperationModel') ];
-		package: 'TFUtilityModel' with: [ spec requires: #('TFDatasetModel') ];
-		package: 'TFUtilityModelTests'
-			with: [ spec requires: #('TensorFlowEnvironmentModelTests' 'TFUtilityModel') ];
 		package: 'MLNeuralNetworkLayerModel' with: [ spec requires: #('TFVariableSpecificationModel') ];
 		package: 'MLNeuralNetworkLayerModelTests' with: [ spec requires: #('MLNeuralNetworkLayerModel') ];
 		package: 'MLTrainingModel' with: [ spec requires: #('MLNeuralNetworkLayerModel') ];
@@ -115,7 +112,7 @@ BaselineOfLibTensorFlowPharoBinding >> machineLearningPackagesIn: spec [
 		package: 'MLTrainingMetricModel' with: [ spec requires: #('MLTrainingModel') ];
 		package: 'MLTrainingMetricModelTests' with: [ spec requires: #('MLTrainingMetricModel') ];
 		package: 'TFDatasetModelTests'
-			with: [ spec requires: #('MLTrainingModel' 'TensorFlowEnvironmentModelTests' 'TFUtilityModel') ];
+			with: [ spec requires: #('MLTrainingModel' 'TensorFlowEnvironmentModelTests') ];
 		package: 'DatasetProviderModel' with: [ spec requires: #('MLTrainingModel' 'TFDatasetModel') ];
 		package: 'MLTrainingLaboratoryModel'
 			with: [ spec requires: #('DatasetProviderModel' 'MLTrainingMetricModel' 'TFOptimizerModel') ];
