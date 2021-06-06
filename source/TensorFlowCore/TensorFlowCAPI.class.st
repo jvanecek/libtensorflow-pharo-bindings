@@ -264,8 +264,7 @@ TensorFlowCAPI >> finishOperation: aTFOperationDescription [
 { #category : #graph }
 TensorFlowCAPI >> forGraph: aTFGraph outputDims: aTFOutput [
 
-	^platformLibrary
-		checkStatusAfter: [:status | platformLibrary forGraph: aTFGraph outputDims: aTFOutput status: status]
+	^platformLibrary forGraph: aTFGraph outputDims: aTFOutput
 ]
 
 { #category : #utils }
@@ -299,8 +298,7 @@ TensorFlowCAPI >> graph: aTFGraph getOperationNamed: anOperationName [
 { #category : #graph }
 TensorFlowCAPI >> graph: aTFGraph getRankOf: aTFOutputOrInput [
 
-	^platformLibrary checkStatusAfter: [:status |
-		platformLibrary graph: aTFGraph getRankOf: aTFOutputOrInput status: status]
+	^ platformLibrary graph: aTFGraph getRankOf: aTFOutputOrInput 
 ]
 
 { #category : #graph }

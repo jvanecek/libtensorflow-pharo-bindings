@@ -11,8 +11,10 @@ Class {
 
 { #category : #'Instance Creation' }
 ReduceMean class >> allAxisOf: aTFOperation [
-
-	^(1 to: aTFOperation outputDimensions) collect: [:axis | axis - 1]
+	
+	^ aTFOperation outputDimensions < 0
+		ifTrue: [ #() ]
+		ifFalse: [(1 to: aTFOperation outputDimensions) collect: [:axis | axis - 1]]
 ]
 
 { #category : #'Instance Creation' }

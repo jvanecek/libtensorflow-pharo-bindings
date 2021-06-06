@@ -513,6 +513,13 @@ TensorFlowPharoLibrary >> finishOperationAsVoid: desc status: status [
 		module: TensorFlowPharoLibrary
 ]
 
+{ #category : #accessing }
+TensorFlowPharoLibrary >> forGraph: aTFGraph outputDims: aTFOutput [ 
+	
+	^self
+		checkStatusAfter: [:status | self forGraph: aTFGraph outputDims: aTFOutput status: status]
+]
+
 { #category : #operation }
 TensorFlowPharoLibrary >> forGraph: aTF_Graph outputDims: aTF_Output status: aTF_Status [
 
@@ -679,7 +686,7 @@ TensorFlowPharoLibrary >> graph: aTFGraph setShapeOf: aTFOutputOrInput to: aShap
 
 	| status value |
 
-	value := FFIExternalArray externalNewType: 'int64' fromArray: aShape.
+	value := FFIExternalArray externalNewType: 'int64' fromArray: aShape dimensionSizes.
 	status := TFStatus create.
 	self
 		graph: aTFGraph
