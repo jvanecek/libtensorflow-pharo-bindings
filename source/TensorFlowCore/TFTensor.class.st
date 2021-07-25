@@ -542,12 +542,6 @@ TFTensor >> asNumbers [
 ]
 
 { #category : #converting }
-TFTensor >> asOperationOn: aComputation [
-
-	^ ConstantNode on: aComputation with: self
-]
-
-{ #category : #converting }
 TFTensor >> asStream [
 	| answer |
 	answer := ReadWriteStream on: (Array new: self size).

@@ -106,7 +106,7 @@ MNISTFile class >> testName [
 	^ self subclassResponsibility 
 ]
 
-{ #category : #tests }
+{ #category : #'instance creation' }
 MNISTFile class >> testSet [
 	^self fromFile: self testName
 	
@@ -117,7 +117,7 @@ MNISTFile class >> trainName [
 	^ self subclassResponsibility 
 ]
 
-{ #category : #tests }
+{ #category : #'instance creation' }
 MNISTFile class >> trainingSet [
 	^self fromFile: self trainName
 	

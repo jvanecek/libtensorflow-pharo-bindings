@@ -127,6 +127,14 @@ TensorShape >> initializeDimensionSized: anArray [
 	dimensionSizes := anArray
 ]
 
+{ #category : #Testing }
+TensorShape >> isCompatibleWithNHWShapes [
+	
+	"NHW shape is those with (number of images in the batch, height, width) shape "
+	
+	^self rank = 3
+]
+
 { #category : #Accessing }
 TensorShape >> numberOfFeatures [
 	" When shape represents a matrix, the second dimensions is the total amount of columns, 
