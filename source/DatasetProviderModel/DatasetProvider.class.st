@@ -36,8 +36,7 @@ DatasetProvider class >> new [
 { #category : #Initialization }
 DatasetProvider >> download: aRemoteFileUrl to: aTargetDirectory [
 
-	aTargetDirectory asFileReference exists
-		ifFalse: [ PublicResourceDownloader new downloadFileAt: aRemoteFileUrl to: aTargetDirectory ]
+	FileSystemAPI current downloadFileAt: aRemoteFileUrl to: aTargetDirectory
 ]
 
 { #category : #'Accessing - MNIST' }
@@ -71,8 +70,7 @@ DatasetProvider >> initializeFashionDataset [
 	| baseUrl baseDirectory |
 
 	baseUrl := 'https://storage.googleapis.com/tensorflow/tf-keras-datasets/'.
-	baseDirectory := './datasets/fashion-mnist' asFileReference.
-	FileSystem disk workingDirectory fileSystem ensureCreateDirectory: baseDirectory.
+	baseDirectory := FileSystemAPI current directoryNamed: './datasets/fashion-mnist'.
 
 	OrderedCollection new
 		add: 'train-labels-idx1-ubyte.gz';
@@ -111,8 +109,7 @@ DatasetProvider >> initializeHandwrittenDataset [
 	| baseUrl baseDirectory |
 
 	baseUrl := 'http://yann.lecun.com/exdb/mnist/'.
-	baseDirectory := './datasets/mnist-handwritten/' asFileReference.
-	FileSystem disk workingDirectory fileSystem ensureCreateDirectory: baseDirectory.
+	baseDirectory := FileSystemAPI current directoryNamed: './datasets/mnist-handwritten/'.
 
 	OrderedCollection new
 		add: 'train-labels-idx1-ubyte.gz';
@@ -122,7 +119,7 @@ DatasetProvider >> initializeHandwrittenDataset [
 		do: [:fileName |
 			self
 				download: ('<1s><2s>' expandMacrosWith: baseUrl with: fileName)
-				to: baseDirectory / ('<1s>' expandMacrosWith: fileName)].
+				to: baseDirectory / fileName].
 
 	handwrittenDigitsDataset :=
 		SampleDataset new
@@ -160,15 +157,12 @@ DatasetProvider >> shakespeareText [
 { #category : #Accessing }
 DatasetProvider >> tensorTyped: aTensorType fromFileNamed: aString [
 
-	| file reader compressed |
-
-	file := aString asFileReference.
-	file exists
-		ifFalse: [ AssertionFailure signal: ( #'Can''t find <1s>' expandMacrosWith: file asString ) ].
-	compressed := file binaryReadStream.
-	reader := IdxReader onStream: ( GZipReadStream on: compressed ) upToEnd asByteArray readStream.
-	^ TFTensor
-		fromNumbers: reader next
-		type: aTensorType
-		shape: ( TensorShape withDimensionsSized: reader dimensionSizes )
+	FileSystemAPI current
+		readIdxFileNamed: aString
+		thenDo: [ :dimensionSizes :content | 
+			^TFTensor
+				fromNumbers: content
+				type: aTensorType
+				shape: ( TensorShape withDimensionsSized: dimensionSizes )
+			]
 ]
