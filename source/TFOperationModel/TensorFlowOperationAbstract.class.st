@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'value'
 	],
-	#category : 'TFOperationModel'
+	#category : #TFOperationModel
 }
 
 { #category : #Operations }
@@ -213,7 +213,7 @@ TensorFlowOperationAbstract >> reshapeTo: aNewShape [
 { #category : #Operations }
 TensorFlowOperationAbstract >> shape [
 
-	^Shape of: self
+	^ShapeOperation of: self
 ]
 
 { #category : #Operations }

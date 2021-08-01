@@ -1,38 +1,38 @@
 Class {
-	#name : #Shape,
+	#name : #ShapeOperation,
 	#superclass : #TensorFlowOperationAbstract,
 	#instVars : [
 		'tensor'
 	],
-	#category : 'TFOperationModel'
+	#category : #TFOperationModel
 }
 
 { #category : #'Instance Creation' }
-Shape class >> named: anOperationName of: anOperationNode [
+ShapeOperation class >> named: anOperationName of: anOperationNode [
 
 	^self new initializeNamed: anOperationName of: anOperationNode
 ]
 
 { #category : #'Instance Creation' }
-Shape class >> of: anOperationNode [
+ShapeOperation class >> of: anOperationNode [
 
 	^self named: self operationType of: anOperationNode
 ]
 
 { #category : #Accessing }
-Shape class >> operationType [
+ShapeOperation class >> operationType [
 
 	^'Shape'
 ]
 
 { #category : #Accessing }
-Shape >> currentComputation [
+ShapeOperation >> currentComputation [
 
 	^tensor currentComputation
 ]
 
 { #category : #Initialization }
-Shape >> initializeNamed: anOperationName of: anOperationNode [
+ShapeOperation >> initializeNamed: anOperationName of: anOperationNode [
 
 	tensor := anOperationNode.
 	value :=
