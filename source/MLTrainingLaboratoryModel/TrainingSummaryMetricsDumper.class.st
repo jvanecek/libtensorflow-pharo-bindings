@@ -16,7 +16,7 @@ TrainingSummaryMetricsDumper >> dumpMetricsIn: aTrainingSummary knownAs: aMetric
 	1 to: aTrainingSummary epochsTrained do: [:i |
 		aMetricKeyCollection do: [:metricKey |
 			aStream
-				print: ((aTrainingSummary metricKnownAs: metricKey) at: i);
+				print: ((aTrainingSummary trainingMetricKnownAs: metricKey) at: i);
 				tab].
 		aStream cr]
 
