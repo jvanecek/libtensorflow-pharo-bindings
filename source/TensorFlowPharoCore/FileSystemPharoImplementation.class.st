@@ -24,7 +24,7 @@ FileSystemPharoImplementation >> directoryNamed: aDirectoryName [
 FileSystemPharoImplementation >> downloadFileAt: datasetURL to: outputFileName [
 
 	outputFileName exists
-		ifTrue: [ ^ self ].
+		ifTrue: [ ^ outputFileName asFileReference ].
 	UIManager default
 		informUserDuring: [ :bar | 
 			bar label: 'Downloading MNIST dataset ...'.
