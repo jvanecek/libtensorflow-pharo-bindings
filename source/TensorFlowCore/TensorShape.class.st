@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'dimensionSizes'
 	],
-	#category : #TensorFlowCore
+	#category : #'TensorFlowCore-DataTypes'
 }
 
 { #category : #'Instance Creation' }

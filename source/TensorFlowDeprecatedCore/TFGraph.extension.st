@@ -34,11 +34,13 @@ TFGraph >> const: nameString value: aTFTensor [
 
 { #category : #'*TensorFlowDeprecatedCore' }
 TFGraph >> fromBlock: aBlockClosure [
+
 	"Create operations from a block"
 
 	| types |
+
 	types := Array new: aBlockClosure argumentCount.
-	types atAllPut: TFTensor typeFloat.
+	types atAllPut: FloatDataType new.
 	^ self fromBlock: aBlockClosure inputTypes: types
 ]
 
@@ -66,9 +68,11 @@ TFGraph >> fromBlock: aBlockClosure inputTypes: anArray named: nameString [
 
 { #category : #'*TensorFlowDeprecatedCore' }
 TFGraph >> fromBlock: aBlockClosure named: nameString [
+
 	| types |
+
 	types := Array new: aBlockClosure argumentCount.
-	types atAllPut: TFTensor typeFloat.
+	types atAllPut: FloatDataType new.
 	^ self fromBlock: aBlockClosure inputTypes: types named: nameString
 ]
 
@@ -162,12 +166,16 @@ TFGraph >> randomGamma:shapeArray alpha: alpha [
 ]
 
 { #category : #'*TensorFlowDeprecatedCore' }
-TFGraph >> randomNormalShaped:shapeArray [
+TFGraph >> randomNormalShaped: shapeArray [
+
 	"Outputs random values from a normal distribution"
+
 	| shape |
+
 	shape := self const: shapeArray asInt32Tensor.
-	^ shape unaryOp: 'RandomStandardNormal' described: [:description |
-		description at: 'dtype' putType: TFTensor typeFloat]
+	^ shape
+		unaryOp: 'RandomStandardNormal'
+		described: [ :description | description at: 'dtype' putType: FloatDataType new ]
 ]
 
 { #category : #'*TensorFlowDeprecatedCore' }
@@ -213,7 +221,7 @@ TFGraph >> randomUniformShaped:shapeArray [
 	| shape |
 	shape := self const: shapeArray asInt32Tensor.
 	^ shape unaryOp: 'RandomUniform' described: [:description |
-		description at: 'dtype' putType: TFTensor typeFloat]
+		description at: 'dtype' putType: FloatDataType new]
 ]
 
 { #category : #'*TensorFlowDeprecatedCore' }
@@ -236,11 +244,13 @@ TFGraph >> runInputs: inArrayOfTFOutputs values: inArrayOfTFTensor outputs: outA
 
 { #category : #'*TensorFlowDeprecatedCore' }
 TFGraph >> truncatedNormalRandomShaped: shapeArray [
+
 	| shape |
+
 	shape := self const: shapeArray asInt32Tensor.
 	^ shape
 		unaryOp: 'TruncatedNormal'
-		described: [ :description | description at: 'dtype' putType: TFTensor typeFloat ]
+		described: [ :description | description at: 'dtype' putType: FloatDataType new ]
 ]
 
 { #category : #'*TensorFlowDeprecatedCore' }

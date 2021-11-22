@@ -37,8 +37,8 @@ TensorFlowCAPITest >> concatGraphInputList [
 	graph := TFGraph create.
 	dimensionValue := TFTensor fromInt32: 0.
 	dimension := graph const: 'const' value: dimensionValue.
-	in1 := graph placeholder: 'in1' type: TFTensor typeInt64.
-	in2 := graph placeholder: 'in2' type: TFTensor typeInt64.
+	in1 := graph placeholder: 'in1' type: Int64DataType new.
+	in2 := graph placeholder: 'in2' type: Int64DataType new.
 	inputs := Array with: (in1 output: 0) with: (in2 output: 0).
 	concat := graph
 		concat: 'concat'
@@ -46,7 +46,7 @@ TensorFlowCAPITest >> concatGraphInputList [
 			description addInput: (dimension output: 0).
 			description addInputs: inputs.
 			description at: 'N' putInt: 2.
-			description at: 'T' putType: TFTensor typeInt64 ].
+			description at: 'T' putType: Int64DataType new ].
 	concat.
 	^ graph
 ]
@@ -57,8 +57,8 @@ TensorFlowCAPITest >> concatGraphInputListNoSizeNoType [
 	graph := TFGraph create.
 	dimensionValue := TFTensor fromInt32: 0.
 	dimension := graph const: 'const' value: dimensionValue.
-	in1 := graph placeholder: 'in1' type: TFTensor typeInt64.
-	in2 := graph placeholder: 'in2' type: TFTensor typeInt64.
+	in1 := graph placeholder: 'in1' type: Int64DataType new.
+	in2 := graph placeholder: 'in2' type: Int64DataType new.
 	inputs := Array with: (in1 output: 0) with: (in2 output: 0).
 	concat := graph
 		concat: 'concat'
@@ -75,8 +75,8 @@ TensorFlowCAPITest >> concatGraphInputListWrongSize [
 	graph := TFGraph create.
 	dimensionValue := TFTensor fromInt32: 0.
 	dimension := graph const: 'const' value: dimensionValue.
-	in1 := graph placeholder: 'in1' type: TFTensor typeInt64.
-	in2 := graph placeholder: 'in2' type: TFTensor typeInt64.
+	in1 := graph placeholder: 'in1' type: Int64DataType new.
+	in2 := graph placeholder: 'in2' type: Int64DataType new.
 	inputs := Array with: (in1 output: 0) with: (in2 output: 0).
 	concat := graph
 		concat: 'concat'
@@ -90,19 +90,23 @@ TensorFlowCAPITest >> concatGraphInputListWrongSize [
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
 TensorFlowCAPITest >> concatGraphInputListWrongType [
+
 	| graph in1 in2 concat dimension dimensionValue inputs |
+
 	graph := TFGraph create.
 	dimensionValue := TFTensor fromInt32: 0.
 	dimension := graph const: 'const' value: dimensionValue.
-	
-	in1 := graph placeholder: 'in1' type: TFTensor typeInt64.
-	in2 := graph placeholder: 'in2' type: TFTensor typeInt64.
-	inputs := Array with: (in1 output: 0) with: (in2 output: 0).
-	concat := graph concat: 'concat' described: [:description |
-		description addInput: (dimension output: 0).
-		description addInputs: inputs.
-		description at: 'T' putType: TFTensor typeInt32.
-	].
+
+	in1 := graph placeholder: 'in1' type: Int64DataType new.
+	in2 := graph placeholder: 'in2' type: Int64DataType new.
+	inputs := Array with: ( in1 output: 0 ) with: ( in2 output: 0 ).
+	concat := graph
+		concat: 'concat'
+		described: [ :description | 
+			description addInput: ( dimension output: 0 ).
+			description addInputs: inputs.
+			description at: 'T' putType: Int32DataType new
+			].
 	concat.
 	^ graph
 ]
@@ -129,7 +133,7 @@ TensorFlowCAPITest >> decodeCSVGraphDefaults: anArrayOfTF_Tensors [
 	| graph records defaults |
 	
 	graph := TFGraph create.
-	records := (graph placeholder: 'records' type: TFTensor typeString) output: 0.
+	records := (graph placeholder: 'records' type: StringDataType new) output: 0.
 	defaults := Array new: anArrayOfTF_Tensors size.
 	
 	anArrayOfTF_Tensors withIndexDo: [:each :index |
@@ -318,7 +322,7 @@ TensorFlowCAPITest >> testAsStringGraphRunOn: tensor [
 TensorFlowCAPITest >> testAttrGetBoolFalse [
 	| graph in op |
 	graph := TFGraph create.
-	in := graph placeholder: 'in' type: TFTensor typeDouble.
+	in := graph placeholder: 'in' type: DoubleDataType new.
 	op := graph asString: 'out' described: [ :description | description addInput: (in output: 0) ].
 	self assert: (op boolAt: 'scientific') equals: false
 ]
@@ -327,9 +331,9 @@ TensorFlowCAPITest >> testAttrGetBoolFalse [
 TensorFlowCAPITest >> testAttrGetBoolTrue [
 	| graph in op input_min input_max |
 	graph := TFGraph create.
-	in := graph placeholder: 'in' type: TFTensor typeDouble.
-	input_min := graph placeholder: 'input_min' type: TFTensor typeDouble.
-	input_max := graph placeholder: 'input_max' type: TFTensor typeDouble.
+	in := graph placeholder: 'in' type: DoubleDataType new.
+	input_min := graph placeholder: 'input_min' type: DoubleDataType new.
+	input_max := graph placeholder: 'input_max' type: DoubleDataType new.
 	op := graph newOperation: 'QuantizeAndDequantizeV2' named: 'out' described: [ :description | description addInput: (in output: 0).
 		description addInput: (input_min output:0).
 		description addInput: (input_max output:0)].
@@ -338,12 +342,17 @@ TensorFlowCAPITest >> testAttrGetBoolTrue [
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
 TensorFlowCAPITest >> testAttrGetFloat [
+
 	| graph in op |
+
 	graph := TFGraph create.
-	in := graph placeholder: 'in' type: TFTensor typeFloat.
-	op := graph newOperation: 'FakeQuantWithMinMaxArgs' named: 'out' described: [ :description | description addInput: (in output: 0) ].
-	self assert: (op floatAt: 'min') equals: -6.0.
-	self assert: (op floatAt: 'max') equals: 6.0
+	in := graph placeholder: 'in' type: FloatDataType new.
+	op := graph
+		newOperation: 'FakeQuantWithMinMaxArgs'
+		named: 'out'
+		described: [ :description | description addInput: ( in output: 0 ) ].
+	self assert: ( op floatAt: 'min' ) equals: -6.0.
+	self assert: ( op floatAt: 'max' ) equals: 6.0
 ]
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
@@ -356,17 +365,19 @@ TensorFlowCAPITest >> testAttrGetInt [
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
 TensorFlowCAPITest >> testAttrGetShape [
+
 	| graph op |
+
 	graph := TFGraph create.
-	op := graph placeholder: 'in' type: TFTensor typeDouble.
-	self assert: (op shapeAt: 'shape') equals: #()
+	op := graph placeholder: 'in' type: DoubleDataType new.
+	self assert: ( op shapeAt: 'shape' ) equals: #()
 ]
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
 TensorFlowCAPITest >> testAttrGetString [
 	| graph in op |
 	graph := TFGraph create.
-	in := graph placeholder: 'in' type: TFTensor typeDouble.
+	in := graph placeholder: 'in' type: DoubleDataType new.
 	op := graph
 		newOperation: 'AsString'
 		named: 'out'
@@ -378,7 +389,7 @@ TensorFlowCAPITest >> testAttrGetString [
 TensorFlowCAPITest >> testAttrGetStringNotEmpty [
 	| graph in op |
 	graph := TFGraph create.
-	in := graph placeholder: 'in' type: TFTensor typeDouble.
+	in := graph placeholder: 'in' type: DoubleDataType new.
 	op := graph
 		newOperation: 'AsString'
 		named: 'out'
@@ -412,7 +423,7 @@ TensorFlowCAPITest >> testAttrGetTensor [
 	graph := self constantInt64Graph.
 	op := graph operationNamed: 'a'.
 	tensor := op tensorAt: 'value'.
-	self assert: tensor type equals: TFTensor typeInt64.
+	self assert: tensor type equals: Int64DataType new.
 	self assert: tensor shape equals: #().
 	self assert: tensor allInt64s equals: #(16r4242424242424242)
 ]
@@ -422,93 +433,65 @@ TensorFlowCAPITest >> testAttrGetType [
 	| op graph |
 	graph := self concatGraphInputList.
 	op := graph operationNamed: 'concat'.
-	self assert: (op typeAt: 'T') equals: TFTensor typeInt64
+	self assert: (op typeAt: 'T') equals: Int64DataType new uniqueIdentifier 
 ]
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
 TensorFlowCAPITest >> testAttrSetBoolFalse [
+
 	| graph in op input_min input_max |
-	graph := TFGraph
-		create.
-	in := graph
-		placeholder: 'in'
-		type:
-			TFTensor
-				typeDouble.
-	input_min := graph
-		placeholder:
-			'input_min'
-		type:
-			TFTensor
-				typeDouble.
-	input_max := graph
-		placeholder:
-			'input_max'
-		type:
-			TFTensor
-				typeDouble.
+
+	graph := TFGraph create.
+	in := graph placeholder: 'in' type: DoubleDataType new.
+	input_min := graph placeholder: 'input_min' type: DoubleDataType new.
+	input_max := graph placeholder: 'input_max' type: DoubleDataType new.
 	op := graph
-		newOperation:
-			'QuantizeAndDequantizeV2'
-		named:
-			'out'
-		described:
-			[ :description | 
-			description
-				at:
-					'signed_input'
-				putBoolean:
-					false.
-			description
-				addInput:
-					(in
-						output: 0).
-			description
-				addInput:
-					(input_min
-						output: 0).
-			description
-				addInput:
-					(input_max
-						output: 0) ].
-	self
-		assert:
-			(op
-				boolAt:
-					'signed_input')
-		equals:
-			false
+		newOperation: 'QuantizeAndDequantizeV2'
+		named: 'out'
+		described: [ :description | 
+			description at: 'signed_input' putBoolean: false.
+			description addInput: ( in output: 0 ).
+			description addInput: ( input_min output: 0 ).
+			description addInput: ( input_max output: 0 )
+			].
+	self assert: ( op boolAt: 'signed_input' ) equals: false
 ]
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
 TensorFlowCAPITest >> testAttrSetBoolTrue [
+
 	| graph in op |
+
 	graph := TFGraph create.
-	in := graph placeholder: 'in' type: TFTensor typeDouble.
+	in := graph placeholder: 'in' type: DoubleDataType new.
 	op := graph
 		asString: 'out'
 		described: [ :description | 
 			description at: 'scientific' putBoolean: true.
-			description addInput: (in output: 0) ].
-	self assert: (op boolAt: 'scientific') equals: true
+			description addInput: ( in output: 0 )
+			].
+	self assert: ( op boolAt: 'scientific' ) equals: true
 ]
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
 TensorFlowCAPITest >> testAttrSetFloat [
+
 	| graph in op min max |
+
 	min := -1234.5678e10.
 	max := 12345678e-10 asFraction.
 	graph := TFGraph create.
-	in := graph placeholder: 'in' type: TFTensor typeFloat.
+	in := graph placeholder: 'in' type: FloatDataType new.
 	op := graph
 		newOperation: 'FakeQuantWithMinMaxArgs'
 		named: 'out'
 		described: [ :description | 
 			description at: 'min' putFloat: min.
 			description at: 'max' putFloat: max.
-			description addInput: (in output: 0) ].
-	self assert: ((op floatAt: 'min') closeTo: min).
-	self assert: ((op floatAt: 'max') closeTo: max)
+			description addInput: ( in output: 0 )
+			].
+	self assert: ( ( op floatAt: 'min' ) closeTo: min ).
+	self assert: ( ( op floatAt: 'max' ) closeTo: max )
 ]
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
@@ -688,7 +671,7 @@ TensorFlowCAPITest >> testGetAttrMetadataBoolean [
 	| graph in op template metadata |
 	template := '1234567890abc'.
 	graph := TFGraph create.
-	in := graph placeholder: 'in' type: TFTensor typeDouble.
+	in := graph placeholder: 'in' type: DoubleDataType new.
 	op := graph
 		newOperation: 'AsString'
 		named: 'out'
@@ -702,10 +685,15 @@ TensorFlowCAPITest >> testGetAttrMetadataBoolean [
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
 TensorFlowCAPITest >> testGetAttrMetadataFloat [
+
 	| graph in op metadata |
+
 	graph := TFGraph create.
-	in := graph placeholder: 'in' type: TFTensor typeFloat.
-	op := graph newOperation: 'FakeQuantWithMinMaxArgs' named: 'out' described: [ :description | description addInput: (in output: 0) ].
+	in := graph placeholder: 'in' type: FloatDataType new.
+	op := graph
+		newOperation: 'FakeQuantWithMinMaxArgs'
+		named: 'out'
+		described: [ :description | description addInput: ( in output: 0 ) ].
 	metadata := op attrMetadata: 'min'.
 	self assert: metadata isFloat.
 	self assert: metadata isList equals: false
@@ -716,7 +704,7 @@ TensorFlowCAPITest >> testGetAttrMetadataInt [
 	| graph in op template metadata |
 	template := '1234567890abc'.
 	graph := TFGraph create.
-	in := graph placeholder: 'in' type: TFTensor typeDouble.
+	in := graph placeholder: 'in' type: DoubleDataType new.
 	op := graph
 		newOperation: 'AsString'
 		named: 'out'
@@ -733,7 +721,7 @@ TensorFlowCAPITest >> testGetAttrMetadataString [
 	| graph in op template metadata |
 	template := '1234567890abc'.
 	graph := TFGraph create.
-	in := graph placeholder: 'in' type: TFTensor typeDouble.
+	in := graph placeholder: 'in' type: DoubleDataType new.
 	op := graph newOperation: 'AsString' named: 'out' described: [:description |
 		description at: 'fill' putString: template.
 		description addInput: (in output: 0)].
@@ -1001,8 +989,8 @@ TensorFlowCAPITest >> testNewGraph [
 TensorFlowCAPITest >> testNewOperationMul [
 	| graph operation a b |
 	graph := TFGraph create.
-	a := graph placeholder: 'a' type: TFTensor typeInt64.
-	b := graph placeholder: 'b' type: TFTensor typeInt64.
+	a := graph placeholder: 'a' type: Int64DataType new.
+	b := graph placeholder: 'b' type: Int64DataType new.
 	operation := graph
 		mul: 'aMultiplication'
 		described: [ :description | 
@@ -1021,11 +1009,11 @@ TensorFlowCAPITest >> testNewOperationMul [
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
 TensorFlowCAPITest >> testNewOperationPlaceholder [
+
 	| graph operation |
+
 	graph := TFGraph create.
-	operation := graph
-		placeholder: 'aPlaceholder'
-		type: TFTensor typeInt64.
+	operation := graph placeholder: 'aPlaceholder' type: Int64DataType new.
 	self assert: operation type equals: 'Placeholder'.
 	self assert: operation name equals: 'aPlaceholder'.
 	self assert: operation inputsCount equals: 0.
@@ -1090,37 +1078,49 @@ TensorFlowCAPITest >> testNewVariableInitialValueAutomaticInitialization [
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
 TensorFlowCAPITest >> testNewVariableInitialization [
-	| graph var assign pi result session |
-	graph := TFGraph create.
-	var := graph variable: 'var' type: TFTensor typeFloat shape: TensorShape scalar.
-	pi := graph const: 'pi' value: (TFTensor fromFloats: 3.14).
-	assign := graph newOperation: 'Assign' named: 'assign' described: [:description |
-		description
-			addInput: (var output: 0);
-			addInput: (pi output: 0)].
-	
-	session := TFSession on: graph.
-	
-	session runOutput: (assign output: 0).
-	result := session runOutput: (var output: 0).
 
-	self assert: (result allFloats first closeTo: 3.14)
+	| graph var assign pi result session |
+
+	graph := TFGraph create.
+	var := graph variable: 'var' type: FloatDataType new shape: TensorShape scalar.
+	pi := graph const: 'pi' value: ( TFTensor fromFloats: 3.14 ).
+	assign := graph
+		newOperation: 'Assign'
+		named: 'assign'
+		described: [ :description | 
+			description
+				addInput: ( var output: 0 );
+				addInput: ( pi output: 0 )
+			].
+
+	session := TFSession on: graph.
+
+	session runOutput: ( assign output: 0 ).
+	result := session runOutput: ( var output: 0 ).
+
+	self assert: ( result allFloats first closeTo: 3.14 )
 ]
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
 TensorFlowCAPITest >> testNewVariableInitializationNodeNotRun [
+
 	| graph var pi lastError |
+
 	graph := TFGraph create.
-	var := graph variable: 'var' type: TFTensor typeFloat shape: TensorShape scalar.
-	pi := graph const: 'pi' value: (TFTensor fromFloats: 3.14).
-	graph newOperation: 'Assign' named: 'assign' described: [:description |
-		description
-			addInput: (var output: 0);
-			addInput: (pi output: 0)].
-	
-	[(TFSession on: graph)
-		runOutput: (var output: 0)] ifError: [:description :receiver | lastError := description].
-	
+	var := graph variable: 'var' type: FloatDataType new shape: TensorShape scalar.
+	pi := graph const: 'pi' value: ( TFTensor fromFloats: 3.14 ).
+	graph
+		newOperation: 'Assign'
+		named: 'assign'
+		described: [ :description | 
+			description
+				addInput: ( var output: 0 );
+				addInput: ( pi output: 0 )
+			].
+
+	[ ( TFSession on: graph ) runOutput: ( var output: 0 ) ]
+		ifError: [ :description :receiver | lastError := description ].
+
 	self
 		assert: 'Error: FAILED_PRECONDITION: Attempting to use uninitialized value var'
 		equals: lastError lines first
@@ -1128,10 +1128,13 @@ TensorFlowCAPITest >> testNewVariableInitializationNodeNotRun [
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
 TensorFlowCAPITest >> testNewVariableNoInitialization [
+
 	| graph var expectedError lastError |
+
 	graph := TFGraph create.
-	var := graph variable: 'var' type: TFTensor typeFloat shape: TensorShape scalar.
-	[ (TFSession on: graph) runOutput: (var output: 0) ] ifError: [ :description :receiver | lastError := description ].
+	var := graph variable: 'var' type: FloatDataType new shape: TensorShape scalar.
+	[ ( TFSession on: graph ) runOutput: ( var output: 0 ) ]
+		ifError: [ :description :receiver | lastError := description ].
 	expectedError := 'Error: FAILED_PRECONDITION: Attempting to use uninitialized value var'.
 	self assert: expectedError equals: lastError lines first
 ]
@@ -1158,9 +1161,11 @@ TensorFlowCAPITest >> testOperationAsOperationOk [
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
 TensorFlowCAPITest >> testOperationEquals [
+
 	| graph in1 |
+
 	graph := TFGraph create.
-	in1 := graph placeholder: 'in1' type: TFTensor typeFloat.
+	in1 := graph placeholder: 'in1' type: FloatDataType new.
 	self assert: in1 equals: in1.
 	self deny: in1 = 'in1'
 ]
@@ -1181,9 +1186,10 @@ TensorFlowCAPITest >> testPlaceholderType: type [
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
 TensorFlowCAPITest >> testPlaceholderTypes [
-	self testPlaceholderType: TFTensor typeInt64.
-	self testPlaceholderType: TFTensor typeInt32.
-	self testPlaceholderType: TFTensor typeFloat
+
+	self testPlaceholderType: Int64DataType new.
+	self testPlaceholderType: Int32DataType new.
+	self testPlaceholderType: FloatDataType new
 ]
 
 { #category : #'*TensorFlowDeprecatedCoreTests' }
@@ -1378,7 +1384,7 @@ TensorFlowCAPITest >> testShapeOfOutputSet [
 	
 	var := graph newOperation: 'Placeholder' named: 'var' described: [:description |
 		description
-			at: 'dtype' putType: TFTensor typeInt64;
+			at: 'dtype' putType: Int64DataType new;
 			at: 'shape' putShape: (TensorShape withDimensionsSized: #(3 -1 -1))].
 	
 	output := var output: 0.

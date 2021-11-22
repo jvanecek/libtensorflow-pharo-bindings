@@ -12,10 +12,10 @@ InputNodeTest >> testOutputAttributesOfPartiallyUndefinedShapedInput [
 	input := InputNode
 		on: tf
 		named: 'inputWithSize'
-		of: TFTensor typeFloat
+		of: FloatDataType new
 		sized: 2.
-	
-	self assert: input value firstOutput rank equals: 2. 
+
+	self assert: input value firstOutput rank equals: 2.
 	self assert: input outputShape equals: ( TensorShape unknownBatchSizeWith: 2 ).
 	self assert: input outputDimensions equals: 2
 ]
@@ -25,9 +25,9 @@ InputNodeTest >> testOutputAttributesOfUndefinedShapedInput [
 
 	| input |
 
-	input := InputNode on: tf named: 'input' of: TFTensor typeFloat.
+	input := InputNode on: tf named: 'input' of: FloatDataType new.
 
-	self assert: input value firstOutput rank equals: -1. 
+	self assert: input value firstOutput rank equals: -1.
 	self assert: input outputShape equals: TensorShape scalar.
 	self assert: input outputDimensions equals: -1
 ]

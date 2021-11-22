@@ -4,7 +4,7 @@ Operation being built. The underlying graph must outlive this.
 Class {
 	#name : #TFOperationDescription,
 	#superclass : #FFIOpaqueObject,
-	#category : #TensorFlowCore
+	#category : #'TensorFlowCore-Structures'
 }
 
 { #category : #finalization }
@@ -96,8 +96,9 @@ TFOperationDescription >> at: attribute putTensor: aTFTensor [
 ]
 
 { #category : #attributes }
-TFOperationDescription >> at: attribute putType: value [
-	self library description: self set: attribute asAsciiZ toType: value
+TFOperationDescription >> at: attribute putType: aDataType [
+
+	self library description: self set: attribute asAsciiZ toType: aDataType uniqueIdentifier
 ]
 
 { #category : #attributes }

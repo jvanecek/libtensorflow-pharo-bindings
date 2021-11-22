@@ -5,29 +5,8 @@ Class {
 		'fileName',
 		'dataset'
 	],
-	#category : 'TFDatasetModelTests'
+	#category : #TFDatasetModelTests
 }
-
-{ #category : #Tests }
-CSVDatasetTest >> datasetFromCSVNamed: aFileName [
-
-	^CSVDataset
-		on: tf
-		named: 'My CSV Dataset'
-		from: aFileName
-		withColumnsDefinedBy: (
-			OrderedCollection new
-				add: (CSVColumnDefinition nullableTyped: TFTensor typeInt32 defaultTo: -1);
-				add: (CSVColumnDefinition mandatoryTyped: TFTensor typeFloat);
-				add: (CSVColumnDefinition nullableTyped: TFTensor typeFloat defaultTo: -1);
-				add: (CSVColumnDefinition nullableTyped: TFTensor typeInt32 defaultTo: -1);
-				yourself)
-		configuredBy: [:configuration |
-			configuration
-				bufferSized: 1024;
-				fieldsDelimiter: ',';
-				forNanUse: '-']
-]
 
 { #category : #Tests }
 CSVDatasetTest >> setUp [
@@ -40,57 +19,61 @@ CSVDatasetTest >> setUp [
 { #category : #Tests }
 CSVDatasetTest >> setUpCSVDatasetOnFile: aFileName [
 
-	dataset :=
-		CSVDataset
-			on: tf
-			named: 'My-CSV-Dataset'
-			from: aFileName
-			withColumnsDefinedBy: (
-				OrderedCollection new
-					add: (CSVColumnDefinition nullableTyped: TFTensor typeInt32 defaultTo: -1);
-					add: (CSVColumnDefinition mandatoryTyped: TFTensor typeFloat);
-					add: (CSVColumnDefinition nullableTyped: TFTensor typeFloat defaultTo: -1);
-					add: (CSVColumnDefinition nullableTyped: TFTensor typeInt32 defaultTo: -1);
-					yourself)
-			configuredBy: [:configuration |
-				configuration
-					bufferSized: 1024;
-					fieldsDelimiter: ',';
-					forNanUse: '-'].
+	dataset := CSVDataset
+		on: tf
+		named: 'My-CSV-Dataset'
+		from: aFileName
+		withColumnsDefinedBy:
+			( OrderedCollection new
+				add: ( CSVColumnDefinition nullableTyped: Int32DataType new defaultTo: -1 );
+				add: ( CSVColumnDefinition mandatoryTyped: FloatDataType new );
+				add: ( CSVColumnDefinition nullableTyped: FloatDataType new defaultTo: -1 );
+				add: ( CSVColumnDefinition nullableTyped: Int32DataType new defaultTo: -1 );
+				yourself )
+		configuredBy: [ :configuration | 
+			configuration
+				bufferSized: 1024;
+				fieldsDelimiter: ',';
+				forNanUse: '-'
+			].
 
-	fileName asFileReference writeStreamDo: [:stream |
-		stream
-			nextPutAll: '1,2,3,4';
-			cr;
-			nextPutAll: ',0.5,6.3,1']
+	fileName asFileReference
+		writeStreamDo: [ :stream | 
+			stream
+				nextPutAll: '1,2,3,4';
+				cr;
+				nextPutAll: ',0.5,6.3,1'
+			]
 ]
 
 { #category : #Tests }
 CSVDatasetTest >> setUpTSVDatasetOnFile: aFileName [
 
-	dataset :=
-		CSVDataset
-			on: tf
-			named: 'My-TSV-Dataset'
-			from: aFileName
-			withColumnsDefinedBy: (
-				OrderedCollection new
-					add: (CSVColumnDefinition nullableTyped: TFTensor typeInt32 defaultTo: -1);
-					add: (CSVColumnDefinition mandatoryTyped: TFTensor typeFloat);
-					add: (CSVColumnDefinition nullableTyped: TFTensor typeFloat defaultTo: -1);
-					add: (CSVColumnDefinition nullableTyped: TFTensor typeInt32 defaultTo: -1);
-					yourself)
-			configuredBy: [:configuration |
-				configuration
-					bufferSized: 1024;
-					fieldsDelimiter: '	';
-					forNanUse: '-'].
+	dataset := CSVDataset
+		on: tf
+		named: 'My-TSV-Dataset'
+		from: aFileName
+		withColumnsDefinedBy:
+			( OrderedCollection new
+				add: ( CSVColumnDefinition nullableTyped: Int32DataType new defaultTo: -1 );
+				add: ( CSVColumnDefinition mandatoryTyped: FloatDataType new );
+				add: ( CSVColumnDefinition nullableTyped: FloatDataType new defaultTo: -1 );
+				add: ( CSVColumnDefinition nullableTyped: Int32DataType new defaultTo: -1 );
+				yourself )
+		configuredBy: [ :configuration | 
+			configuration
+				bufferSized: 1024;
+				fieldsDelimiter: '	';
+				forNanUse: '-'
+			].
 
-	fileName asFileReference writeStreamDo: [:stream |
-		stream
-			nextPutAll: '1	2	3	4';
-			cr;
-			nextPutAll: '	0.5	6.3	1']
+	fileName asFileReference
+		writeStreamDo: [ :stream | 
+			stream
+				nextPutAll: '1	2	3	4';
+				cr;
+				nextPutAll: '	0.5	6.3	1'
+			]
 ]
 
 { #category : #Tests }

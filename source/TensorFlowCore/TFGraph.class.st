@@ -9,7 +9,7 @@ Class {
 	#instVars : [
 		'context'
 	],
-	#category : #TensorFlowCore
+	#category : #'TensorFlowCore-Structures'
 }
 
 { #category : #'instance creation' }

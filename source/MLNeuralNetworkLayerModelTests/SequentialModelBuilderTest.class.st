@@ -1,7 +1,7 @@
 Class {
 	#name : #SequentialModelBuilderTest,
 	#superclass : #TensorFlowComputationBasedTest,
-	#category : 'MLNeuralNetworkLayerModelTests'
+	#category : #MLNeuralNetworkLayerModelTests
 }
 
 { #category : #Accessing }
@@ -44,7 +44,7 @@ SequentialModelBuilderTest >> testBuildWithArgMaxOnLogits [
 					at: model inputVariableName put: inputValues;
 					yourself))
 		isMatrixCloseTo: #((0.6 2.2) (0.9 0.8)).
-	self assert: (model predictFrom: inputValues) isVectorTyped: TFTensor typeInt64 closeTo: #(1 0)
+	self assert: (model predictFrom: inputValues) isVectorTyped: Int64DataType new closeTo: #(1 0)
 ]
 
 { #category : #Tests }
@@ -52,15 +52,14 @@ SequentialModelBuilderTest >> testOneLayerInitializedRandomly [
 
 	| model result |
 
-	model :=
-		(SequentialModelBuilder on: tf)
-			addDenseLayerSized: 2 builtWith: [:layer | layer inputSize: 3];
-			build.
+	model := ( SequentialModelBuilder on: tf )
+		addDenseLayerSized: 2 builtWith: [ :layer | layer inputSize: 3 ];
+		build.
 
 	result := model predictFrom: self inputWithThreeFeatures.
 
-	self assert: result type equals: TFTensor typeFloat.
-	self assert: result shape equals: (TensorShape matrixSized: 4 by: 2)
+	self assert: result type equals: FloatDataType new.
+	self assert: result shape equals: ( TensorShape matrixSized: 4 by: 2 )
 ]
 
 { #category : #Tests }

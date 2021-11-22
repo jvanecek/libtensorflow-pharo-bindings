@@ -1,7 +1,7 @@
 Class {
 	#name : #VariableInitializerTest,
 	#superclass : #TensorFlowComputationBasedTest,
-	#category : 'TFVariableSpecificationModelTests'
+	#category : #TFVariableSpecificationModelTests
 }
 
 { #category : #Accessing }
@@ -81,18 +81,16 @@ VariableInitializerTest >> testInitializeScalarVariableWithRandomSeed [
 
 	| variable output |
 
-	variable :=
-		VariableNode
-			on: tf
-			named: 'input'
-			forFloatsShaped: TensorShape scalar
-			initializedWith: self createInitializerWithRandomSeed.
-	
+	variable := VariableNode
+		on: tf
+		named: 'input'
+		forFloatsShaped: TensorShape scalar
+		initializedWith: self createInitializerWithRandomSeed.
+
 	output := tf compute: variable.
-	
-	self assert: output type equals: TFTensor typeFloat.
-	self assert: output shape equals: TensorShape scalar.
-	
+
+	self assert: output type equals: FloatDataType new.
+	self assert: output shape equals: TensorShape scalar
 ]
 
 { #category : #Test }

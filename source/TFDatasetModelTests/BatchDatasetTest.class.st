@@ -1,7 +1,7 @@
 Class {
 	#name : #BatchDatasetTest,
 	#superclass : #DatasetTest,
-	#category : 'TFDatasetModelTests'
+	#category : #TFDatasetModelTests
 }
 
 { #category : #Tests }
@@ -17,10 +17,10 @@ BatchDatasetTest >> testIterateThroughDatasetWithOneFloatMatrixInBatchesOfOne [
 	iterator := batch newIterator.
 	self
 		assert: iterator next
-		isOf: TFTensor typeFloat
-		with: (TensorShape withDimensionsSized: #(1 2 4))
+		isOf: FloatDataType new
+		with: ( TensorShape withDimensionsSized: #(1 2 4) )
 		comparedTo: #(0 1 2 3 9 8 7 6)
-		complying: [:actual :expected | self assert: actual equals: expected].
+		complying: [ :actual :expected | self assert: actual equals: expected ].
 
 	self assertReachedEnd: iterator
 ]

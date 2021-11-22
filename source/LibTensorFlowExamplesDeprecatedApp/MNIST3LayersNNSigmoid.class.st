@@ -31,7 +31,7 @@ MNIST3LayersNNSigmoid >> initializeLearningGraph [
 	| axis0 activationGradient gradient1 gradient2 learningRate biasGradient one batchSize learnBiases1 learnBiases2 learnBiases3 learnWeights1 learnWeights2 learnWeights3 |
 	
 	learningRate := graph const: 0.1 asTensor.
-	batchSize := graph fromBlock: [(input sizeOn: 0) castTo: TFTensor typeFloat] named: 'batchSize'.
+	batchSize := graph fromBlock: [(input sizeOn: 0) castTo: FloatDataType new] named: 'batchSize'.
 	axis0 := #(0) asInt32Tensor. 
 	graph
 		fromBlock: [

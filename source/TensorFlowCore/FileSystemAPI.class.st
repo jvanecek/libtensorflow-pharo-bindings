@@ -7,7 +7,7 @@ Class {
 	#classInstVars : [
 		'current'
 	],
-	#category : #TensorFlowCore
+	#category : #'TensorFlowCore-APIs'
 }
 
 { #category : #accessing }

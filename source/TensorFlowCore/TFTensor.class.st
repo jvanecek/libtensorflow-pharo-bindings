@@ -8,141 +8,102 @@ A Tensor is a symbolic handle to one of the outputs of an Operation. It does not
 Class {
 	#name : #TFTensor,
 	#superclass : #FFIOpaqueObject,
-	#category : #TensorFlowCore
+	#category : #'TensorFlowCore-Structures'
 }
 
 { #category : #utils }
-TFTensor class >> array: values type: type into: anExternalAddressOrByteArray [
-	| size index setter |
-	size := self sizeForType: type.
-	setter := self setterBlockFor: type.
+TFTensor class >> copyArrayOf: type with: values into: anExternalAddressOrByteArray [
+
+	| index |
+
 	index := 0.
-	self
-		elementsOf: values
-		do: [ :value | 
-			setter value: anExternalAddressOrByteArray value: index * size + 1 value: value.
-			index := index + 1 ]
-]
-
-{ #category : #types }
-TFTensor class >> descriptionOf: aType [
-
-	^ Dictionary new
-		at: self typeBFloat16 put: 'BFloat16';
-		at: self typeBoolean put: 'Bool';
-		at: self typeComplex put: 'Complex';
-		at: self typeComplex128 put: 'Complex128';
-		at: self typeComplex64 put: 'Complex64';
-		at: self typeDouble put: 'Double';
-		at: self typeFloat put: 'Float';
-		at: self typeHalf put: 'Half';
-		at: self typeInt16 put: 'Int16';
-		at: self typeInt32 put: 'Int32';
-		at: self typeInt64 put: 'Int64';
-		at: self typeInt8 put: 'Int8';
-		at: self typeQint16 put: 'QInt16';
-		at: self typeQint32 put: 'QInt32';
-		at: self typeQint8 put: 'QInt8';
-		at: self typeQuint16 put: 'QUInt16';
-		at: self typeQuint8 put: 'QUInt8';
-		at: self typeResource put: 'Resource';
-		at: self typeString put: 'String';
-		at: self typeUint16 put: 'UInt16';
-		at: self typeUint32 put: 'Uint32';
-		at: self typeUint64 put: 'Uint64';
-		at: self typeUint8 value put: 'Uint8';
-		at: self typeVariant put: 'Variant';
-		at: aType
-]
-
-{ #category : #utils }
-TFTensor class >> elementsOf: aMultidimensionalTensor [
-	| answer |
-	answer := (Array new: (self sizeOf: aMultidimensionalTensor)) writeStream.
-	self elementsOf: aMultidimensionalTensor do: [ :each | answer nextPut: each ].
-	^ answer contents
-]
-
-{ #category : #utils }
-TFTensor class >> elementsOf: tensorArray do: oneArgBlock [
-	^ (tensorArray isCollection and: [ tensorArray isString not ])
-		ifTrue: [ tensorArray do: [ :each | self elementsOf: each do: oneArgBlock ] ]
-		ifFalse: [ oneArgBlock value: tensorArray ]
+	values singleElementsDo: [:value |
+		type put: value at: index in: anExternalAddressOrByteArray.
+		index := index + 1]
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> fromBooleans: values [
-	^ self fromNumbers: values type: self typeBoolean
+
+	^ self fromNumbers: values type: BooleanDataType new
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> fromBools: values shape: shape [
-	^ self fromNumbers: values type: self typeBoolean shape: shape
+
+	^ self fromNumbers: values type: BooleanDataType new shape: shape
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> fromDoubles: values [
-	^ self fromNumbers: values type: self typeDouble
+
+	^ self fromNumbers: values type: DoubleDataType new
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> fromDoubles: values shape: shape [
-	^ self fromNumbers: values type: self typeDouble shape: shape
+
+	^ self fromNumbers: values type: DoubleDataType new shape: shape
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> fromFloats: values [
-	^ self fromNumbers: values type: self typeFloat
+
+	^ self fromNumbers: values type: FloatDataType new
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> fromFloats: values shape: shape [
-	^ self fromNumbers: values type: self typeFloat shape: shape
+
+	^ self fromNumbers: values type: FloatDataType new shape: shape
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> fromInt32: value [
 
 	^ self
-		newTyped: self typeInt32
+		newTyped: Int32DataType new
 		shaped: TensorShape scalar
 		thenDo: [ :tensor | tensor data getHandle signedLongAt: 1 put: value ]
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> fromInt32s: values [
-	^ self fromNumbers: values type: self typeInt32
+
+	^ self fromNumbers: values type: Int32DataType new
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> fromInt32s: values shape: shape [
-	^ self fromNumbers: values type: self typeInt32 shape: shape
+
+	^ self fromNumbers: values type: Int32DataType new shape: shape
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> fromInt64: value [
 
 	^ self
-		newTyped: self typeInt64
+		newTyped: Int64DataType new
 		shaped: TensorShape scalar
 		thenDo: [ :tensor | tensor data getHandle signedLongLongAt: 1 put: value ]
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> fromInt64s: values [
-	^ self fromNumbers: values type: self typeInt64
+
+	^ self fromNumbers: values type: Int64DataType new
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> fromInt64s: values shape: shape [
-	^ self fromNumbers: values type: self typeInt64 shape: shape
+
+	^ self fromNumbers: values type: Int64DataType new shape: shape
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> fromNumbers: values type: type [
-	| shape |
-	shape := self shapeOf: values.
-	^ self fromNumbers: values type: type shape: shape
+
+	^ self fromNumbers: values type: type shape: values inferTensorShape
 ]
 
 { #category : #acccessing }
@@ -150,14 +111,14 @@ TFTensor class >> fromNumbers: values type: type shape: shape [
 
 	| size count |
 
-	size := self sizeOf: values.
+	size := values singleElementsInCollection.
 	count := shape totalAmountOfElements.
 	count = size
 		ifFalse: [ Error signal: 'Inferred size and real size don''t match.' ].
 	^ self
 		newTyped: type
 		shaped: shape
-		thenDo: [ :tensor | self array: values type: type into: tensor data getHandle ]
+		thenDo: [ :tensor | self copyArrayOf: type with: values into: tensor data getHandle ]
 ]
 
 { #category : #'instance creation' }
@@ -181,33 +142,19 @@ TFTensor class >> fromStringArray: aStringArray shape: shape [
 { #category : #'instance creation' }
 TFTensor class >> fromStrings: aStringArray [
 
-	^self
-		fromStrings: aStringArray
-		shape: (self shapeOf: aStringArray) dimensionSizes allButLast asTensorShape
+	^ self fromStrings: aStringArray shape: aStringArray inferTensorShape
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> fromStrings: strings shape: shape [
+
 	| flatten |
-	flatten := self elementsOf: strings.
-	^ self fromStringArray: flatten shape: shape
-]
 
-{ #category : #types }
-TFTensor class >> getterBlockFor: type [
-	TFTensor typeUInt8 = type ifTrue: [ ^ [ :data :offset | data unsignedByteAt: offset ] ].
-	TFTensor typeInt32 = type ifTrue: [^ [:data :offset | data signedLongAt: offset]].
-	TFTensor typeInt64 = type ifTrue: [^ [:data :offset | data signedLongLongAt: offset]].
-	TFTensor typeFloat = type ifTrue: [^ [:data :offset | data floatAt: offset]].
-	TFTensor typeDouble = type ifTrue: [^ [:data :offset | data doubleAt: offset]].
-	TFTensor typeBoolean = type ifTrue: [^ [:data :offset | data booleanAt: offset]].
-	^ self shouldBeImplemented 
-]
-
-{ #category : #utils }
-TFTensor class >> int64Array: values into: anExternalAddressOrByteArray [
-	self array: values type: self typeInt64 into: anExternalAddressOrByteArray.
-
+	flatten :=
+		Array
+			new: strings singleElementsInCollection
+			streamContents: [:stream | strings singleElementsDo: [:each | stream nextPut: each]].
+	^self fromStringArray: flatten shape: shape
 ]
 
 { #category : #'instance creation' }
@@ -235,7 +182,7 @@ TFTensor class >> newTyped: aTensorType shaped: aTensorShape bytesize: bytesizeI
 ]
 
 { #category : #'instance creation' }
-TFTensor class >> newTyped: anInteger shaped: aTensorShape thenDo: aBlock [ 
+TFTensor class >> newTyped: aDataType shaped: aTensorShape thenDo: aBlock [
 
 	" I understand dimenssions are:
 		#()		-> Scalar
@@ -245,246 +192,19 @@ TFTensor class >> newTyped: anInteger shaped: aTensorShape thenDo: aBlock [
 		etc.
 	"
 
-	| bytesize elementSize |
+	| bytesize |
 
-	elementSize := self sizeForType: anInteger.
-	bytesize := aTensorShape totalAmountOfElements * elementSize.
+	bytesize := aTensorShape totalAmountOfElements * aDataType dataSize.
 	^ self
-		newTyped: anInteger
+		newTyped: aDataType
 		shaped: aTensorShape
 		bytesize: bytesize
-		thenDo: aBlock 
+		thenDo: aBlock
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> pi [
 	^ Float pi asTensor
-]
-
-{ #category : #utils }
-TFTensor class >> rankOf: aMultidimensionalArray [
-	"Return the rank of a multi-dimensional Array"
-
-	^ aMultidimensionalArray isCollection
-		ifTrue: [ 1 + (self rankOf: aMultidimensionalArray first) ]
-		ifFalse: [ 0 ]
-]
-
-{ #category : #types }
-TFTensor class >> setterBlockFor: type [
-	TFTensor typeUInt8 = type
-		ifTrue: [ ^ [ :data :offset :value | data unsignedByteAt: offset put: value ] ].
-	TFTensor typeInt32 = type
-		ifTrue: [ ^ [ :data :offset :value | data signedLongAt: offset put: value ] ].
-	TFTensor typeInt64 = type
-		ifTrue: [ ^ [ :data :offset :value | data signedLongLongAt: offset put: value ] ].
-	TFTensor typeFloat = type
-		ifTrue: [ ^ [ :data :offset :value | data floatAt: offset put: value ] ].
-	TFTensor typeDouble = type
-		ifTrue: [ ^ [ :data :offset :value | data doubleAt: offset put: value ] ].
-	TFTensor typeBoolean = type
-		ifTrue: [ ^ [ :data :offset :value | data booleanAt: offset put: value ] ].
-	^ self shouldBeImplemented
-]
-
-{ #category : #acccessing }
-TFTensor class >> shapeOf: aMultidimensionalTensor [
-
-	^aMultidimensionalTensor isCollection
-		ifTrue: [
-			aMultidimensionalTensor isEmpty
-				ifTrue: [TensorShape vectorSized: 0]
-				ifFalse: [
-					TensorShape withDimensionsSized: (
-						(Array with: aMultidimensionalTensor size) ,
-							(self shapeOf: aMultidimensionalTensor first) dimensionSizes)]]
-		ifFalse: [TensorShape scalar]
-]
-
-{ #category : #types }
-TFTensor class >> sizeForType: aTypeNumber [
-
-	^TensorFlowCAPI current sizeOfDataType: aTypeNumber
-]
-
-{ #category : #utils }
-TFTensor class >> sizeOf: aMultidimensionalArray [
-	"Return the size of a multi-dimensional Array"
-
-	^ aMultidimensionalArray isCollection
-		ifTrue: [ aMultidimensionalArray isEmpty
-				ifTrue: [ 0 ]
-				ifFalse: [ aMultidimensionalArray sum: [ :each | self sizeOf: each ] ] ]
-		ifFalse: [ 1 ]
-]
-
-{ #category : #types }
-TFTensor class >> typeBFloat16 [
-	^ 14
-]
-
-{ #category : #types }
-TFTensor class >> typeBoolean [
-	"TF_BOOL = 10"
-
-	^ 10
-]
-
-{ #category : #types }
-TFTensor class >> typeComplex [
-	
-	^ 8
-]
-
-{ #category : #types }
-TFTensor class >> typeComplex128 [
-	^ 18
-]
-
-{ #category : #types }
-TFTensor class >> typeComplex64 [
-	^ 8
-]
-
-{ #category : #types }
-TFTensor class >> typeDouble [
-	"TF_DOUBLE = 2"
-
-	^ 2
-]
-
-{ #category : #types }
-TFTensor class >> typeFloat [
-	^ 1
-]
-
-{ #category : #types }
-TFTensor class >> typeHalf [
-	^ 19
-]
-
-{ #category : #types }
-TFTensor class >> typeInt16 [
-	^5
-]
-
-{ #category : #types }
-TFTensor class >> typeInt32 [
-	^ 3
-]
-
-{ #category : #types }
-TFTensor class >> typeInt64 [
-	^ 9
-]
-
-{ #category : #types }
-TFTensor class >> typeInt8 [
-	^6
-]
-
-{ #category : #types }
-TFTensor class >> typeQInt16 [
-	^15
-]
-
-{ #category : #types }
-TFTensor class >> typeQInt32 [
-	^13
-]
-
-{ #category : #types }
-TFTensor class >> typeQInt8 [
-	^11
-]
-
-{ #category : #types }
-TFTensor class >> typeQUInt16 [
-	^16
-]
-
-{ #category : #types }
-TFTensor class >> typeQUInt8 [
-	^12
-]
-
-{ #category : #types }
-TFTensor class >> typeQint16 [
-	
-	^ 15
-]
-
-{ #category : #types }
-TFTensor class >> typeQint32 [
-	
-	^ 13
-]
-
-{ #category : #types }
-TFTensor class >> typeQint8 [
-	
-	^ 11
-]
-
-{ #category : #types }
-TFTensor class >> typeQuint16 [
-	
-	^ 16
-]
-
-{ #category : #types }
-TFTensor class >> typeQuint8 [
-	
-	^ 12
-]
-
-{ #category : #types }
-TFTensor class >> typeResource [
-	^20
-]
-
-{ #category : #types }
-TFTensor class >> typeString [
-	^7
-]
-
-{ #category : #types }
-TFTensor class >> typeUInt16 [
-	^17
-]
-
-{ #category : #types }
-TFTensor class >> typeUInt8 [
-	^4
-]
-
-{ #category : #types }
-TFTensor class >> typeUint16 [
-	
-	^ 17
-]
-
-{ #category : #types }
-TFTensor class >> typeUint32 [
-	
-	^ 22
-]
-
-{ #category : #types }
-TFTensor class >> typeUint64 [
-	
-	^ 23
-]
-
-{ #category : #types }
-TFTensor class >> typeUint8 [
-	
-	^ 4
-]
-
-{ #category : #acccessing }
-TFTensor class >> typeVariant [
-	^21
 ]
 
 { #category : #comparing }
@@ -565,18 +285,6 @@ TFTensor >> data [
 	^ self library tensorDataOf: self
 ]
 
-{ #category : #iterating }
-TFTensor >> dataAndOffsetsCollect: twoArgsBlock thenDo: oneArgBlock [
-	| data elementSize |
-	elementSize := self elementSize.
-	data := self data getHandle.
-	1 to: self size do: [:i |
-		| value |
-		value := twoArgsBlock value: data value: i-1*elementSize+1.
-		oneArgBlock value: value].
-
-]
-
 { #category : #accessing }
 TFTensor >> dataBytes [
 	^ self data getHandle structAt: 1 length: self byteSize
@@ -592,12 +300,17 @@ TFTensor >> delete [
 
 { #category : #accessing }
 TFTensor >> elementSize [
-	^ self class sizeForType: self type
+
+	^ self type dataSize
 ]
 
 { #category : #iterating }
 TFTensor >> elementsDo: oneArgBlock [
-	self dataAndOffsetsCollect: self getterBlock thenDo: oneArgBlock
+
+	| data |
+
+	data := self data getHandle.
+	1 to: self size do: [ :i | oneArgBlock value: ( self type getElementAt: i in: data ) ]
 ]
 
 { #category : #finalization }
@@ -610,11 +323,6 @@ TFTensor >> getHandle [
 
 "We need to refactor later"
 ^ super getHandle getHandle
-]
-
-{ #category : #iterating }
-TFTensor >> getterBlock [
-	^ self class getterBlockFor: self type
 ]
 
 { #category : #testing }

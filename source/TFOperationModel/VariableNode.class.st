@@ -11,10 +11,10 @@ Class {
 { #category : #'Instance Creation' }
 VariableNode class >> on: aComputation named: aName forFloatsShaped: aShape initializedWith: aVariableInitializer [
 
-	^self
+	^ self
 		on: aComputation
 		named: aName
-		of: TFTensor typeFloat
+		of: FloatDataType new
 		shaped: aShape
 		initializedWith: aVariableInitializer
 ]

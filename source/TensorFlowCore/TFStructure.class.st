@@ -4,7 +4,7 @@ Root class of all TF_XXX structures
 Class {
 	#name : #TFStructure,
 	#superclass : #FFIExternalStructure,
-	#category : #TensorFlowCore
+	#category : #'TensorFlowCore-Structures'
 }
 
 { #category : #'class initialization' }

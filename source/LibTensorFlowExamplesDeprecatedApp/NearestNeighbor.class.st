@@ -52,7 +52,7 @@ NearestNeighbor >> decodeCSVGraphDefaults: anArrayOfTF_Tensors [
 	| graph records defaults |
 	
 	graph := TFGraph create.
-	records := (graph placeholder: 'records' type: TFTensor typeString) output: 0.
+	records := (graph placeholder: 'records' type: StringDataType new) output: 0.
 	defaults := Array new: anArrayOfTF_Tensors size.
 	
 	anArrayOfTF_Tensors withIndexDo: [:each :index |

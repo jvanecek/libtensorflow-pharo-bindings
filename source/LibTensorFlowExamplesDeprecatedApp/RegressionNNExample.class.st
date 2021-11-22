@@ -140,7 +140,7 @@ RegressionNNExample >> initializeLearningGraph [
 	|  axis0 learningRate batchSize biasGradient one backprop learnBiases1 learnBiases2 learnBiases3 learnBiases4 learnWeights1 learnWeights2 learnWeights3 learnWeights4 |
 	
 	learningRate := 0.1 asTensor.
-	batchSize := graph fromBlock: [(input sizeOn: 0) castTo: TFTensor typeFloat] named: 'batchSize'.
+	batchSize := graph fromBlock: [(input sizeOn: 0) castTo: FloatDataType new] named: 'batchSize'.
 	axis0 := graph const: #(0) asInt32Tensor. 
 	one := 1.0 asTensor asOperationOn: graph.
 	graph
@@ -190,12 +190,14 @@ RegressionNNExample >> initializeLearningGraph [
 
 { #category : #initialization }
 RegressionNNExample >> initializeLossGraph [
+
 	loss := graph
-		fromBlock: [ :expected |
+		fromBlock: [ :expected | 
 			expectedLabel := expected.
-			(prediction - expectedLabel) squared meanOn: #(0) asInt32Tensor ]
-		inputTypes: {TFTensor typeFloat}
-		named: 'loss'.
+			( prediction - expectedLabel ) squared meanOn: #(0) asInt32Tensor
+			]
+		inputTypes: {FloatDataType new}
+		named: 'loss'
 ]
 
 { #category : #initialization }

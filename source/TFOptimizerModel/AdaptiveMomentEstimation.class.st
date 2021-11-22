@@ -13,7 +13,7 @@ Class {
 		'variableGradientsVariance',
 		'timestep'
 	],
-	#category : 'TFOptimizerModel'
+	#category : #TFOptimizerModel
 }
 
 { #category : #Accessing }
@@ -88,7 +88,7 @@ AdaptiveMomentEstimation >> apply: aGradient to: aVariable [
 { #category : #Configuring }
 AdaptiveMomentEstimation >> considerCurrentEpochIn: anEpochHolder [
 
-	timestep := anEpochHolder trainingStepAsVariable castedTo: TFTensor typeFloat
+	timestep := anEpochHolder trainingStepAsVariable castedTo: FloatDataType new
 ]
 
 { #category : #Accessing }

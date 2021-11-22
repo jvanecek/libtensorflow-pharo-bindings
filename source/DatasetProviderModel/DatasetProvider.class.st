@@ -9,7 +9,7 @@ Class {
 	#classInstVars : [
 		'current'
 	],
-	#category : 'DatasetProviderModel'
+	#category : #DatasetProviderModel
 }
 
 { #category : #'Instance Creation' }
@@ -86,19 +86,19 @@ DatasetProvider >> initializeFashionDataset [
 		SampleDataset new
 			bindTrainingSetTo: (
 					self
-						tensorTyped: TFTensor typeFloat
+						tensorTyped: FloatDataType new
 						fromFileNamed: baseDirectory / 'train-images-idx3-ubyte.gz')
 				withLabels: (
 					self
-						tensorTyped: TFTensor typeInt32
+						tensorTyped: Int32DataType new
 						fromFileNamed: baseDirectory / 'train-labels-idx1-ubyte.gz');
 			bindValidationSetTo: (
 					self
-						tensorTyped: TFTensor typeFloat
+						tensorTyped: FloatDataType new
 						fromFileNamed: baseDirectory / 't10k-images-idx3-ubyte.gz')
 				withLabels: (
 					self
-						tensorTyped: TFTensor typeInt32
+						tensorTyped: Int32DataType new
 						fromFileNamed: baseDirectory / 't10k-labels-idx1-ubyte.gz');
 			yourself
 ]
@@ -125,19 +125,19 @@ DatasetProvider >> initializeHandwrittenDataset [
 		SampleDataset new
 			bindTrainingSetTo: (
 					self
-						tensorTyped: TFTensor typeFloat
+						tensorTyped: FloatDataType new
 						fromFileNamed: baseDirectory / 'train-images-idx3-ubyte.gz')
 				withLabels: (
 					self
-						tensorTyped: TFTensor typeInt32
+						tensorTyped: Int32DataType new
 						fromFileNamed: baseDirectory / 'train-labels-idx1-ubyte.gz');
 			bindTestingSetTo: (
 					self
-						tensorTyped: TFTensor typeFloat
+						tensorTyped: FloatDataType new
 						fromFileNamed: baseDirectory / 't10k-images-idx3-ubyte.gz')
 				withLabels: (
 					self
-						tensorTyped: TFTensor typeInt32
+						tensorTyped: Int32DataType new
 						fromFileNamed: baseDirectory / 't10k-labels-idx1-ubyte.gz');
 			yourself
 ]

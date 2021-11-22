@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'crossEntropy'
 	],
-	#category : 'TFOperationModel'
+	#category : #TFOperationModel
 }
 
 { #category : #'Instance Creation' }
@@ -16,9 +16,9 @@ CrossEntropyMean class >> of: aCrossEntropyLoss [
 { #category : #Accessing }
 CrossEntropyMean >> backpropagatedGradient [
 
-	^ElementWiseDivision
+	^ ElementWiseDivision
 		of: crossEntropy backpropagatedGradient
-		and: (crossEntropy shape sumElements castedTo: TFTensor typeFloat)
+		and: ( crossEntropy shape sumElements castedTo: FloatDataType new )
 ]
 
 { #category : #Accessing }

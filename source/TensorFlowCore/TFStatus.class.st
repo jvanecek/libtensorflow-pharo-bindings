@@ -4,7 +4,7 @@ TF_Status holds error information.  It either has an OK code, or else an error c
 Class {
 	#name : #TFStatus,
 	#superclass : #FFIOpaqueObject,
-	#category : #TensorFlowCore
+	#category : #'TensorFlowCore-Structures'
 }
 
 { #category : #'instance creation' }

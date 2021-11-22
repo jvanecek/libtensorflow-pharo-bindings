@@ -9,13 +9,20 @@ Class {
 
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> assertElementsOf: tensorArray are: allElementsArray [
-	self assert: allElementsArray equals: (TFTensor elementsOf: tensorArray)
+
+	self
+		assert: allElementsArray
+		equals: (
+			Array
+				new: tensorArray singleElementsInCollection
+				streamContents: [:stream |
+					tensorArray singleElementsDo: [:each | stream nextPut: each]])
 ]
 
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> assertRankOf: aMultidimensionalTensor is: anInteger [
 	| rank |
-	rank := TFTensor rankOf: aMultidimensionalTensor.
+	rank := aMultidimensionalTensor inferTensorRank.
 	self
 		assert: rank = anInteger
 		description:
@@ -25,19 +32,19 @@ TensorFlowCAPITest >> assertRankOf: aMultidimensionalTensor is: anInteger [
 
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> assertShapeOf: aMultidimensionalTensor is: anArray [
+
 	| shape |
-	shape := TFTensor shapeOf: aMultidimensionalTensor.
+
+	shape := aMultidimensionalTensor inferTensorShape.
 	self
 		assert: shape = anArray
-		description:
-			'The shape is ' , shape printString , ' and should have been '
-				, anArray printString
+		description: 'The shape is ' , shape printString , ' and should have been ' , anArray printString
 ]
 
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> assertSizeOf: aMultidimensionalTensor is: anInteger [
 	| size |
-	size := TFTensor sizeOf: aMultidimensionalTensor.
+	size := aMultidimensionalTensor singleElementsInCollection.
 	self
 		assert: size = anInteger
 		description: 'The size is ', size printString, ' and should have been ', anInteger printString
@@ -172,16 +179,18 @@ TensorFlowCAPITest >> testAsBooleanTensor [
 
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> testAsBooleanTensor: anArray shape: shapeArray [
+
 	| tensor index bools |
+
 	tensor := anArray asBooleanTensor.
 	self assert: tensor shape equals: shapeArray.
 	index := 1.
 	bools := tensor allElements.
-	TFTensor
-		elementsOf: anArray
-		do: [ :each | 
-			self assert: (bools at: index) equals: each.
-			index := index + 1 ]
+	anArray
+		singleElementsDo: [ :each | 
+			self assert: ( bools at: index ) equals: each.
+			index := index + 1
+			]
 ]
 
 { #category : #'testing tensor' }
@@ -194,14 +203,18 @@ TensorFlowCAPITest >> testAsFloatTensor [
 
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> testAsFloatTensor: tensorArray shape: shapeArray [
+
 	| tensor index floats |
+
 	tensor := tensorArray asFloatTensor.
-	
+
 	index := 1.
 	floats := tensor allFloats.
-	TFTensor elementsOf: tensorArray do: [:each |
-		self assert: ((floats at: index) closeTo: each).
-		index := index + 1].
+	tensorArray
+		singleElementsDo: [ :each | 
+			self assert: ( ( floats at: index ) closeTo: each ).
+			index := index + 1
+			].
 
 	self assert: tensor shape equals: shapeArray
 ]
@@ -215,18 +228,20 @@ TensorFlowCAPITest >> testAsInt32Tensor [
 
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> testAsInt32Tensor: tensorArray shape: shapeArray [
+
 	| tensor index ints |
+
 	tensor := tensorArray asInt32Tensor.
-	
+
 	self assert: tensor shape equals: shapeArray.
-	
+
 	index := 1.
 	ints := tensor allInt32s.
-	TFTensor elementsOf: tensorArray do: [:each |
-		self assert: (ints at: index) equals: each.
-		index := index + 1].
-
-
+	tensorArray
+		singleElementsDo: [ :each | 
+			self assert: ( ints at: index ) equals: each.
+			index := index + 1
+			]
 ]
 
 { #category : #'testing tensor' }
@@ -238,16 +253,18 @@ TensorFlowCAPITest >> testAsInt64Tensor [
 
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> testAsInt64Tensor: tensorArray shape: shapeArray [
+
 	| tensor index ints |
+
 	tensor := tensorArray asInt64Tensor.
 	self assert: tensor shape equals: shapeArray.
 	index := 1.
 	ints := tensor allInt64s.
-	TFTensor
-		elementsOf: tensorArray
-		do: [ :each | 
-			self assert: (ints at: index) equals: each.
-			index := index + 1 ]
+	tensorArray
+		singleElementsDo: [ :each | 
+			self assert: ( ints at: index ) equals: each.
+			index := index + 1
+			]
 ]
 
 { #category : #'testing structures size' }
@@ -272,7 +289,7 @@ TensorFlowCAPITest >> testAttrSetShape: anIntegerArray [
 		named: 'const'
 		described: [:description |
 			description at: 'shape' putShape: anIntegerArray.
-			description at: 'dtype' putType: TFTensor typeInt64].
+			description at: 'dtype' putType: Int64DataType new].
 		
 	self assert: (op shapeAt: 'shape') equals: anIntegerArray.
 
@@ -284,7 +301,7 @@ TensorFlowCAPITest >> testAttrSetString: aString [
 	graph := TFGraph create.
 	copy := aString asByteArray.
 	
-	in := graph placeholder: 'in' type: TFTensor typeDouble.
+	in := graph placeholder: 'in' type: DoubleDataType new.
 	op := graph newOperation: 'AsString' named: 'out' described: [:description |
 		description at: 'fill' putString: copy.
 		description addInput: (in output: 0)].
@@ -368,9 +385,11 @@ TensorFlowCAPITest >> testDecodeCSVGraphRunCSV: csvLines [
 
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> testElementsOf: tensorArray sum: aNumber [
+
 	| sum |
+
 	sum := 0.
-	TFTensor elementsOf: tensorArray do: [ :each | sum := sum + each ].
+	tensorArray singleElementsDo: [ :each | sum := sum + each ].
 	self assert: sum equals: aNumber
 ]
 
@@ -404,7 +423,7 @@ TensorFlowCAPITest >> testGetAttrMetadataShape [
 		named: 'const'
 		described: [ :description | 
 			description at: 'shape' putShape: template.
-			description at: 'dtype' putType: TFTensor typeInt64 ].
+			description at: 'dtype' putType: Int64DataType new ].
 	metadata := op attrMetadata: 'shape'.
 	self assert: metadata isShape.
 	self assert: metadata isList equals: false.
@@ -421,7 +440,7 @@ TensorFlowCAPITest >> testGetAttrMetadataType [
 		named: 'const'
 		described: [ :description | 
 			description at: 'shape' putShape: template.
-			description at: 'dtype' putType: TFTensor typeInt64 ].
+			description at: 'dtype' putType: Int64DataType new ].
 	metadata := op attrMetadata: 'dtype'.
 	self assert: metadata isType.
 	self assert: metadata isList equals: false
@@ -590,17 +609,20 @@ TensorFlowCAPITest >> testNewStatus [
 
 { #category : #'testing operation' }
 TensorFlowCAPITest >> testOperationOutputTypeFloat [
-	^ self testGraph: self constantFloatGraphFromDef outputType: TFTensor typeFloat
+
+	^ self testGraph: self constantFloatGraphFromDef outputType: FloatDataType new
 ]
 
 { #category : #'testing operation' }
 TensorFlowCAPITest >> testOperationOutputTypeInt32 [
-	^ self testGraph: self constantInt32GraphFromDef outputType: TFTensor typeInt32
+
+	^ self testGraph: self constantInt32GraphFromDef outputType: Int32DataType new
 ]
 
 { #category : #'testing operation' }
 TensorFlowCAPITest >> testOperationOutputTypeInt64 [
-	^ self testGraph: self constantInt64GraphFromDef outputType: TFTensor typeInt64
+
+	^ self testGraph: self constantInt64GraphFromDef outputType: Int64DataType new
 ]
 
 { #category : #'testing graph' }
@@ -832,18 +854,63 @@ TensorFlowCAPITest >> testTensorAsStream [
 
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> testTensorByteSize [
+
 	| tensor |
-	tensor := TFTensor newTyped: TFTensor typeInt64 shaped: (TensorShape matrixSized: 2 by: 3).
+
+	tensor := TFTensor newTyped: Int64DataType new shaped: ( TensorShape matrixSized: 2 by: 3 ).
 	self assert: tensor byteSize equals: 8 * 2 * 3
 ]
 
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> testTensorData [
 	| tensor |
-	tensor := TFTensor newTyped: TFTensor typeInt64 shaped: (TensorShape matrixSized: 2 by: 3).
+	tensor := TFTensor newTyped: Int64DataType new shaped: (TensorShape matrixSized: 2 by: 3).
 	self assert: tensor rank equals: 2.
 	self deny: tensor data getHandle asInteger = 0.
 	self deny: tensor data getHandle isNil
+]
+
+{ #category : #'testing tensor' }
+TensorFlowCAPITest >> testTensorDataTypeSize [
+
+	OrderedCollection new
+		add: ResourceDataType new;
+		add: StringDataType new;
+		add: VariantDataType new;
+		do: [:type | self assert: type dataSize equals: 0].
+
+	OrderedCollection new
+		add: BooleanDataType new;
+		add: Int8DataType new;
+		add: QuantizedInt8DataType new;
+		add: QuantizedUnsignedInt8DataType new;
+		add: UnsignedInt8DataType new;
+		do: [:type | self assert: type dataSize equals: 1].
+
+	OrderedCollection new
+		add: HalfDataType new;
+		add: Int16DataType new;
+		add: QuantizedInt16DataType new;
+		add: QuantizedUnsignedInt16DataType new;
+		add: ReducedFloat16DataType new;
+		add: UnsignedInt16DataType new;
+		do: [:type | self assert: type dataSize equals: 2].
+
+	OrderedCollection new
+		add: FloatDataType new;
+		add: Int32DataType new;
+		add: QuantizedInt32DataType new;
+		add: UnsignedInt32DataType new;
+		do: [:type | self assert: type dataSize equals: 4].
+
+	OrderedCollection new
+		add: Complex64DataType new;
+		add: DoubleDataType new;
+		add: Int64DataType new;
+		add: UnsignedInt64DataType new;
+		do: [:type | self assert: type dataSize equals: 8].
+
+	self assert: Complex128DataType new dataSize equals: 16
 ]
 
 { #category : #'testing tensor' }
@@ -1017,15 +1084,17 @@ TensorFlowCAPITest >> testTensorFromInt32 [
 
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> testTensorFromInt32Shape [
+
 	| tensor template values |
+
 	template := #(123456 0 -1234567 11).
-	tensor := TFTensor fromInt32s: template shape: (TensorShape matrixSized: 2 by: 2).
+	tensor := TFTensor fromInt32s: template shape: ( TensorShape matrixSized: 2 by: 2 ).
 	values := tensor allFloats.
-	self assert: tensor type equals: TFTensor typeInt32.
-	self assert: tensor shape equals: (TensorShape matrixSized: 2 by: 2).
+	self assert: tensor type equals: Int32DataType new.
+	self assert: tensor shape equals: ( TensorShape matrixSized: 2 by: 2 ).
 	self assert: tensor size equals: 4.
 	self assert: tensor byteSize equals: tensor size * 4.
-	template with: values do: [ :templ :actual | self assert: (templ closeTo: actual) ]
+	template with: values do: [ :templ :actual | self assert: ( templ closeTo: actual ) ]
 ]
 
 { #category : #'testing tensor' }
@@ -1046,7 +1115,7 @@ TensorFlowCAPITest >> testTensorFromInt64Shape [
 	template := #(123456 0 -1234567 11).
 	tensor := TFTensor fromInt64s: template shape: (TensorShape matrixSized: 2 by: 2).
 	values := tensor allFloats.
-	self assert: tensor type equals: TFTensor typeInt64.
+	self assert: tensor type equals: Int64DataType new.
 	self assert: tensor shape equals: (TensorShape matrixSized: 2 by: 2).
 	self assert: tensor size equals: 4.
 	self assert: tensor byteSize equals: tensor size * 8.
@@ -1084,12 +1153,14 @@ TensorFlowCAPITest >> testTensorFromStringArray [
 
 { #category : #'testing strings' }
 TensorFlowCAPITest >> testTensorFromStrings [
-	| tensor template flatten |
-	template := #(#('hola manola' 'te traje una lola') #('pamela' 'que pandulce!') #('habia una vez' 'truz')).
-	flatten := TFTensor elementsOf: template.
+
+	| tensor template |
+
+	template := #(('hola manola' 'te traje una lola') ('pamela' 'que pandulce!') ('habia una vez' 'truz')).
 	tensor := TFTensor fromStrings: template.
-	self assert: (TensorShape matrixSized: 3 by: 2) equals: tensor shape.
-	self assert: flatten equals: tensor allStrings
+	
+	self assert: #(3 2) asTensorShape equals: tensor shape.
+	self assert: (template flatCollect: #yourself as: OrderedCollection) asArray equals: tensor allStrings
 ]
 
 { #category : #'testing strings' }
@@ -1104,8 +1175,10 @@ TensorFlowCAPITest >> testTensorFromStringsShape [
 
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> testTensorNewScalar [
+
 	| tensor |
-	tensor := TFTensor newTyped: TFTensor typeInt64 shaped: TensorShape scalar.
+
+	tensor := TFTensor newTyped: Int64DataType new shaped: TensorShape scalar.
 	tensor ignoreFinalization.
 	self deny: tensor isNull.
 	tensor delete.
@@ -1134,54 +1207,47 @@ TensorFlowCAPITest >> testTensorShape2D [
 
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> testTensorShape: anArray [
+
 	| tensor shape size |
-	tensor := TFTensor newTyped: TFTensor typeInt64 shaped: (TensorShape withDimensionsSized: anArray).
+
+	tensor := TFTensor newTyped: Int64DataType new shaped: ( TensorShape withDimensionsSized: anArray ).
 	self assert: tensor rank equals: anArray size.
 	anArray
-		withIndexDo: [ :each :index | self assert: (tensor sizeOn: index - 1) equals: (anArray at: index) ].
+		withIndexDo: [ :each :index | self assert: ( tensor sizeOn: index - 1 ) equals: ( anArray at: index ) ].
 	shape := tensor shape.
 	size := anArray isEmpty
 		ifTrue: [ 1 ]
-		ifFalse: [ anArray inject: 1 into: [:prev :next | prev*next] ].
+		ifFalse: [ anArray inject: 1 into: [ :prev :next | prev * next ] ].
 	self assert: shape equals: anArray.
 	self assert: tensor size equals: size
 ]
 
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> testTensorType [
+
 	| tensor |
-	tensor := TFTensor newTyped: TFTensor typeInt64 shaped: TensorShape scalar.
-	self assert: tensor type equals: tensor class typeInt64.
-	tensor := TFTensor newTyped: TFTensor typeFloat shaped: TensorShape scalar.
-	self assert: tensor type equals: tensor class typeFloat
+
+	tensor := TFTensor newTyped: Int64DataType new shaped: TensorShape scalar.
+	self assert: tensor type equals: Int64DataType new.
+	tensor := TFTensor newTyped: FloatDataType new shaped: TensorShape scalar.
+	self assert: tensor type equals: FloatDataType new
 ]
 
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> testTensorTypes [
+
 	| types |
-	types := #(
-		Float 1
-		Double 2
-		Int32 3
-		UInt8 4
-		Int16 5
-		Int8 6
-		String 7
-		Complex64 8
-		Int64 9
-		Boolean 10
-		QInt8 11
-		QUInt8 12
-		QInt32 13
-		BFloat16 14
-		QInt16 15
-		QUInt16 16
-		UInt16 17
-		Complex128 18
-		Half 19
-		Resource 20).
-	types pairsDo: [:name :value |
-		self assert: (TFTensor perform: (#type, name) asSymbol) equals: value]
+
+	types := #(Float 1 Double 2 Int32 3 UInt8 4 Int16 5 Int8 6 String 7 Complex64 8 Int64 9 Boolean
+	10 QInt8 11 QUInt8 12 QInt32 13 BFloat16 14 QInt16 15 QUInt16 16 UInt16 17 Complex128 18 Half 19
+	Resource 20 Variant 21 Uint32 22 Uint64 23).
+	1
+		to: types size
+		by: 2
+		do: [:index | | name value |
+			name := (types at: index) asString.
+			value := types at: index + 1.
+			self assert: (TensorDataType identifiedWith: value) description equals: name]
 ]
 
 { #category : #'testing library' }

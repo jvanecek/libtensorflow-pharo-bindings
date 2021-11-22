@@ -523,17 +523,18 @@ TensorFlowOperationsTest >> testOperationAtan [
 
 { #category : #'binary operations' }
 TensorFlowOperationsTest >> testOperationCastTo [
+
 	| graph template cast input result |
-	
-	template := #((1.1 1.2) (2.1 2.2)).	
+
+	template := #(#(1.1 1.2) #(2.1 2.2)).
 	graph := TFGraph create.
-	
+
 	input := graph const: template asFloatTensor.
-	cast := input castTo: TFTensor typeInt32.
+	cast := input castTo: Int32DataType new.
 
 	result := graph runOutput: cast firstOutput.
 
-	self assert: template truncated equals: result asNumbers.
+	self assert: template truncated equals: result asNumbers
 ]
 
 { #category : #'unary operations' }
@@ -1174,7 +1175,7 @@ TensorFlowOperationsTest >> testOperationSliceSimple [
 	slice := const sliceFrom: #(0) asInt32Tensor size: #(1) asInt32Tensor.
 
 	session := TFSession on: graph.
-	result := session runOutput: slice output.
+	result := session runOutput: slice firstOutput.
 	
 	self assert: #(1) equals: result asNumbers.
 ]

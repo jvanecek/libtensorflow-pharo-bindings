@@ -41,7 +41,7 @@ TensorFlowComputation >> floatConstantWith: aNumberOrMatrix named: aName [
 { #category : #'*TFOperationModel' }
 TensorFlowComputation >> floatInputNamed: anInputName [
 
-	^InputNode on: self named: anInputName of: TFTensor typeFloat
+	^ InputNode on: self named: anInputName of: FloatDataType new
 ]
 
 { #category : #'*TFOperationModel' }
@@ -53,7 +53,7 @@ TensorFlowComputation >> integerConstantWith: aNumberOrArray [
 { #category : #'*TFOperationModel' }
 TensorFlowComputation >> integerInputNamed: anInputName [
 
-	^InputNode on: self named: anInputName of: TFTensor typeInt32
+	^ InputNode on: self named: anInputName of: Int32DataType new
 ]
 
 { #category : #'*TFOperationModel' }

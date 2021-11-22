@@ -10,7 +10,7 @@ Class {
 		'OFFSET_DEALLOCATOR',
 		'OFFSET_LENGTH'
 	],
-	#category : #TensorFlowCore
+	#category : #'TensorFlowCore-Structures'
 }
 
 { #category : #'field definition' }

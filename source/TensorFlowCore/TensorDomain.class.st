@@ -5,7 +5,7 @@ Class {
 		'type',
 		'shape'
 	],
-	#category : #TensorFlowCore
+	#category : #'TensorFlowCore-DataTypes'
 }
 
 { #category : #'Instance Creation' }
@@ -17,33 +17,33 @@ TensorDomain class >> of: aTensorType withShape: aTensorShape [
 { #category : #'Instance Creation' }
 TensorDomain class >> ofFloatMatrixSized: aNumberOfRows by: aNumberOfColumns [
 
-	^self
-		of: TFTensor typeFloat
-		withShape: (TensorShape matrixSized: aNumberOfRows by: aNumberOfColumns)
+	^ self
+		of: FloatDataType new
+		withShape: ( TensorShape matrixSized: aNumberOfRows by: aNumberOfColumns )
 ]
 
 { #category : #'Instance Creation' }
 TensorDomain class >> ofFloatScalar [
 
-	^self of: TFTensor typeFloat withShape: TensorShape scalar
+	^ self of: FloatDataType new withShape: TensorShape scalar
 ]
 
 { #category : #'Instance Creation' }
 TensorDomain class >> ofFloatVectorSized: anInteger [
 
-	^self of: TFTensor typeFloat withShape: (TensorShape vectorSized: anInteger)
+	^ self of: FloatDataType new withShape: ( TensorShape vectorSized: anInteger )
 ]
 
 { #category : #'Instance Creation' }
 TensorDomain class >> ofIntegerScalar [
 
-	^self of: TFTensor typeInt32 withShape: TensorShape scalar
+	^ self of: Int32DataType new withShape: TensorShape scalar
 ]
 
 { #category : #'Instance Creation' }
 TensorDomain class >> ofLargeIntegerScalar [
 
-	^self of: TFTensor typeInt64 withShape: TensorShape scalar
+	^ self of: Int64DataType new withShape: TensorShape scalar
 ]
 
 { #category : #Initialization }
@@ -57,7 +57,7 @@ TensorDomain >> initializeOf: aTensorType withShape: aTensorShape [
 TensorDomain >> printOn: aStream [
 
 	aStream
-		nextPutAll: (TFTensor descriptionOf: type);
+		nextPutAll: type description;
 		space;
 		print: shape
 ]

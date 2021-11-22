@@ -61,6 +61,22 @@ TensorFlowPharoLibrary class >> initialize [
 ]
 
 { #category : #tensor }
+TensorFlowPharoLibrary >> accumulatedLengthsOf: aStringArray [
+
+	| sizes offsets |
+
+	sizes := self collectEncodedSizeOf: aStringArray.
+	offsets := OrderedCollection new: aStringArray size.
+	sizes
+		inject: 0
+		into: [ :prev :each | 
+			offsets add: prev.
+			each + prev
+			].
+	^ offsets
+]
+
+{ #category : #tensor }
 TensorFlowPharoLibrary >> allStringsOf: aTFTensor [
 
 	| total answer bytes data |
@@ -90,7 +106,7 @@ TensorFlowPharoLibrary >> allocateTensorOf: aTensorDomain length: aLenght [
 		fromArray: aTensorDomain shape dimensionSizes.
 
 	answer := self
-		allocateTensorType: aTensorDomain type
+		allocateTensorType: aTensorDomain type uniqueIdentifier 
 		shape: externalized getHandle
 		rank: aTensorDomain shape rank
 		length: aLenght.
@@ -149,6 +165,12 @@ TensorFlowPharoLibrary >> closeSession: aTF_Session status: aTF_Status [
 	^ self
 		ffiCall: #(void TF_CloseSession #(TFSession * aTF_Session , TFStatus * aTF_Status))
 		module: TensorFlowPharoLibrary
+]
+
+{ #category : #tensor }
+TensorFlowPharoLibrary >> collectEncodedSizeOf: aStringArray [
+
+	^ aStringArray collect: [ :each | self stringEncodedSize: each ]
 ]
 
 { #category : #buffer }
@@ -447,7 +469,9 @@ TensorFlowPharoLibrary >> description: aTFOperationDescription set: anAttributeN
 	self
 		description: aTFOperationDescription
 		set: anAttributeName
-		toTypes: ( FFIExternalArray externalNewType: 'int32' fromArray: aListOfTypes ) getHandle
+		toTypes:
+			( FFIExternalArray externalNewType: 'int32' fromArray: ( aListOfTypes collect: #uniqueIdentifier ) )
+				getHandle
 		size: aListOfTypes size.
 	status check
 ]
@@ -1347,51 +1371,9 @@ TensorFlowPharoLibrary >> setStatus: aTF_Status code: anInteger message: anExter
 ]
 
 { #category : #accessing }
-TensorFlowPharoLibrary >> sizeOfDataType: anInteger [
+TensorFlowPharoLibrary >> sizeOfDataType: aDataType [
 
-	TFTensor typeFloat = anInteger ifTrue: [^4].
-	TFTensor typeInt64 = anInteger ifTrue: [^8].
-	TFTensor typeInt32 = anInteger ifTrue: [^4].
-	TFTensor typeUInt8 = anInteger ifTrue: [^1].
-	TFTensor typeDouble = anInteger ifTrue: [^8].
-	TFTensor typeBoolean = anInteger ifTrue: [^1].
-
-"
-8
-		UInt8 4
-		Int8 6
-		QInt8 11
-		QUInt8 12
-
-16
-		Int16 5
-		BFloat16 14
-		QInt16 15
-		QUInt16 16
-		UInt16 17
-		Half 19
-
-32
-		Float 1
-		Int32 3
-		QInt32 13
-
-64
-		Double 2
-		Complex64 8
-		Int64 9
-
-128
-		Complex128 18
-
-		String 7
-		Resource 20).
-
-		Bool 10
-"
-
-
-	^ self shouldBeImplemented.
+	^ self ffiCall: #(size_t TF_DataTypeSize #(int aDataType)) module: TensorFlowPharoLibrary
 ]
 
 { #category : #strings }
@@ -1495,7 +1477,7 @@ TensorFlowPharoLibrary >> tensorFromString: aString [
 	bytesize := self stringEncodedSize: aString.
 
 	^ TFTensor
-		newTyped: TFTensor typeString
+		newTyped: StringDataType new
 		shaped: TensorShape scalar
 		bytesize: bytesize
 		thenDo: [ :tensor | self stringEncode: aString to: tensor data getHandle size: bytesize ]
@@ -1504,32 +1486,22 @@ TensorFlowPharoLibrary >> tensorFromString: aString [
 { #category : #tensor }
 TensorFlowPharoLibrary >> tensorFromStrings: aStringArray shaped: aTensorShape [
 
-	| sizes offsets offsetSize bytesize |
+	| offsets bytesize offsetsBytesize |
 
-	sizes := aStringArray collect: [ :each | self stringEncodedSize: each ].
-	offsetSize := self sizeOfDataType: TFTensor typeInt64.
-	bytesize := offsetSize * aStringArray size + sizes sum.
-	offsets := OrderedCollection new: sizes size.
-
-	sizes
-		inject: 0
-		into: [ :prev :each | 
-			offsets add: prev.
-			each + prev
-			].
-
+	offsets := self accumulatedLengthsOf: aStringArray.
+	offsetsBytesize := Int64DataType new dataSize * aStringArray size.
+	bytesize := offsetsBytesize + ( self collectEncodedSizeOf: aStringArray ) sum.
 	^ TFTensor
-		newTyped: TFTensor typeString
+		newTyped: StringDataType new
 		shaped: aTensorShape
 		bytesize: bytesize
 		thenDo: [ :answer | 
-			TFTensor int64Array: offsets into: answer data getHandle.
-
+			TFTensor copyArrayOf: Int64DataType new with: offsets into: answer data getHandle.
 			aStringArray
 				withIndexDo: [ :each :index | 
 					| offset |
 
-					offset := offsetSize * aStringArray size + ( offsets at: index ).
+					offset := offsetsBytesize + ( offsets at: index ).
 					self stringEncode: each to: answer data getHandle + offset size: bytesize - offset
 					]
 			]

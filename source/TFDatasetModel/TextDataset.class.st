@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'currentComputation'
 	],
-	#category : 'TFDatasetModel'
+	#category : #TFDatasetModel
 }
 
 { #category : #Accessing }
@@ -62,5 +62,5 @@ TextDataset >> initializeOn: aComputation readingFrom: aFileName compressedWith:
 { #category : #Accessing }
 TextDataset >> outputDomains [
 
-	^Array with: (TensorDomain of: TFTensor typeString withShape: TensorShape scalar)
+	^Array with: (TensorDomain of: StringDataType new withShape: TensorShape scalar)
 ]

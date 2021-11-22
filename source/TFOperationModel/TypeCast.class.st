@@ -5,7 +5,7 @@ Class {
 		'castedTensor',
 		'targetType'
 	],
-	#category : 'TFOperationModel'
+	#category : #TFOperationModel
 }
 
 { #category : #'Instance Creation' }
@@ -51,8 +51,6 @@ TypeCast >> initializeNamed: anOperationName of: anOperation to: aDataType [
 { #category : #Printing }
 TypeCast >> printOn: aStream [
 
-	aStream nextPutAll: (
-		'<1p> casted to <2s>'
-			expandMacrosWith: castedTensor
-			with: (TFTensor descriptionOf: targetType))
+	aStream
+		nextPutAll: ( '<1p> casted to <2s>' expandMacrosWith: castedTensor with: targetType description )
 ]

@@ -7,7 +7,7 @@ Class {
 		'OFFSET_TOTAL_SIZE',
 		'OFFSET_TYPE'
 	],
-	#category : #TensorFlowCore
+	#category : #'TensorFlowCore-Structures'
 }
 
 { #category : #'field definition' }

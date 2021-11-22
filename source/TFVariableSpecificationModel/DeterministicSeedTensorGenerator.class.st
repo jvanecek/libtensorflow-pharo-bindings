@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'seed'
 	],
-	#category : 'TFVariableSpecificationModel'
+	#category : #TFVariableSpecificationModel
 }
 
 { #category : #'Instance Creation' }
@@ -30,7 +30,7 @@ DeterministicSeedTensorGenerator >> truncatedNormalTensorOn: aComputation shaped
 		newOperationOf: 'StatelessTruncatedNormal'
 		namePrefixed: 'StatelessTruncatedNormal'
 		withAll: ( Array with: shape with: seeds )
-		describedBy: [ :description | description atDataTypePut: TFTensor typeFloat ]
+		describedBy: [ :description | description atDataTypePut: FloatDataType new ]
 ]
 
 { #category : #Accessing }
@@ -39,11 +39,10 @@ DeterministicSeedTensorGenerator >> uniformTensorOn: aComputation shaped: aTenso
 	| shape seeds |
 
 	shape := ConstantNode on: aComputation with: aTensorShape dimensionSizes asInt32Tensor.
-	seeds := ConstantNode on: aComputation with: (Array with: seed with: 0) asInt32Tensor.
-	^ aComputation 
+	seeds := ConstantNode on: aComputation with: ( Array with: seed with: 0 ) asInt32Tensor.
+	^ aComputation
 		newOperationOf: 'StatelessRandomUniform'
 		namePrefixed: 'StatelessRandomUniform'
-		withAll: (Array with: shape with: seeds)
-		describedBy: [:description | description atDataTypePut: TFTensor typeFloat] 
-
+		withAll: ( Array with: shape with: seeds )
+		describedBy: [ :description | description atDataTypePut: FloatDataType new ]
 ]

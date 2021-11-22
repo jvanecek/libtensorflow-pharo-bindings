@@ -8,7 +8,7 @@ Class {
 		'graph',
 		'output'
 	],
-	#category : #TensorFlowCore
+	#category : #'TensorFlowCore-Structures'
 }
 
 { #category : #comparing }

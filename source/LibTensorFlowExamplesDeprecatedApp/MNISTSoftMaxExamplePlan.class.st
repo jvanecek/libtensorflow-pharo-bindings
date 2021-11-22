@@ -49,28 +49,33 @@ MNISTSoftMaxExamplePlan >> initializeInferenceGraph [
 
 { #category : #initialization }
 MNISTSoftMaxExamplePlan >> initializeLearningGraph [
+
 	| learningRate activationGradient biasGradient |
+
 	graph
 		fromBlock: [ | batchSize |
+
 			learningRate := 0.9 asTensor.
 			activationGradient := activation useOutput: 1.
 			biasGradient := activationGradient meanOn: #(0) asInt32Tensor.
-			batchSize := (input sizeOn: 0) castTo: TFTensor typeFloat.
-			learnWeights := weights descent: input \* activationGradient @/ batchSize rate: learningRate.
-			learnBiases := biases descent: biasGradient rate: learningRate]
+			batchSize := ( input sizeOn: 0 ) castTo: FloatDataType new.
+			learnWeights := weights descent: ( input \* activationGradient ) @/ batchSize rate: learningRate.
+			learnBiases := biases descent: biasGradient rate: learningRate
+			]
 		named: 'learning'
 ]
 
 { #category : #initialization }
 MNISTSoftMaxExamplePlan >> initializeLossGraph [
+
 	loss := graph
-		fromBlock: [:expected |
+		fromBlock: [ :expected | 
 			expectedLabel := expected.
 			activation := netInput sparseSoftmaxCrossEntropyWithLogits: expected.
-			activation meanOn: #(0) asInt32Tensor]
-		inputTypes: {TFTensor typeInt32}
+			activation meanOn: #(0) asInt32Tensor
+			]
+		inputTypes: {Int32DataType new}
 		named: 'loss'
-
 ]
 
 { #category : #initialization }

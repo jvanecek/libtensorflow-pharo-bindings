@@ -11,7 +11,7 @@ Class {
 		'OFFSET_INDEX',
 		'OFFSET_OPERATION'
 	],
-	#category : #TensorFlowCore
+	#category : #'TensorFlowCore-Structures'
 }
 
 { #category : #'field definition' }
@@ -103,9 +103,9 @@ TFOutput >> tensorflowTypeFrom: aProtobufferType [
 
 	"Ref: https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/framework/types.proto"
 	mapping := Dictionary new
-		at: 101 put: TFTensor typeFloat;
-		at: 102 put: TFTensor typeFloat;
-		at: 103 put: TFTensor typeInt32;
+		at: 101 put: FloatDataType new;
+		at: 102 put: FloatDataType new;
+		at: 103 put: Int32DataType new;
 		yourself.
 
 	^ mapping
@@ -127,7 +127,7 @@ TFOutput >> type [
 
 	^ ( TFOperation fromHandle: self operation ) type = 'Variable'
 		ifTrue: [ self tensorflowTypeFrom: type ]
-		ifFalse: [ type ]
+		ifFalse: [ TensorDataType identifiedWith: type ]
 ]
 
 { #category : #accessing }

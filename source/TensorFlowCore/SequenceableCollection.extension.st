@@ -24,3 +24,19 @@ SequenceableCollection >> asInt64Tensor [
 SequenceableCollection >> asTensorShape [
 	^ TensorShape withDimensionsSized: self
 ]
+
+{ #category : #'*TensorFlowCore' }
+SequenceableCollection >> inferTensorRank [
+
+	^1 + self first inferTensorRank
+]
+
+{ #category : #'*TensorFlowCore' }
+SequenceableCollection >> inferTensorShape [
+
+	^self isEmpty
+		ifTrue: [TensorShape vectorSized: 0]
+		ifFalse: [
+			TensorShape withDimensionsSized:
+				((Array with: self size) , (self first inferTensorShape dimensionSizes))]
+]

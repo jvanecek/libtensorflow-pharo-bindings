@@ -1,7 +1,7 @@
 Class {
 	#name : #ElementWiseEqualityTest,
 	#superclass : #TensorFlowComputationBasedTest,
-	#category : 'TFOperationModelTests'
+	#category : #TFOperationModelTests
 }
 
 { #category : #Asserting }
@@ -10,30 +10,30 @@ ElementWiseEqualityTest >> assertOutputOf: anOperation isBooleanMatrixEqualTo: a
 	| columns rows |
 
 	anExpectedMatrix first isCollection
-		ifTrue: [
-			columns := anExpectedMatrix first size.
-			rows := anExpectedMatrix flatCollect: #yourself as: OrderedCollection]
-		ifFalse: [
-			columns := 1.
-			rows := anExpectedMatrix].
+		ifTrue: [ columns := anExpectedMatrix first size.
+			rows := anExpectedMatrix flatCollect: #yourself as: OrderedCollection
+			]
+		ifFalse: [ columns := 1.
+			rows := anExpectedMatrix
+			].
 
 	self
-		assert: (tf compute: anOperation)
-		isOf: TFTensor typeBoolean
-		with: (TensorShape matrixSized: anExpectedMatrix size by: columns)
+		assert: ( tf compute: anOperation )
+		isOf: BooleanDataType new
+		with: ( TensorShape matrixSized: anExpectedMatrix size by: columns )
 		comparedTo: rows
-		complying: [:actual :expected | self assert: actual equals: expected]
+		complying: [ :actual :expected | self assert: actual equals: expected ]
 ]
 
 { #category : #Asserting }
 ElementWiseEqualityTest >> assertOutputOf: anOperation isBooleanVectorEqualTo: aVectorOfBooleans [
 
 	self
-		assert: (tf compute: anOperation)
-		isOf: TFTensor typeBoolean
-		with: (TensorShape vectorSized: aVectorOfBooleans size)
+		assert: ( tf compute: anOperation )
+		isOf: BooleanDataType new
+		with: ( TensorShape vectorSized: aVectorOfBooleans size )
 		comparedTo: aVectorOfBooleans
-		complying: [:actual :expected | self assert: actual equals: expected]
+		complying: [ :actual :expected | self assert: actual equals: expected ]
 ]
 
 { #category : #Test }

@@ -4,7 +4,7 @@ TF_ImportGraphDefOptions holds options that can be passed to TF_GraphImportGraph
 Class {
 	#name : #TFImportGraphDefOptions,
 	#superclass : #FFIExternalObject,
-	#category : #TensorFlowCore
+	#category : #'TensorFlowCore-Structures'
 }
 
 { #category : #converting }

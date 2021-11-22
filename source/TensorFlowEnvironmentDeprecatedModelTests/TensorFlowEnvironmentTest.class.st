@@ -38,7 +38,7 @@ TensorFlowEnvironmentTest >> normalWith: aNumber examplesFrom: calculator [
 			description
 				at: 'seed' putInt: 3;
 				at: 'seed2' putInt: 4;
-				at: 'dtype' putType: TFTensor typeFloat]
+				at: 'dtype' putType: FloatDataType new]
 ]
 
 { #category : #Asserting }

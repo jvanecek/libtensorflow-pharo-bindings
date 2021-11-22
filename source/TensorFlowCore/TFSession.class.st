@@ -1,7 +1,7 @@
 Class {
 	#name : #TFSession,
 	#superclass : #FFIOpaqueObject,
-	#category : #TensorFlowCore
+	#category : #'TensorFlowCore-Structures'
 }
 
 { #category : #'instance creation' }

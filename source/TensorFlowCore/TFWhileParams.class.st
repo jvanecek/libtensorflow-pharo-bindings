@@ -11,7 +11,7 @@ Class {
 		'OFFSET_NAME',
 		'OFFSET_NINPUTS'
 	],
-	#category : #TensorFlowCore
+	#category : #'TensorFlowCore-Structures'
 }
 
 { #category : #'field definition' }

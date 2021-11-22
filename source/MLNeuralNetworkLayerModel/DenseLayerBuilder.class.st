@@ -10,7 +10,7 @@ Class {
 		'biasSpecification',
 		'inputSizeAsserter'
 	],
-	#category : 'MLNeuralNetworkLayerModel'
+	#category : #MLNeuralNetworkLayerModel
 }
 
 { #category : #'Instance Creation' }
@@ -46,19 +46,19 @@ DenseLayerBuilder >> activatedByTanh [
 { #category : #'Configuring - Bias' }
 DenseLayerBuilder >> biasInitializedTo: anArray [
 
-	self biasSpecifiedBy: (
-		VariableNodeSpecification
-			of: TFTensor typeFloat
-			initializedWith: (ConstantInitializer with: anArray asFloatTensor))
+	self
+		biasSpecifiedBy:
+			( VariableNodeSpecification
+				of: FloatDataType new
+				initializedWith: ( ConstantInitializer with: anArray asFloatTensor ) )
 ]
 
 { #category : #'Configuring - Bias' }
 DenseLayerBuilder >> biasInitializedToZero [
 
-	self biasSpecifiedBy: (
-		VariableNodeSpecification
-			of: TFTensor typeFloat
-			initializedWith: ConstantInitializer withZeros)
+	self
+		biasSpecifiedBy:
+			( VariableNodeSpecification of: FloatDataType new initializedWith: ConstantInitializer withZeros )
 ]
 
 { #category : #'Configuring - Bias' }
@@ -135,8 +135,8 @@ DenseLayerBuilder >> weightInitializedToZero [
 { #category : #'Configuring - Weight' }
 DenseLayerBuilder >> weightInitializedWith: anVariableInitializer [
 
-	self weightSpecifiedBy:
-		(VariableNodeSpecification of: TFTensor typeFloat initializedWith: anVariableInitializer)
+	self
+		weightSpecifiedBy: ( VariableNodeSpecification of: FloatDataType new initializedWith: anVariableInitializer )
 ]
 
 { #category : #'Configuring - Weight' }

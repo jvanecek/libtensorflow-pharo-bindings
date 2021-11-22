@@ -5,7 +5,7 @@ Class {
 		'model',
 		'reduction'
 	],
-	#category : 'MLNeuralNetworkLayerModel'
+	#category : #MLNeuralNetworkLayerModel
 }
 
 { #category : #'Instance Creation' }
@@ -19,14 +19,13 @@ LossBuilder >> buildCategoricalCrossEntropy [
 
 	| labels |
 
-	labels :=
-		InputNode
-			on: model currentComputation
-			named: self targetInputName
-			of: TFTensor typeFloat
-			shaped: model outputShape.
+	labels := InputNode
+		on: model currentComputation
+		named: self targetInputName
+		of: FloatDataType new
+		shaped: model outputShape.
 
-	^reduction value: (CategoricalCrossEntropy of: model whenExpectedProbabilityIs: labels)
+	^ reduction value: ( CategoricalCrossEntropy of: model whenExpectedProbabilityIs: labels )
 ]
 
 { #category : #Building }
@@ -42,10 +41,9 @@ LossBuilder >> buildSparseCategoricalCrossEntropy [
 
 	| labels |
 
-	labels :=
-		InputNode on: model currentComputation named: self targetInputName of: TFTensor typeInt32.
+	labels := InputNode on: model currentComputation named: self targetInputName of: Int32DataType new.
 
-	^reduction value: (SparseCategoricalCrossEntropy of: model whenExpectedIs: labels)
+	^ reduction value: ( SparseCategoricalCrossEntropy of: model whenExpectedIs: labels )
 ]
 
 { #category : #Building }
@@ -53,14 +51,13 @@ LossBuilder >> buildSquaredError [
 
 	| expected |
 
-	expected :=
-		InputNode
-			on: model currentComputation
-			named: self targetInputName
-			of: TFTensor typeFloat
-			shaped: model outputShape.
+	expected := InputNode
+		on: model currentComputation
+		named: self targetInputName
+		of: FloatDataType new
+		shaped: model outputShape.
 
-	^reduction value: (SquaredDifference between: model and: expected)
+	^ reduction value: ( SquaredDifference between: model and: expected )
 ]
 
 { #category : #Initialization }

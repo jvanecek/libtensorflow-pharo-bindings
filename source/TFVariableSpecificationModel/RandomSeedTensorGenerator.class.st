@@ -1,7 +1,7 @@
 Class {
 	#name : #RandomSeedTensorGenerator,
 	#superclass : #PseudorandomTensorGenerator,
-	#category : 'TFVariableSpecificationModel'
+	#category : #TFVariableSpecificationModel
 }
 
 { #category : #Accessing }
@@ -15,7 +15,7 @@ RandomSeedTensorGenerator >> truncatedNormalTensorOn: aComputation shaped: aTens
 		newOperationOf: 'TruncatedNormal'
 		namePrefixed: 'TruncatedNormal'
 		withAll: ( Array with: shape )
-		describedBy: [ :description | description atDataTypePut: TFTensor typeFloat ]
+		describedBy: [ :description | description atDataTypePut: FloatDataType new ]
 ]
 
 { #category : #Accessing }
@@ -29,5 +29,5 @@ RandomSeedTensorGenerator >> uniformTensorOn: aComputation shaped: aTensorShape 
 		newOperationOf: 'RandomUniform'
 		namePrefixed: 'RandomUniform'
 		withAll: ( Array with: shape )
-		describedBy: [ :description | description atDataTypePut: TFTensor typeFloat ]
+		describedBy: [ :description | description atDataTypePut: FloatDataType new ]
 ]

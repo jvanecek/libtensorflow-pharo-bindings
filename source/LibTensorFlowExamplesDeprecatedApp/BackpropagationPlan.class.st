@@ -24,33 +24,34 @@ BackpropagationPlan >> graph [
 
 { #category : #initialization }
 BackpropagationPlan >> initializeBackwardGraph [
+
 	| actual learningRate learningRateValue one input |
+
 	actual := activation.
-	one := graph const: 'one' value: #((1 1) (1 1)) asFloatTensor.
-	
+	one := graph const: 'one' value: #(#(1 1) #(1 1)) asFloatTensor.
+
 	learningRateValue := 0.9 asTensor.
 	learningRate := graph const: 'learningRate' value: learningRateValue.
 
 	input := inputs first operationOn: graph.
-	
-	target := graph placeholder: 'target' type: TFTensor typeFloat.
-	
-	delta := (target - actual) negated @* actual @* (one - actual) @* input.
-	
-	"learn := weights assign: weights - learningRate @* delta."
-	"learn := weights -= learningRate @* delta."
-	learn := weights descent: delta rate: learningRate.
+
+	target := graph placeholder: 'target' type: FloatDataType new.
+
+	delta := ( target - actual ) negated @* actual @* ( one - actual ) @* input.	"learn := weights assign: weights - learningRate @* delta."	"learn := weights -= learningRate @* delta."
+	learn := weights descent: delta rate: learningRate
 ]
 
 { #category : #initialization }
 BackpropagationPlan >> initializeForwardGraph [
+
 	| input |
-	input := graph placeholder: 'Input' type: TFTensor typeFloat.
-	
-	activation := (weights * input) sigmoid.
-	
-	outputs := {activation output: 0}.
-	inputs := {input input: 0}
+
+	input := graph placeholder: 'Input' type: FloatDataType new.
+
+	activation := ( weights * input ) sigmoid.
+
+	outputs := {( activation output: 0 )}.
+	inputs := {( input input: 0 )}
 ]
 
 { #category : #initialization }

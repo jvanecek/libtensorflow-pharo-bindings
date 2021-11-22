@@ -28,5 +28,5 @@ TFTensor >> shapeDescription [
 { #category : #'*TFOperationModel' }
 TFTensor >> typeDescription [
 
-	^self class descriptionOf: self type
+	^ self type description
 ]
