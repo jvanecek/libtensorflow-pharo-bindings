@@ -79,21 +79,23 @@ TensorFlowPharoLibrary >> accumulatedLengthsOf: aStringArray [
 { #category : #tensor }
 TensorFlowPharoLibrary >> allStringsOf: aTFTensor [
 
-	| total answer bytes data |
+	| total offsetsBytesize bytes data |
 
 	total := aTFTensor size.
-	answer := WriteStream on: ( Array new: total ).
-	bytes := aTFTensor dataBytes.
-	data := aTFTensor data getHandle + ( 8 * total ).
-	1 to: total do: [ :i | 
-		| offset str |
+	offsetsBytesize := UnsignedInt64DataType new dataSize * total.
+	^ Array
+		new: total
+		streamContents: [ :answer | 
+			bytes := aTFTensor dataBytes.
+			data := aTFTensor data getHandle + offsetsBytesize.
+			1 to: total do: [ :i | 
+				| offset str |
 
-		offset := bytes unsignedLongLongAt: ( i - 1 ) * 8 + 1.
-		str := self stringDecode: data + offset.
-		answer nextPut: str
-		].
-
-	^ answer contents
+				offset := UnsignedInt64DataType new getElementAt: i in: bytes.
+				str := self stringDecode: data + offset.
+				answer nextPut: str
+				]
+			]
 ]
 
 { #category : #accessing }
@@ -1431,11 +1433,6 @@ TensorFlowPharoLibrary >> stringEncode: src to: dst size: dstSize [
 		status: status.
 	status check.
 	^ answer
-]
-
-{ #category : #strings }
-TensorFlowPharoLibrary >> stringEncoded: aString [ 
-	self shouldBeImplemented.
 ]
 
 { #category : #strings }
