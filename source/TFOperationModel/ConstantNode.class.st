@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'currentComputation'
 	],
-	#category : 'TFOperationModel'
+	#category : #TFOperationModel
 }
 
 { #category : #'Instance Creation' }
@@ -30,7 +30,7 @@ ConstantNode class >> like: anOperation filledWith: aValue [
 		on: anOperation currentComputation
 		named: self operationType
 		shaped: anOperation value outputShape
-		filledWith: (TFTensor fromNumbers: aValue type: anOperation value outputType)
+		filledWith: (TFTensor newTyped: aValue containing: anOperation value outputType)
 ]
 
 { #category : #'Instance Creation' }

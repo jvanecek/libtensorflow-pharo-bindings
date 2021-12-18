@@ -1,7 +1,7 @@
 Class {
 	#name : #TensorFiller,
 	#superclass : #TensorModifier,
-	#category : 'TFTensorModifierModel'
+	#category : #TFTensorModifierModel
 }
 
 { #category : #'Instance Creation' }
@@ -21,5 +21,5 @@ TensorFiller class >> on: aTensorFlowComputation fillWith: aValue tensorShaped: 
 		newOperationOf: 'Fill'
 		namePrefixed: 'Fill'
 		with: aShape asInt32Tensor
-		with: (TFTensor fromNumbers: aValue type: aTensorType)
+		with: (TFTensor newTyped: aValue containing: aTensorType)
 ]

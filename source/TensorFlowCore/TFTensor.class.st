@@ -25,37 +25,37 @@ TFTensor class >> copyArrayOf: type with: values into: anExternalAddressOrByteAr
 { #category : #'instance creation' }
 TFTensor class >> fromBooleans: values [
 
-	^ self fromNumbers: values type: BooleanDataType new
+	^ self newTyped: values containing: BooleanDataType new
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> fromBools: values shape: shape [
 
-	^ self fromNumbers: values type: BooleanDataType new shape: shape
+	^ self newTyped: BooleanDataType new shaped: shape containing: values
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> fromDoubles: values [
 
-	^ self fromNumbers: values type: DoubleDataType new
+	^ self newTyped: values containing: DoubleDataType new
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> fromDoubles: values shape: shape [
 
-	^ self fromNumbers: values type: DoubleDataType new shape: shape
+	^ self newTyped: DoubleDataType new shaped: shape containing: values
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> fromFloats: values [
 
-	^ self fromNumbers: values type: FloatDataType new
+	^ self newTyped: values containing: FloatDataType new
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> fromFloats: values shape: shape [
 
-	^ self fromNumbers: values type: FloatDataType new shape: shape
+	^ self newTyped: FloatDataType new shaped: shape containing: values
 ]
 
 { #category : #'instance creation' }
@@ -70,13 +70,13 @@ TFTensor class >> fromInt32: value [
 { #category : #'instance creation' }
 TFTensor class >> fromInt32s: values [
 
-	^ self fromNumbers: values type: Int32DataType new
+	^ self newTyped: values containing: Int32DataType new
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> fromInt32s: values shape: shape [
 
-	^ self fromNumbers: values type: Int32DataType new shape: shape
+	^ self newTyped: Int32DataType new shaped: shape containing: values
 ]
 
 { #category : #'instance creation' }
@@ -91,34 +91,13 @@ TFTensor class >> fromInt64: value [
 { #category : #'instance creation' }
 TFTensor class >> fromInt64s: values [
 
-	^ self fromNumbers: values type: Int64DataType new
+	^ self newTyped: values containing: Int64DataType new
 ]
 
 { #category : #'instance creation' }
 TFTensor class >> fromInt64s: values shape: shape [
 
-	^ self fromNumbers: values type: Int64DataType new shape: shape
-]
-
-{ #category : #'instance creation' }
-TFTensor class >> fromNumbers: values type: type [
-
-	^ self fromNumbers: values type: type shape: values inferTensorShape
-]
-
-{ #category : #acccessing }
-TFTensor class >> fromNumbers: values type: type shape: shape [
-
-	| size count |
-
-	size := values singleElementsInCollection.
-	count := shape totalAmountOfElements.
-	count = size
-		ifFalse: [ Error signal: 'Inferred size and real size don''t match.' ].
-	^ self
-		newTyped: type
-		shaped: shape
-		thenDo: [ :tensor | self copyArrayOf: type with: values into: tensor data getHandle ]
+	^ self newTyped: Int64DataType new shaped: shape containing: values
 ]
 
 { #category : #'instance creation' }
@@ -164,6 +143,12 @@ TFTensor class >> new [
 ]
 
 { #category : #'instance creation' }
+TFTensor class >> newTyped: values containing: type [
+
+	^ self newTyped: type shaped: values inferTensorShape containing: values
+]
+
+{ #category : #'instance creation' }
 TFTensor class >> newTyped: anInteger shaped: aTensorShape [
 
 	^ self newTyped: anInteger shaped: aTensorShape thenDo: [ :tensor |  ]
@@ -179,6 +164,21 @@ TFTensor class >> newTyped: aTensorType shaped: aTensorShape bytesize: bytesizeI
 		length: bytesizeInteger.
 	aBlock value: tensor.
 	^ tensor
+]
+
+{ #category : #acccessing }
+TFTensor class >> newTyped: type shaped: shape containing: values [
+
+	| size count |
+
+	size := values singleElementsInCollection.
+	count := shape totalAmountOfElements.
+	count = size
+		ifFalse: [ Error signal: 'Inferred size and real size don''t match.' ].
+	^ self
+		newTyped: type
+		shaped: shape
+		thenDo: [ :tensor | self copyArrayOf: type with: values into: tensor data getHandle ]
 ]
 
 { #category : #'instance creation' }

@@ -160,9 +160,9 @@ DatasetProvider >> tensorTyped: aTensorType fromFileNamed: aString [
 	FileSystemAPI current
 		readIdxFileNamed: aString
 		thenDo: [ :dimensionSizes :content | 
-			^TFTensor
-				fromNumbers: content
-				type: aTensorType
-				shape: ( TensorShape withDimensionsSized: dimensionSizes )
+			^ TFTensor
+				newTyped: aTensorType
+				shaped: ( TensorShape withDimensionsSized: dimensionSizes )
+				containing: content
 			]
 ]
