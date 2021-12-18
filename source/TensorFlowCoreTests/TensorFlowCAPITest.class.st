@@ -367,7 +367,7 @@ TensorFlowCAPITest >> testDecodeCSVGraphRunCSV: csvLines [
 	graph := self decodeCSVGraphDefaults: defaults.
 	records := (graph operationNamed: 'records') input: 0.
 	output := graph operationNamed: 'output'.
-	values := TFTensor fromStringArray: csvLines.
+	values := TFTensor fromStrings: csvLines.
 	
 	session := TFSession on: graph.
 	results := session
@@ -766,11 +766,13 @@ TensorFlowCAPITest >> testStatusSetGetCode [
 
 { #category : #'testing strings' }
 TensorFlowCAPITest >> testStringAsTensor [
+
 	| tensor template |
+
 	template := 'hola manola'.
 	tensor := template asTensor.
-	self assert: tensor dataBytes first equals: template size.
-	self assert: tensor dataBytes allButFirst asString equals: template
+	self assert: tensor size equals: template size.
+	self assert: tensor content equals: template
 ]
 
 { #category : #'testing tensor' }
@@ -875,9 +877,8 @@ TensorFlowCAPITest >> testTensorDataTypeSize [
 
 	OrderedCollection new
 		add: ResourceDataType new;
-		add: StringDataType new;
 		add: VariantDataType new;
-		do: [:type | self assert: type dataSize equals: 0].
+		do: [ :type | self assert: type dataSize equals: 0 ].
 
 	OrderedCollection new
 		add: BooleanDataType new;
@@ -885,7 +886,7 @@ TensorFlowCAPITest >> testTensorDataTypeSize [
 		add: QuantizedInt8DataType new;
 		add: QuantizedUnsignedInt8DataType new;
 		add: UnsignedInt8DataType new;
-		do: [:type | self assert: type dataSize equals: 1].
+		do: [ :type | self assert: type dataSize equals: 1 ].
 
 	OrderedCollection new
 		add: HalfDataType new;
@@ -894,23 +895,24 @@ TensorFlowCAPITest >> testTensorDataTypeSize [
 		add: QuantizedUnsignedInt16DataType new;
 		add: ReducedFloat16DataType new;
 		add: UnsignedInt16DataType new;
-		do: [:type | self assert: type dataSize equals: 2].
+		do: [ :type | self assert: type dataSize equals: 2 ].
 
 	OrderedCollection new
 		add: FloatDataType new;
 		add: Int32DataType new;
 		add: QuantizedInt32DataType new;
 		add: UnsignedInt32DataType new;
-		do: [:type | self assert: type dataSize equals: 4].
+		do: [ :type | self assert: type dataSize equals: 4 ].
 
 	OrderedCollection new
 		add: Complex64DataType new;
 		add: DoubleDataType new;
 		add: Int64DataType new;
 		add: UnsignedInt64DataType new;
-		do: [:type | self assert: type dataSize equals: 8].
+		do: [ :type | self assert: type dataSize equals: 8 ].
 
-	self assert: Complex128DataType new dataSize equals: 16
+	self assert: Complex128DataType new dataSize equals: 16.
+	self assert: StringDataType new dataSize equals: 24
 ]
 
 { #category : #'testing tensor' }
@@ -1135,19 +1137,38 @@ TensorFlowCAPITest >> testTensorFromInt64s [
 ]
 
 { #category : #'testing strings' }
+TensorFlowCAPITest >> testTensorFromLargeString [
+
+	| string template |
+
+	template := String streamContents: [:str | 100 timesRepeat: [str nextPutAll: 'Hola']].
+	string := TFString with: template.
+	
+	self assert: string size equals: template size. 
+	self assert: string stringType equals: 1.
+	self assert: string capacity equals: 415.
+	self assert: string content equals: template
+]
+
+{ #category : #'testing strings' }
 TensorFlowCAPITest >> testTensorFromString [
-	| tensor template |
+
+	| string template |
+
 	template := 'hola manola'.
-	tensor := TFTensor fromString: template.
-	self assert: tensor dataBytes first equals: template size.
-	self assert: tensor dataBytes allButFirst asString equals: template
+	string := TFString with: template.
+
+	self assert: string size equals: template size.
+	self assert: string stringType equals: 0.
+	self assert: string capacity equals: 22.
+	self assert: string content equals: template
 ]
 
 { #category : #'testing strings' }
 TensorFlowCAPITest >> testTensorFromStringArray [
 	| tensor template |
 	template := #('hola manola' 'te traje una lola' 'pamela' 'que pandulce!').
-	tensor := TFTensor fromStringArray: template.
+	tensor := TFTensor fromStrings: template.
 	self assert: tensor allStrings equals: template
 ]
 
@@ -1254,7 +1275,7 @@ TensorFlowCAPITest >> testTensorTypes [
 TensorFlowCAPITest >> testVersion [
 	| version |
 	version := library version.
-	self assert: (#('2.3.1') includes: version)
+	self assert: ('2.7.0*' match: version)
 ]
 
 { #category : #'testing graph' }

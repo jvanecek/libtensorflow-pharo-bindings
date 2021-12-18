@@ -7,7 +7,8 @@ String >> asAsciiZ [
 
 { #category : #'*TensorFlowCore' }
 String >> asTensor [
-	^ TFTensor fromString: self
+
+	^TFString with: self
 ]
 
 { #category : #'*TensorFlowCore' }

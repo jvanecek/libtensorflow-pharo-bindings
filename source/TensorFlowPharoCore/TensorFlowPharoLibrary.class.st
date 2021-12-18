@@ -60,44 +60,6 @@ TensorFlowPharoLibrary class >> initialize [
 	TensorFlowCAPI setCurrentPlatformLibraryTo: self current. 
 ]
 
-{ #category : #tensor }
-TensorFlowPharoLibrary >> accumulatedLengthsOf: aStringArray [
-
-	| sizes offsets |
-
-	sizes := self collectEncodedSizeOf: aStringArray.
-	offsets := OrderedCollection new: aStringArray size.
-	sizes
-		inject: 0
-		into: [ :prev :each | 
-			offsets add: prev.
-			each + prev
-			].
-	^ offsets
-]
-
-{ #category : #tensor }
-TensorFlowPharoLibrary >> allStringsOf: aTFTensor [
-
-	| total offsetsBytesize bytes data |
-
-	total := aTFTensor size.
-	offsetsBytesize := UnsignedInt64DataType new dataSize * total.
-	^ Array
-		new: total
-		streamContents: [ :answer | 
-			bytes := aTFTensor dataBytes.
-			data := aTFTensor data getHandle + offsetsBytesize.
-			1 to: total do: [ :i | 
-				| offset str |
-
-				offset := UnsignedInt64DataType new getElementAt: i in: bytes.
-				str := self stringDecode: data + offset.
-				answer nextPut: str
-				]
-			]
-]
-
 { #category : #accessing }
 TensorFlowPharoLibrary >> allocateTensorOf: aTensorDomain length: aLenght [
 
@@ -169,12 +131,6 @@ TensorFlowPharoLibrary >> closeSession: aTF_Session status: aTF_Status [
 		module: TensorFlowPharoLibrary
 ]
 
-{ #category : #tensor }
-TensorFlowPharoLibrary >> collectEncodedSizeOf: aStringArray [
-
-	^ aStringArray collect: [ :each | self stringEncodedSize: each ]
-]
-
 { #category : #buffer }
 TensorFlowPharoLibrary >> deleteBuffer: aTF_Buffer [
 	"<cdecl: void 'TF_DeleteBuffer' (TF_Buffer*)>"
@@ -224,6 +180,14 @@ TensorFlowPharoLibrary >> deleteStatus: aTF_Status [
 	"<cdecl: void 'TF_DeleteStatus' (TF_Status*)>"
 
 	^ self ffiCall: #(void TF_DeleteStatus #(TFStatus * aTF_Status)) module: TensorFlowPharoLibrary
+]
+
+{ #category : #strings }
+TensorFlowPharoLibrary >> deleteString: aTFString [
+
+	^ self
+		ffiCall: #(void TF_StringDealloc #(#TFString * aTFString))
+		module: TensorFlowPharoLibrary
 ]
 
 { #category : #tensor }
@@ -868,6 +832,24 @@ TensorFlowPharoLibrary >> newStatus [
 	^ self ffiCall: #(#TFStatus * TF_NewStatus #()) module: TensorFlowPharoLibrary
 ]
 
+{ #category : #strings }
+TensorFlowPharoLibrary >> newStringOn: externalString with: aString [
+
+	self
+		stringInitOn: externalString;
+		stringCopy: aString withLenght: aString size into: externalString
+]
+
+{ #category : #strings }
+TensorFlowPharoLibrary >> newStringWith: aString [
+
+	| externalString |
+
+	externalString := TFString externalNew.
+	self newStringOn: externalString with: aString.
+	^ externalString
+]
+
 { #category : #tensor }
 TensorFlowPharoLibrary >> newTensorType: anInteger shape: aLongLongArray rank: dimCount data: aData length: len deallocator: deallocator args: args [
 	"TF_CAPI_EXPORT extern TF_Tensor* TF_NewTensor(
@@ -1206,13 +1188,6 @@ TensorFlowPharoLibrary >> operationOutputType: aTF_Output [
 	^ self ffiCall: #(int TF_OperationOutputType #(TFOutput aTF_Output)) module: TensorFlowPharoLibrary
 ]
 
-{ #category : #strings }
-TensorFlowPharoLibrary >> primStringEncodedSize: anInteger [
-	"TF_CAPI_EXPORT extern size_t TF_StringEncodedSize(size_t len)"
-
-	^ self ffiCall: #(size_t TF_StringEncodedSize #(size_t anInteger)) module: TensorFlowPharoLibrary
-]
-
 { #category : #session }
 TensorFlowPharoLibrary >> runSession: aTFSession inputs: inArrayOfTFInputs values: inArrayOfTFTensor outputs: outArrayOfTFOutputs [
 
@@ -1379,65 +1354,44 @@ TensorFlowPharoLibrary >> sizeOfDataType: aDataType [
 ]
 
 { #category : #strings }
-TensorFlowPharoLibrary >> stringDecode: src [
-	| destination status answer dstSize |
-	destination := ByteArray new: 8.
-	dstSize := ByteArray new: 8.
-	status := TFStatus create.
-	answer := self stringDecode: src len: src size destination: destination len: dstSize status: status.
-	status check.
-	dstSize := dstSize unsignedLongLongAt: 1.
-	destination := destination pointerAt: 1.
-	answer := (destination structAt: 1 length: dstSize) asString.
-	^ answer
-]
-
-{ #category : #strings }
-TensorFlowPharoLibrary >> stringDecode: srcString len: srcLen destination: dstPointer len: dstLenPointer status: status [
-	"TF_CAPI_EXPORT extern size_t TF_StringDecode(const char* src, size_t src_len,
-                                             const char** dst, size_t* dst_len,
-TF_Status* status);"
-
+TensorFlowPharoLibrary >> stringCopy: aString withLenght: aLenght into: aTFString [
+	
+	"void TF_StringCopy(TF_TString *dst, const char *src, size_t size) "
 	^ self
-		ffiCall:
-			#(size_t TF_StringDecode #(String srcString , size_t srcLen , String dstPointer , size_t * dstLenPointer, #TFStatus * status))
+		ffiCall: #(void TF_StringCopy #(TFString * aTFString, String aString , size_t aLenght))
 		module: TensorFlowPharoLibrary
 ]
 
 { #category : #strings }
-TensorFlowPharoLibrary >> stringEncode: srcString len: srcLen destination: dstString len: dstLen status: status [
-	"TF_CAPI_EXPORT extern size_t TF_StringEncode(const char* src, size_t src_len,
-                                             char* dst, size_t dst_len,
-													TF_Status* status);"
+TensorFlowPharoLibrary >> stringGetCapacityOf: aTFString [
+
+	^ self ffiCall: #(size_t TF_StringGetCapacity #(TFString * aTFString)) module: TensorFlowPharoLibrary
+]
+
+{ #category : #strings }
+TensorFlowPharoLibrary >> stringGetDataOf: aTFString [
 
 	^ self
-		ffiCall:
-			#(size_t TF_StringEncode #(String srcString , size_t srcLen , String dstString , size_t dstLen, #TFStatus * status))
+		ffiCall: #(const char * TF_StringGetDataPointer #(TFString * aTFString))
 		module: TensorFlowPharoLibrary
 ]
 
 { #category : #strings }
-TensorFlowPharoLibrary >> stringEncode: src to: dst [
-	^ self stringEncode: src to: dst size: dst size
+TensorFlowPharoLibrary >> stringGetSizeOf: aTFString [
+
+	^ self ffiCall: #(size_t TF_StringGetSize #(TFString * aTFString)) module: TensorFlowPharoLibrary
 ]
 
 { #category : #strings }
-TensorFlowPharoLibrary >> stringEncode: src to: dst size: dstSize [
-	| status answer |
-	status := TFStatus create.
-	answer := self
-		stringEncode: src
-		len: src size
-		destination: dst
-		len: dstSize
-		status: status.
-	status check.
-	^ answer
+TensorFlowPharoLibrary >> stringGetTypeOf: aTFString [
+
+	^ self ffiCall: #(size_t TF_StringGetType #(TFString * aTFString)) module: TensorFlowPharoLibrary
 ]
 
 { #category : #strings }
-TensorFlowPharoLibrary >> stringEncodedSize: aString [
-	^ self primStringEncodedSize: aString size
+TensorFlowPharoLibrary >> stringInitOn: aTFString [
+
+	^ self ffiCall: #(size_t TF_StringInit #(TFString * aTFString)) module: TensorFlowPharoLibrary
 ]
 
 { #category : #tensor }
@@ -1464,44 +1418,6 @@ TensorFlowPharoLibrary >> tensorDataOf: aTF_Tensor [
 	^ self
 		ffiCall: #(void * TF_TensorData #(TFTensor * aTF_Tensor))
 		module: TensorFlowPharoLibrary
-]
-
-{ #category : #tensor }
-TensorFlowPharoLibrary >> tensorFromString: aString [
-
-	| bytesize |
-
-	bytesize := self stringEncodedSize: aString.
-
-	^ TFTensor
-		newTyped: StringDataType new
-		shaped: TensorShape scalar
-		bytesize: bytesize
-		thenDo: [ :tensor | self stringEncode: aString to: tensor data getHandle size: bytesize ]
-]
-
-{ #category : #tensor }
-TensorFlowPharoLibrary >> tensorFromStrings: aStringArray shaped: aTensorShape [
-
-	| offsets bytesize offsetsBytesize |
-
-	offsets := self accumulatedLengthsOf: aStringArray.
-	offsetsBytesize := Int64DataType new dataSize * aStringArray size.
-	bytesize := offsetsBytesize + ( self collectEncodedSizeOf: aStringArray ) sum.
-	^ TFTensor
-		newTyped: StringDataType new
-		shaped: aTensorShape
-		bytesize: bytesize
-		thenDo: [ :answer | 
-			TFTensor copyArrayOf: Int64DataType new with: offsets into: answer data getHandle.
-			aStringArray
-				withIndexDo: [ :each :index | 
-					| offset |
-
-					offset := offsetsBytesize + ( offsets at: index ).
-					self stringEncode: each to: answer data getHandle + offset size: bytesize - offset
-					]
-			]
 ]
 
 { #category : #tensor }

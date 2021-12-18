@@ -101,39 +101,20 @@ TFTensor class >> fromInt64s: values shape: shape [
 ]
 
 { #category : #'instance creation' }
-TFTensor class >> fromString: aString [
-	
-	^ TensorFlowCAPI current tensorFromString: aString
-]
-
-{ #category : #'instance creation' }
-TFTensor class >> fromStringArray: aStringArray [
-
-	^self fromStrings: aStringArray shape: (TensorShape vectorSized: aStringArray size)
-]
-
-{ #category : #'instance creation' }
-TFTensor class >> fromStringArray: aStringArray shape: shape [
-
-	^ TensorFlowCAPI current tensorFromStrings: aStringArray shaped: shape
-]
-
-{ #category : #'instance creation' }
 TFTensor class >> fromStrings: aStringArray [
 
 	^ self fromStrings: aStringArray shape: aStringArray inferTensorShape
 ]
 
 { #category : #'instance creation' }
-TFTensor class >> fromStrings: strings shape: shape [
+TFTensor class >> fromStrings: aStringArray shape: shape [
 
 	| flatten |
 
-	flatten :=
-		Array
-			new: strings singleElementsInCollection
-			streamContents: [:stream | strings singleElementsDo: [:each | stream nextPut: each]].
-	^self fromStringArray: flatten shape: shape
+	flatten := Array
+		new: aStringArray singleElementsInCollection
+		streamContents: [ :stream | aStringArray singleElementsDo: [ :each | stream nextPut: each ] ].
+	^ self newTyped: StringDataType new shaped: shape containing: flatten
 ]
 
 { #category : #'instance creation' }
@@ -239,7 +220,7 @@ TFTensor >> allInt64s [
 { #category : #converting }
 TFTensor >> allStrings [
 
-	^ self library allStringsOf: self
+	^ self allElements collect: #content
 ]
 
 { #category : #converting }

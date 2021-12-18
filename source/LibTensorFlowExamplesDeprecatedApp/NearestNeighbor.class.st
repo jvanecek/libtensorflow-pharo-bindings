@@ -27,7 +27,7 @@ NearestNeighbor >> decodeCSV: csvLines graphRun: description [
 	graph := self decodeCSVGraphDefaults: description.
 	records := (graph operationNamed: 'records') input: 0.
 	output := graph operationNamed: 'output'.
-	values := TFTensor fromStringArray: csvLines.
+	values := TFTensor fromStrings: csvLines.
 	
 	session := TFSession on: graph.
 	results := session

@@ -30,12 +30,6 @@ TensorFlowCAPI class >> wrapping: aTensorFlowLibrary [
 	^ self new initializeWrapping: aTensorFlowLibrary
 ]
 
-{ #category : #strings }
-TensorFlowCAPI >> allStringsOf: aTFTensor [
-
-	^ platformLibrary allStringsOf: aTFTensor
-]
-
 { #category : #tensor }
 TensorFlowCAPI >> allocateTensorOf: aTensorDomain length: aSmallInteger [
 
@@ -428,6 +422,18 @@ TensorFlowCAPI >> newStatus [
 	^ platformLibrary newStatus
 ]
 
+{ #category : #strings }
+TensorFlowCAPI >> newStringOn: anExternalAddress with: aString [
+
+	^ platformLibrary newStringOn: anExternalAddress with: aString
+]
+
+{ #category : #strings }
+TensorFlowCAPI >> newStringWith: aString [ 
+	
+	^ platformLibrary newStringWith: aString 
+]
+
 { #category : #'operation attribute' }
 TensorFlowCAPI >> operation: aTFOperation getBoolAt: anAttributeName [
 
@@ -598,6 +604,30 @@ TensorFlowCAPI >> sizeOfDataType: aDataType [
 	^ platformLibrary sizeOfDataType: aDataType uniqueIdentifier
 ]
 
+{ #category : #strings }
+TensorFlowCAPI >> stringGetCapacityOf: aTFString [
+
+	^ platformLibrary stringGetCapacityOf: aTFString
+]
+
+{ #category : #strings }
+TensorFlowCAPI >> stringGetDataOf: aTFString [ 
+	
+	^ platformLibrary stringGetDataOf: aTFString 
+]
+
+{ #category : #strings }
+TensorFlowCAPI >> stringGetSizeOf: aTFString [ 
+	
+	^ platformLibrary stringGetSizeOf: aTFString 
+]
+
+{ #category : #strings }
+TensorFlowCAPI >> stringGetTypeOf: aTFString [
+
+	^ platformLibrary stringGetTypeOf: aTFString
+]
+
 { #category : #tensor }
 TensorFlowCAPI >> tensor: aTFTensor sizeOn: aDimension [
 
@@ -615,20 +645,6 @@ TensorFlowCAPI >> tensorByteSize: aTFTensor [
 TensorFlowCAPI >> tensorDataOf: aTFTensor [
 
 	^platformLibrary tensorDataOf: aTFTensor
-]
-
-{ #category : #tensor }
-TensorFlowCAPI >> tensorFromString: aString [
-
-
-	^ platformLibrary tensorFromString: aString
-]
-
-{ #category : #tensor }
-TensorFlowCAPI >> tensorFromStrings: anArray shaped: aTensorShape [
-
-
-	^ platformLibrary tensorFromStrings: anArray shaped: aTensorShape 
 ]
 
 { #category : #tensor }

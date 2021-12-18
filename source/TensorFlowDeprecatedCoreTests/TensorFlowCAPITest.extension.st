@@ -619,7 +619,7 @@ TensorFlowCAPITest >> testDescriptionDevice [
 				device: 'anInvalidDevice';
 				addInput: (in output: 0);
 				addInput: (in output: 0) ].
-	expected := 'INVALID_ARGUMENT: Malformed device specification ''anInvalidDevice'' in node: {name:''out'' id:3 op device:{} def:{{{node out}} = Mul[T=DT_INT64, _device="anInvalidDevice"](const, const)}}
+	expected := 'INVALID_ARGUMENT: Malformed device specification ''anInvalidDevice'' in node: {name:''out'' id:3 op device:{requested: ''anInvalidDevice'', assigned: ''''} def:{{{node out}} = Mul[T=DT_INT64, _device="anInvalidDevice"](const, const)}}
 	 [[out]]'.
 	self should: [ (TFSession on: graph) runOutput: (op output: 0) ] raiseError: expected
 ]
@@ -640,10 +640,9 @@ TensorFlowCAPITest >> testFloatAsStringGraphRun [
 	self deny: result data isNull.
 	str := result dataBytes.
 	
-	self assert: 8+1+ expected size equals: str size.
-	self assert: (str unsignedLongLongAt: 1) equals: 0.
-	self assert: (str at: 9) equals: expected size.
-	self assert: (str copyFrom: 10 to: (9+expected size)) asString equals: expected.
+	self assert: 16 + expected size equals: str size.
+	self assert: (str unsignedLongLongAt: 10) equals: 0.
+	self assert: (str copyFrom: 1 to: (expected size +1 )) asString trim equals: expected.
 	
 	result delete.
 

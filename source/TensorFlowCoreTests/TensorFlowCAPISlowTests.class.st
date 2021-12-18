@@ -72,6 +72,6 @@ TensorFlowCAPISlowTests >> testTensorFinalizationReleasesExternalMemory [
 	( String new: 1000 )}.
 	self
 		assertCreating: 20
-		of: [ TFTensor fromStringArray: template ]
+		of: [ TFTensor fromStrings: template ]
 		releasesExternalMemoryRepeatingUpTo: 20
 ]
