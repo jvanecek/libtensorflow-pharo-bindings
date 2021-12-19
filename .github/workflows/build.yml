@@ -24,6 +24,8 @@ jobs:
         run: ./scripts/install-tensorflow.sh
         env:
           VERSION: ${{ matrix.tensorflow }}
+      - name: Install Pharo Dependencies
+        run: ./scripts/install-pharo-dependencies.sh
       - name: Load Image and Run Tests
         run: smalltalkci -s ${{ matrix.smalltalk }}
         env:
