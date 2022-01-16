@@ -1451,3 +1451,11 @@ TensorFlowPharoLibrary >> version [
 
 	^ self ffiCall: #(String TF_Version #()) module: TensorFlowPharoLibrary
 ]
+
+{ #category : #accessing }
+TensorFlowPharoLibrary >> win32ModuleName [
+	#('tensorflow.dll')
+		detect: [ :each | (FileLocator vmDirectory / each) exists ]
+		ifFound: [ :each | ^ each ].
+	self error: 'tensorflow library not found!'
+]
