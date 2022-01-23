@@ -17,9 +17,9 @@ TensorFiller class >> fillWith: aValue tensorShaped: aShape [
 { #category : #'Instance Creation' }
 TensorFiller class >> on: aTensorFlowComputation fillWith: aValue tensorShaped: aShape andType: aTensorType [
 
-	^aTensorFlowComputation
-		newOperationOf: 'Fill'
-		namePrefixed: 'Fill'
-		with: aShape asInt32Tensor
-		with: (TFTensor newTyped: aValue containing: aTensorType)
+	^ aTensorFlowComputation
+		  newOperationOf: 'Fill'
+		  namePrefixed: 'Fill'
+		  with: aShape asInt32Tensor
+		  with: (TFTensor newTyped: aTensorType containing: aValue)
 ]

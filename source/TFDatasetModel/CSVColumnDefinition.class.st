@@ -16,13 +16,15 @@ CSVColumnDefinition class >> containing: aTensor [
 { #category : #'Instance Creation' }
 CSVColumnDefinition class >> mandatoryTyped: aTensorType [
 
-	^self containing: (TFTensor newTyped: #() containing: aTensorType)
+	^ self containing: (TFTensor newTyped: aTensorType containing: #(  ))
 ]
 
 { #category : #'Instance Creation' }
 CSVColumnDefinition class >> nullableTyped: aTensorType defaultTo: aDefaultValue [
 
-	^self containing: (TFTensor newTyped: (Array with: aDefaultValue) containing: aTensorType)
+	^ self containing: (TFTensor
+			   newTyped: aTensorType
+			   containing: (Array with: aDefaultValue))
 ]
 
 { #category : #Accessing }

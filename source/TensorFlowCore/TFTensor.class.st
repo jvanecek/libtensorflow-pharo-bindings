@@ -25,7 +25,7 @@ TFTensor class >> copyArrayOf: type with: values into: anExternalAddressOrByteAr
 { #category : #'instance creation' }
 TFTensor class >> fromBooleans: values [
 
-	^ self newTyped: values containing: BooleanDataType new
+	^ self newTyped: BooleanDataType new containing: values
 ]
 
 { #category : #'instance creation' }
@@ -37,7 +37,7 @@ TFTensor class >> fromBools: values shape: shape [
 { #category : #'instance creation' }
 TFTensor class >> fromDoubles: values [
 
-	^ self newTyped: values containing: DoubleDataType new
+	^ self newTyped: DoubleDataType new containing: values
 ]
 
 { #category : #'instance creation' }
@@ -49,7 +49,7 @@ TFTensor class >> fromDoubles: values shape: shape [
 { #category : #'instance creation' }
 TFTensor class >> fromFloats: values [
 
-	^ self newTyped: values containing: FloatDataType new
+	^ self newTyped: FloatDataType new containing: values
 ]
 
 { #category : #'instance creation' }
@@ -70,7 +70,7 @@ TFTensor class >> fromInt32: value [
 { #category : #'instance creation' }
 TFTensor class >> fromInt32s: values [
 
-	^ self newTyped: values containing: Int32DataType new
+	^ self newTyped: Int32DataType new containing: values
 ]
 
 { #category : #'instance creation' }
@@ -91,7 +91,7 @@ TFTensor class >> fromInt64: value [
 { #category : #'instance creation' }
 TFTensor class >> fromInt64s: values [
 
-	^ self newTyped: values containing: Int64DataType new
+	^ self newTyped: Int64DataType new containing: values
 ]
 
 { #category : #'instance creation' }
@@ -124,7 +124,7 @@ TFTensor class >> new [
 ]
 
 { #category : #'instance creation' }
-TFTensor class >> newTyped: values containing: type [
+TFTensor class >> newTyped: type containing: values [
 
 	^ self newTyped: type shaped: values inferTensorShape containing: values
 ]
