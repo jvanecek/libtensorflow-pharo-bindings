@@ -1,6 +1,6 @@
 Class {
 	#name : #VariableNode,
-	#superclass : #TensorFlowOperationAbstract,
+	#superclass : #VariableNodeAbstract,
 	#instVars : [
 		'currentComputation',
 		'currentValueAssigned'
@@ -19,26 +19,15 @@ VariableNode class >> on: aComputation named: aName forFloatsShaped: aShape init
 		initializedWith: aVariableInitializer
 ]
 
-{ #category : #'Instance Creation' }
-VariableNode class >> on: aComputation named: aName of: aType shaped: aShape initializedWith: aVariableInitializer [
-
-	^self new
-		initializeOn: aComputation
-		named: aName
-		of: aType
-		shaped: aShape
-		initializedWith: aVariableInitializer
-]
-
 { #category : #Configuring }
 VariableNode >> assign: anOperation [
 
-
-	currentValueAssigned := currentComputation
-		newOperationOf: 'Assign'
-		namePrefixed: self operationName , '_initializer'
-		with: self 
-		with: anOperation
+	currentValueAssigned :=
+		currentComputation
+			newOperationOf: 'Assign'
+			namePrefixed: self operationName , '_initializer'
+			with: self
+			with: anOperation
 ]
 
 { #category : #Accessing }
@@ -51,12 +40,17 @@ VariableNode >> currentComputation [
 VariableNode >> initializeOn: aTensorFlowComputation named: aName of: aType shaped: aShape initializedWith: aVariableInitializer [
 
 	currentComputation := aTensorFlowComputation.
-	value := currentComputation createVariableNamed: aName of: aType shaped: aShape initializedWith: aVariableInitializer.
+	value :=
+		currentComputation
+			createVariableNamed: aName
+			of: aType
+			shaped: aShape
+			initializedWith: aVariableInitializer.
 	aVariableInitializer applyTo: self
 ]
 
 { #category : #Accessing }
 VariableNode >> operationType [
 
-	^'Variable'
+	^'VariableV2'
 ]

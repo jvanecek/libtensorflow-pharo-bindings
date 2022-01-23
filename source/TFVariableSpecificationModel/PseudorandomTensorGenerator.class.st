@@ -1,8 +1,14 @@
 Class {
 	#name : #PseudorandomTensorGenerator,
 	#superclass : #Object,
-	#category : 'TFVariableSpecificationModel'
+	#category : #TFVariableSpecificationModel
 }
+
+{ #category : #Accessing }
+PseudorandomTensorGenerator >> binomialTensorOn: aTensorFlowComputation shaped: aTensorShape withProbabilityOfSuccess: aProbabilityOfSuccess in: aNumberOfExperiments [
+
+	self subclassResponsibility
+]
 
 { #category : #Accessing }
 PseudorandomTensorGenerator >> glorotFactorBasedOn: aTensorShape [
