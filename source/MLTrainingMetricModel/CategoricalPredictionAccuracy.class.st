@@ -27,7 +27,10 @@ CategoricalPredictionAccuracy >> initializeOf: aPrediction whenExpectedIs: aTarg
 
 	prediction := aPrediction.
 	target := aTarget.
-	predictionsMatches := ( aPrediction comparedWith: ( aTarget castedTo: aPrediction outputType ) )
-		castedTo: FloatDataType new.	" I assume this is always gonna be a vector with the matches "
+	predictionsMatches :=
+		(aPrediction comparedWith: (aTarget castedTo: aPrediction outputType))
+			castedTo: FloatDataType new.
+
+	" I assume this is always gonna be a vector with the matches "
 	value := predictionsMatches meanAlongside: #(0)
 ]

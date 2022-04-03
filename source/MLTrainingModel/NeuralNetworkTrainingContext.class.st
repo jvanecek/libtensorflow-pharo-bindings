@@ -8,7 +8,7 @@ Class {
 		'metricTrackers',
 		'metricsCollected'
 	],
-	#category : 'MLTrainingModel'
+	#category : #MLTrainingModel
 }
 
 { #category : #'Instance Creation' }
@@ -56,9 +56,9 @@ NeuralNetworkTrainingContext >> computeEpochFor: aStage using: aSampleDataset [
 						computeBatchStepUsing:
 							(self buildInputWithFeatures: features andTarget: target)
 						aggregatingLossTo: losses
-						within: self]].
-	loss := losses mean.
-	self addMetricValued: loss during: aStage to: self lossMetricKey.
+						within: self].
+			loss := losses mean.
+			self addMetricValued: loss during: aStage to: self lossMetricKey].
 	^loss
 ]
 
@@ -221,4 +221,10 @@ NeuralNetworkTrainingContext >> trainingMetricKnownAs: aMetricKey [
 NeuralNetworkTrainingContext >> validationMetricKnownAs: aMetricKey [
 
 	^self metricKnownAs: aMetricKey during: ValidationStage new
+]
+
+{ #category : #Accessing }
+NeuralNetworkTrainingContext >> withMetricKnownAs: aMetricKey during: aFittingStage do: aBlock [
+
+	^(metricsCollected at: (aFittingStage metricKeyNamed: aMetricKey) ifPresent: aBlock ifAbsent: [])
 ]

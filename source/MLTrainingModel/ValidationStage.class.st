@@ -4,7 +4,7 @@ Class {
 	#classInstVars : [
 		'default'
 	],
-	#category : 'MLTrainingModel'
+	#category : #MLTrainingModel
 }
 
 { #category : #'Instance Creation' }
@@ -38,6 +38,12 @@ ValidationStage >> description [
 ValidationStage >> shouldBeExecutedFor: aSampleDataset [
 
 	^aSampleDataset hasValidationSetConfigured
+]
+
+{ #category : #'Not categorized' }
+ValidationStage >> whenTrainDo: aTrainBlock whenValidationDo: aValidationBlock [
+
+	^aValidationBlock value
 ]
 
 { #category : #Accessing }

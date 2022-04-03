@@ -85,10 +85,10 @@ BaselineOfLibTensorFlowPharoBinding >> machineLearningGroupsIn: spec [
 	spec
 		group: 'MachineLearning-Deployment'
 			with:
-			#('TFVariableSpecificationModel' 'TFDatasetModel' 'MLNeuralNetworkLayerModel' 'TFOptimizerModel' 'MLTrainingMetricModel' 'DatasetProviderModel' 'MLTrainingLaboratoryModel' 'TFExperimentalOperationModel');
+			#('TFVariableSpecificationModel' 'TFDatasetModel' 'MLNeuralNetworkLayerModel' 'TFOptimizerModel' 'MLTrainingMetricModel' 'DatasetProviderModel' 'MLTrainingLaboratoryModel' 'TFExperimentalOperationModel' 'TFSummaryWriterModel');
 		group: 'MachineLearning-Development'
 			with:
-			#('MachineLearning-Deployment' 'TFVariableSpecificationModelTests' 'TFOptimizerModelTests' 'TFDatasetModelTests' 'MLNeuralNetworkLayerModelTests' 'MLTrainingMetricModelTests' 'MLTrainingModelTests' 'LibTensorFlowExamplesApp' 'TFExperimentalOperationModelTests')
+			#('MachineLearning-Deployment' 'TFVariableSpecificationModelTests' 'TFOptimizerModelTests' 'TFDatasetModelTests' 'MLNeuralNetworkLayerModelTests' 'MLTrainingMetricModelTests' 'MLTrainingModelTests' 'LibTensorFlowExamplesApp' 'TFExperimentalOperationModelTests' 'TFSummaryWriterModelTests')
 ]
 
 { #category : #baseline }
@@ -109,8 +109,10 @@ BaselineOfLibTensorFlowPharoBinding >> machineLearningPackagesIn: spec [
 		package: 'TFOptimizerModel' with: [ spec requires: #('TFVariableSpecificationModel') ];
 		package: 'TFOptimizerModelTests'
 			with: [ spec requires: #('TensorFlowEnvironmentModelTests' 'TFOptimizerModel') ];
-		package: 'MLTrainingMetricModel' with: [ spec requires: #('MLTrainingModel') ];
-		package: 'MLTrainingMetricModelTests' with: [ spec requires: #('MLTrainingMetricModel') ];
+		package: 'TFSummaryWriterModel' with: [  ];
+		package: 'TFSummaryWriterModelTests' with: [  ];
+		package: 'MLTrainingMetricModel' with: [ spec requires: #('MLTrainingModel' 'TFSummaryWriterModel') ];
+		package: 'MLTrainingMetricModelTests' with: [ spec requires: #('MLTrainingMetricModel' 'TFSummaryWriterModelTests') ];
 		package: 'TFDatasetModelTests'
 			with: [ spec requires: #('MLTrainingModel' 'TensorFlowEnvironmentModelTests') ];
 		package: 'DatasetProviderModel' with: [ spec requires: #('MLTrainingModel' 'TFDatasetModel') ];

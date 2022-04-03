@@ -1,7 +1,7 @@
 Class {
 	#name : #NeuralNetworkFittingStage,
 	#superclass : #Object,
-	#category : 'MLTrainingModel'
+	#category : #MLTrainingModel
 }
 
 { #category : #Computing }
@@ -28,6 +28,12 @@ NeuralNetworkFittingStage >> shouldBeExecutedFor: aSampleDataset [
 
 	self subclassResponsibility
 	
+]
+
+{ #category : #'Not categorized' }
+NeuralNetworkFittingStage >> whenTrainDo: aTrainBlock whenValidationDo: aValidationBlock [
+
+	self subclassResponsibility
 ]
 
 { #category : #Accessing }
