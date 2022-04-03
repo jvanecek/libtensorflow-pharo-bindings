@@ -13,9 +13,11 @@ ResourceDataType >> description [
 { #category : #accessing }
 ResourceDataType >> getElementAt: anIndex in: anExternalAddressOrByteArray [
 	" Not sure if should be reading 64bit integer, but anyway to access the elements 
-	 stored in the resource should be using ResourceVariableNode>>#underlayingValue "
+	 stored in the resource should be using ResourceVariableNode>>#underlayingValue. 
+	Can't use the #signedLongLongAt: as is not backward compatible
+	"
 
-	^anExternalAddressOrByteArray signedLongLongAt: (anIndex - 1) * self dataSize
+	^ anExternalAddressOrByteArray integerAt: ( anIndex - 1 ) * self dataSize  + 1 size: 8 signed: true
 ]
 
 { #category : #accessing }
