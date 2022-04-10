@@ -4,25 +4,6 @@ Class {
 	#category : #MLTrainingMetricModelTests
 }
 
-{ #category : #tests }
-TrainingWithTensorboardExperimentTrackerTest >> formattedTimestamp [
-
-   | now timestamp |
-
-   now := DateAndTime now.
-   timestamp := String streamContents: [ :stream | 
-                   stream print: now year.
-                   stream nextPutAll: ( now month printPaddedWith: $0 to: 2 ).
-                   stream
-                      nextPutAll: ( now dayOfMonth printPaddedWith: $0 to: 2 );
-                      nextPut: $-;
-                      nextPutAll: ( now hour printPaddedWith: $0 to: 2 );
-                      nextPutAll: ( now minute printPaddedWith: $0 to: 2 );
-                      nextPutAll: ( now second printPaddedWith: $0 to: 2 )
-                   ].
-   ^ timestamp
-]
-
 { #category : #accessing }
 TrainingWithTensorboardExperimentTrackerTest >> modelWithTwoOutputUnits [
 
@@ -39,9 +20,8 @@ TrainingWithTensorboardExperimentTrackerTest >> modelWithTwoOutputUnits [
 { #category : #tests }
 TrainingWithTensorboardExperimentTrackerTest >> testTrackExperimentWithNoValidation [
 
-	| model folder expectedTimestamp |
+	| model folder |
 	
-	expectedTimestamp := self formattedTimestamp.
 	model := self modelWithTwoOutputUnits.
 
 	(NeuralNetworkTrainer on: tf)
@@ -53,22 +33,19 @@ TrainingWithTensorboardExperimentTrackerTest >> testTrackExperimentWithNoValidat
 	folder := FileSystemAPI current directoryNamed: './test-logs'.
 	[| content |
 		content := folder allFileAndDirectoryEntries.
-		self assert: content size equals: 6.
-		self assert: (content at: 1) basename equals: 'fit'.
-		self assert: (content at: 2) basename equals: expectedTimestamp.
-		self assert: (content at: 3) basename equals: 'train'.
-		self assert: (content at: 4) size equals: 518.
-		self assert: (content at: 5) basename equals: 'validation'.
-		self assert: (content at: 6) size equals: 40]
+		self assert: content size equals: 4.
+		self assert: (content at: 1) basename equals: 'train'.
+		self assert: (content at: 2) size equals: 518.
+		self assert: (content at: 3) basename equals: 'validation'.
+		self assert: (content at: 4) size equals: 40]
 			ensure: [folder deleteAll]
 ]
 
 { #category : #tests }
 TrainingWithTensorboardExperimentTrackerTest >> testTrackExperimentWithValidationSet [
 
-	| model folder expectedTimestamp |
+	| model folder |
 	
-	expectedTimestamp := self formattedTimestamp.
 	model := self modelWithTwoOutputUnits.
 
 	(NeuralNetworkTrainer on: tf)
@@ -80,13 +57,11 @@ TrainingWithTensorboardExperimentTrackerTest >> testTrackExperimentWithValidatio
 	folder := FileSystemAPI current directoryNamed: './test-logs'.
 	[| content |
 		content := folder allFileAndDirectoryEntries.
-		self assert: content size equals: 6.
-		self assert: (content at: 1) basename equals: 'fit'.
-		self assert: (content at: 2) basename equals: expectedTimestamp.
-		self assert: (content at: 3) basename equals: 'train'.
-		self assert: (content at: 4) size equals: 518.
-		self assert: (content at: 5) basename equals: 'validation'.
-		self assert: (content at: 6) size equals: 518]
+		self assert: content size equals: 4.
+		self assert: (content at: 1) basename equals: 'train'.
+		self assert: (content at: 2) size equals: 518.
+		self assert: (content at: 3) basename equals: 'validation'.
+		self assert: (content at: 4) size equals: 518]
 			ensure: [folder deleteAll]
 ]
 

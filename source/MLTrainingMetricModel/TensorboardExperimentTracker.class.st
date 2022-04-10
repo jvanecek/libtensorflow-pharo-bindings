@@ -15,25 +15,6 @@ TensorboardExperimentTracker class >> storingTo: aLogsLocation [
 	^self new initializeStoringTo: aLogsLocation
 ]
 
-{ #category : #Preprocessing }
-TensorboardExperimentTracker >> formattedTimestamp [
-
-   | now timestamp |
-
-   now := DateAndTime now.
-   timestamp := String streamContents: [ :stream | 
-                   stream print: now year.
-                   stream nextPutAll: ( now month printPaddedWith: $0 to: 2 ).
-                   stream
-                      nextPutAll: ( now dayOfMonth printPaddedWith: $0 to: 2 );
-                      nextPut: $-;
-                      nextPutAll: ( now hour printPaddedWith: $0 to: 2 );
-                      nextPutAll: ( now minute printPaddedWith: $0 to: 2 );
-                      nextPutAll: ( now second printPaddedWith: $0 to: 2 )
-                   ].
-   ^ timestamp
-]
-
 { #category : #Initialization }
 TensorboardExperimentTracker >> initializeStoringTo: aLogsLocation [
 
@@ -76,13 +57,10 @@ TensorboardExperimentTracker >> measureMetricDuring: aTrainingStage onStepStartU
 { #category : #Preprocessing }
 TensorboardExperimentTracker >> prepareMetricsWithin: aNeuralNetworkTrainingContext [
 
-	| timestamp |
-
-	timestamp := self formattedTimestamp.
-	trainingWriter := aNeuralNetworkTrainingContext buildSummaryWriterTo:
-		                  ( logsFolder asFileReference / 'fit' / timestamp / 'train' ) pathString.
-	validationWriter := aNeuralNetworkTrainingContext buildSummaryWriterTo:
-		                    ( logsFolder asFileReference / 'fit' / timestamp / 'validation' ) pathString
+   trainingWriter := aNeuralNetworkTrainingContext buildSummaryWriterTo:
+                        ( logsFolder asFileReference / 'train' ) pathString.
+   validationWriter := aNeuralNetworkTrainingContext buildSummaryWriterTo:
+                          ( logsFolder asFileReference / 'validation' ) pathString
 ]
 
 { #category : #Processing }
