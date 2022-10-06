@@ -40,11 +40,11 @@ CurrentEpochHolder >> incrementTrainingStep [
 CurrentEpochHolder >> initializeOn: aTensorFlowComputation [
 
 	currentComputation := aTensorFlowComputation.
-	epochVariable := VariableNode on: currentComputation named: 'currentEpoch' with: 1 asInt64Tensor.
+	epochVariable := VariableTensor on: currentComputation named: 'currentEpoch' with: 1 asInt64Tensor.
 	incrementEpoch := epochVariable += 1 asInt64Tensor.
 
 	trainingStepVariable :=
-		VariableNode on: currentComputation named: 'trainingStep' with: 1 asInt64Tensor.
+		VariableTensor on: currentComputation named: 'trainingStep' with: 1 asInt64Tensor.
 	incrementTrainingStep := trainingStepVariable += 1 asInt64Tensor
 ]
 

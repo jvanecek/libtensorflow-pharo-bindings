@@ -1,6 +1,6 @@
 Class {
 	#name : #RandomUniformInitializer,
-	#superclass : #VariableNodeInitializer,
+	#superclass : #VariableTensorInitializer,
 	#instVars : [
 		'mean',
 		'standardDeviation',
@@ -78,12 +78,12 @@ RandomUniformInitializer class >> withSeed: anIntegerSeed [
 ]
 
 { #category : #Applying }
-RandomUniformInitializer >> applyTo: aVariableNode [
+RandomUniformInitializer >> applyTo: aVariableTensor [
 
-	aVariableNode assign: (
+	aVariableTensor assign: (
 		tensorGenerator
-			uniformTensorOn: aVariableNode currentComputation
-			shaped: aVariableNode outputShape
+			uniformTensorOn: aVariableTensor currentComputation
+			shaped: aVariableTensor outputShape
 			boundedBetween: minimumValue
 			and: maximumValue)
 ]

@@ -3,7 +3,7 @@ Extension { #name : #TensorFlowComputation }
 { #category : #'*TensorFlowOperationBasicModel' }
 TensorFlowComputation >> constantWith: aNumberOrArray [
 
-	^ConstantNode on: self with: aNumberOrArray asTensor
+	^ConstantTensor on: self with: aNumberOrArray asTensor
 ]
 
 { #category : #'*TensorFlowOperationBasicModel' }
@@ -35,13 +35,13 @@ TensorFlowComputation >> floatConstantWith: aNumberOrArray [
 { #category : #'*TensorFlowOperationBasicModel' }
 TensorFlowComputation >> floatConstantWith: aNumberOrMatrix named: aName [
 
-	^ConstantNode on: self named: aName with: aNumberOrMatrix asFloatTensor
+	^ConstantTensor on: self named: aName with: aNumberOrMatrix asFloatTensor
 ]
 
 { #category : #'*TensorFlowOperationBasicModel' }
 TensorFlowComputation >> floatInputNamed: anInputName [
 
-	^ InputNode on: self named: anInputName of: FloatDataType new
+	^ InputTensor on: self named: anInputName of: FloatDataType new
 ]
 
 { #category : #'*TensorFlowOperationBasicModel' }
@@ -53,11 +53,11 @@ TensorFlowComputation >> integerConstantWith: aNumberOrArray [
 { #category : #'*TensorFlowOperationBasicModel' }
 TensorFlowComputation >> integerInputNamed: anInputName [
 
-	^ InputNode on: self named: anInputName of: Int32DataType new
+	^ InputTensor on: self named: anInputName of: Int32DataType new
 ]
 
 { #category : #'*TensorFlowOperationBasicModel' }
 TensorFlowComputation >> variableNamed: aVariableName with: aTensor [
 
-	^VariableNode on: self named: aVariableName with: aTensor
+	^VariableTensor on: self named: aVariableName with: aTensor
 ]

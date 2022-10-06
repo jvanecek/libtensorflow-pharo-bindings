@@ -1,7 +1,7 @@
-Extension { #name : #RectifiedLinearTest }
+Extension { #name : #ReLUTest }
 
 { #category : #'*TensorFlowOperationGradientModelTests' }
-RectifiedLinearTest >> testDerivativeWithRespectToAnInvalidInput [
+ReLUTest >> testDerivativeWithRespectToAnInvalidInput [
 
 	| negativeScalar positiveScalar |
 
@@ -9,12 +9,12 @@ RectifiedLinearTest >> testDerivativeWithRespectToAnInvalidInput [
 	positiveScalar := tf constantWith: 4.0.
 
 	self
-		assert: (RectifiedLinear activating: negativeScalar)
+		assert: (ReLU activating: negativeScalar)
 		isNotDifferentiableRespectTo: positiveScalar
 ]
 
 { #category : #'*TensorFlowOperationGradientModelTests' }
-RectifiedLinearTest >> testGradientOfReluOfFloatScalar [
+ReLUTest >> testGradientOfReluOfFloatScalar [
 
 	| negativeScalar positiveScalar |
 
@@ -22,22 +22,22 @@ RectifiedLinearTest >> testGradientOfReluOfFloatScalar [
 	positiveScalar := tf constantWith: 4.0.
 
 	self
-		assertPartialDerivativeOf: (RectifiedLinear activating: negativeScalar)
+		assertPartialDerivativeOf: (ReLU activating: negativeScalar)
 			withRespectTo: negativeScalar
 			isCloseTo: 0;
-		assertPartialDerivativeOf: (RectifiedLinear activating: positiveScalar)
+		assertPartialDerivativeOf: (ReLU activating: positiveScalar)
 			withRespectTo: positiveScalar
 			isCloseTo: 1
 ]
 
 { #category : #'*TensorFlowOperationGradientModelTests' }
-RectifiedLinearTest >> testGradientOfReluOfFloatVector [
+ReLUTest >> testGradientOfReluOfFloatVector [
 
 	| input relu |
 
 	input := tf variableNamed: 'input' with: #(-1 4 -0.4 5) asFloatTensor.
 
-	relu := RectifiedLinear activating: input.
+	relu := ReLU activating: input.
 
 	self assertPartialDerivativeOf: relu withRespectTo: input isVectorCloseTo: #(0 1 0 1)
 ]

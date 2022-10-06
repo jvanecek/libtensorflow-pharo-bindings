@@ -1,11 +1,11 @@
 Class {
-	#name : #VariableNodeAbstract,
+	#name : #VariableTensorAbstract,
 	#superclass : #TensorFlowOperationAbstract,
 	#category : #TensorFlowOperationBasicModel
 }
 
 { #category : #'Instance Creation' }
-VariableNodeAbstract class >> on: aComputation named: aName of: aType shaped: aShape initializedWith: aVariableInitializer [
+VariableTensorAbstract class >> on: aComputation named: aName of: aType shaped: aShape initializedWith: aVariableInitializer [
 
 	^self new
 		initializeOn: aComputation
@@ -16,13 +16,13 @@ VariableNodeAbstract class >> on: aComputation named: aName of: aType shaped: aS
 ]
 
 { #category : #Accessing }
-VariableNodeAbstract >> assign: anOperation [
+VariableTensorAbstract >> assign: anOperation [
 
 	self subclassResponsibility
 ]
 
 { #category : #Accessing }
-VariableNodeAbstract >> initializeOn: aTensorFlowComputation named: aName of: aType shaped: aShape initializedWith: aVariableInitializer [
+VariableTensorAbstract >> initializeOn: aTensorFlowComputation named: aName of: aType shaped: aShape initializedWith: aVariableInitializer [
 	
 	self subclassResponsibility
 ]

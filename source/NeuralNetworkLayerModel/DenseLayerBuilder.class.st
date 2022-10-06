@@ -28,7 +28,7 @@ DenseLayerBuilder >> activatedBy: anActivation [
 { #category : #Configuring }
 DenseLayerBuilder >> activatedByRelu [
 
-	self activatedBy: RectifiedLinear
+	self activatedBy: ReLU
 ]
 
 { #category : #Configuring }
@@ -48,7 +48,7 @@ DenseLayerBuilder >> biasInitializedTo: anArray [
 
 	self
 		biasSpecifiedBy:
-			( VariableNodeSpecification
+			( VariableTensorSpecification
 				of: FloatDataType new
 				initializedWith: ( ConstantInitializer with: anArray asFloatTensor ) )
 ]
@@ -58,7 +58,7 @@ DenseLayerBuilder >> biasInitializedToZero [
 
 	self
 		biasSpecifiedBy:
-			( VariableNodeSpecification of: FloatDataType new initializedWith: ConstantInitializer withZeros )
+			( VariableTensorSpecification of: FloatDataType new initializedWith: ConstantInitializer withZeros )
 ]
 
 { #category : #'Configuring - Bias' }
@@ -136,7 +136,7 @@ DenseLayerBuilder >> weightInitializedToZero [
 DenseLayerBuilder >> weightInitializedWith: anVariableInitializer [
 
 	self
-		weightSpecifiedBy: ( VariableNodeSpecification of: FloatDataType new initializedWith: anVariableInitializer )
+		weightSpecifiedBy: ( VariableTensorSpecification of: FloatDataType new initializedWith: anVariableInitializer )
 ]
 
 { #category : #'Configuring - Weight' }

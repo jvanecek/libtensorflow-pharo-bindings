@@ -1,6 +1,6 @@
 Class {
-	#name : #VariableNode,
-	#superclass : #VariableNodeAbstract,
+	#name : #VariableTensor,
+	#superclass : #VariableTensorAbstract,
 	#instVars : [
 		'currentComputation',
 		'currentValueAssigned'
@@ -9,7 +9,7 @@ Class {
 }
 
 { #category : #'instance creation' }
-VariableNode class >> on: aComputation named: aName filledWithZerosLike: anOperation [
+VariableTensor class >> on: aComputation named: aName filledWithZerosLike: anOperation [
 
 	^self
 		on: aComputation
@@ -20,7 +20,7 @@ VariableNode class >> on: aComputation named: aName filledWithZerosLike: anOpera
 ]
 
 { #category : #'Instance Creation' }
-VariableNode class >> on: aComputation named: aName forFloatsShaped: aShape initializedWith: aVariableInitializer [
+VariableTensor class >> on: aComputation named: aName forFloatsShaped: aShape initializedWith: aVariableInitializer [
 
 	^ self
 		on: aComputation
@@ -31,7 +31,7 @@ VariableNode class >> on: aComputation named: aName forFloatsShaped: aShape init
 ]
 
 { #category : #'Instance Creation' }
-VariableNode class >> on: aComputation named: aName with: aTensor [
+VariableTensor class >> on: aComputation named: aName with: aTensor [
 
 	^self
 		on: aComputation
@@ -42,7 +42,7 @@ VariableNode class >> on: aComputation named: aName with: aTensor [
 ]
 
 { #category : #Configuring }
-VariableNode >> assign: anOperation [
+VariableTensor >> assign: anOperation [
 
 	currentValueAssigned :=
 		currentComputation
@@ -53,13 +53,13 @@ VariableNode >> assign: anOperation [
 ]
 
 { #category : #Accessing }
-VariableNode >> currentComputation [
+VariableTensor >> currentComputation [
 
 	^currentComputation
 ]
 
 { #category : #Initialization }
-VariableNode >> initializeOn: aTensorFlowComputation named: aName of: aType shaped: aShape initializedWith: aVariableInitializer [
+VariableTensor >> initializeOn: aTensorFlowComputation named: aName of: aType shaped: aShape initializedWith: aVariableInitializer [
 
 	currentComputation := aTensorFlowComputation.
 	value :=
@@ -72,7 +72,7 @@ VariableNode >> initializeOn: aTensorFlowComputation named: aName of: aType shap
 ]
 
 { #category : #Accessing }
-VariableNode >> operationType [
+VariableTensor >> operationType [
 
 	^'VariableV2'
 ]

@@ -1,6 +1,6 @@
 Class {
 	#name : #ConstantInitializer,
-	#superclass : #VariableNodeInitializer,
+	#superclass : #VariableTensorInitializer,
 	#instVars : [
 		'initialValue'
 	],
@@ -20,12 +20,12 @@ ConstantInitializer class >> withZeros [
 ]
 
 { #category : #Evaluating }
-ConstantInitializer >> applyTo: aVariableNode [
+ConstantInitializer >> applyTo: aVariableTensor [
 
-	aVariableNode assign: (
+	aVariableTensor assign: (
 		(initialValue isA: TFTensor)
-			ifTrue: [initialValue value asOperationOn: aVariableNode currentComputation]
-			ifFalse: [(ConstantNode like: aVariableNode filledWith: initialValue) value])
+			ifTrue: [initialValue value asOperationOn: aVariableTensor currentComputation]
+			ifFalse: [(ConstantTensor like: aVariableTensor filledWith: initialValue) value])
 ]
 
 { #category : #Initialization }

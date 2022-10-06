@@ -1,5 +1,5 @@
 Class {
-	#name : #AdaptiveGradient,
+	#name : #Adagrad,
 	#superclass : #OptimizationAlgorithm,
 	#instVars : [
 		'learningRate',
@@ -11,25 +11,25 @@ Class {
 }
 
 { #category : #Accessing }
-AdaptiveGradient class >> defaultEpsilonValue [
+Adagrad class >> defaultEpsilonValue [
 
 	^1e-07
 ]
 
 { #category : #Accessing }
-AdaptiveGradient class >> defaultInitialAccumulatorValue [
+Adagrad class >> defaultInitialAccumulatorValue [
 
 	^0.1
 ]
 
 { #category : #Accessing }
-AdaptiveGradient class >> defaultLearningRate [
+Adagrad class >> defaultLearningRate [
 
 	^0.001
 ]
 
 { #category : #'Instance Creation' }
-AdaptiveGradient class >> new [
+Adagrad class >> new [
 
 	^self
 		scalingBy: self defaultLearningRate
@@ -38,7 +38,7 @@ AdaptiveGradient class >> new [
 ]
 
 { #category : #'Instance Creation' }
-AdaptiveGradient class >> scalingBy: aLearningRate [
+Adagrad class >> scalingBy: aLearningRate [
 
 	^self
 		scalingBy: aLearningRate
@@ -47,7 +47,7 @@ AdaptiveGradient class >> scalingBy: aLearningRate [
 ]
 
 { #category : #'Instance Creation' }
-AdaptiveGradient class >> scalingBy: aLearningRate startingAccumulatorWith: anAccumulatatorInitialValue usingForNumericalStability: anEpsilonValue [
+Adagrad class >> scalingBy: aLearningRate startingAccumulatorWith: anAccumulatatorInitialValue usingForNumericalStability: anEpsilonValue [
 
 	^super new
 		initializeScalingBy: aLearningRate
@@ -56,12 +56,12 @@ AdaptiveGradient class >> scalingBy: aLearningRate startingAccumulatorWith: anAc
 ]
 
 { #category : #Accessing }
-AdaptiveGradient >> accumulatorFor: aVariable [
+Adagrad >> accumulatorFor: aVariable [
 
 	^accumulatorByVariable
 		at: aVariable
 		ifAbsentPut: [
-			VariableNode
+			VariableTensor
 				on: aVariable currentComputation
 				named: 'accum'
 				of: aVariable value outputType
@@ -70,7 +70,7 @@ AdaptiveGradient >> accumulatorFor: aVariable [
 ]
 
 { #category : #Applying }
-AdaptiveGradient >> apply: aGradient to: aVariable [
+Adagrad >> apply: aGradient to: aVariable [
 
 	| tf |
 
@@ -90,7 +90,7 @@ AdaptiveGradient >> apply: aGradient to: aVariable [
 ]
 
 { #category : #Initialization }
-AdaptiveGradient >> initializeScalingBy: aLearningRate startingAccumulatorWith: anAccumulatatorInitialValue usingForNumericalStability: anEpsilonValue [
+Adagrad >> initializeScalingBy: aLearningRate startingAccumulatorWith: anAccumulatatorInitialValue usingForNumericalStability: anEpsilonValue [
 
 	learningRate := aLearningRate.
 	initialAccumulatorValue := anAccumulatatorInitialValue.
@@ -99,13 +99,13 @@ AdaptiveGradient >> initializeScalingBy: aLearningRate startingAccumulatorWith: 
 ]
 
 { #category : #Printing }
-AdaptiveGradient >> printOn: aStream [
+Adagrad >> printOn: aStream [
 
 	aStream nextPutAll: ('AdaGrad (learning rate: <1p>)' expandMacrosWith: learningRate)
 ]
 
 { #category : #Accessing }
-AdaptiveGradient >> shortName [
+Adagrad >> shortName [
 
 	^'AdaGrad'
 ]

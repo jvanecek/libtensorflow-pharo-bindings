@@ -1,6 +1,6 @@
 Class {
 	#name : #TruncatedNormalInitializer,
-	#superclass : #VariableNodeInitializer,
+	#superclass : #VariableTensorInitializer,
 	#instVars : [
 		'mean',
 		'standardDeviation',
@@ -79,12 +79,12 @@ TruncatedNormalInitializer class >> withSeed: anIntegerSeed [
 ]
 
 { #category : #Evaluating }
-TruncatedNormalInitializer >> applyTo: aVariableNode [
+TruncatedNormalInitializer >> applyTo: aVariableTensor [
 
-	aVariableNode assign: (
+	aVariableTensor assign: (
 		tensorGenerator
-			truncatedNormalTensorOn: aVariableNode currentComputation
-			shaped: aVariableNode outputShape
+			truncatedNormalTensorOn: aVariableTensor currentComputation
+			shaped: aVariableTensor outputShape
 			centeredOn: mean
 			spreadedBy: standardDeviation)
 ]

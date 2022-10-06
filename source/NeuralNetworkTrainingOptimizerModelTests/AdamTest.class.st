@@ -1,11 +1,11 @@
 Class {
-	#name : #AdaptiveMomentEstimationTest,
+	#name : #AdamTest,
 	#superclass : #TensorFlowComputationBasedTest,
 	#category : #NeuralNetworkTrainingOptimizerModelTests
 }
 
 { #category : #Tests }
-AdaptiveMomentEstimationTest >> testAppliedToVector [
+AdamTest >> testAppliedToVector [
 
 	| parameter grad optimizer |
 
@@ -13,7 +13,7 @@ AdaptiveMomentEstimationTest >> testAppliedToVector [
 	grad := #(3.14 2.71).
 
 	optimizer :=
-		AdaptiveMomentEstimation new
+		Adam new
 			apply: (tf constantWith: grad asFloatTensor)
 			to: (tf variableNamed: 'var' with: parameter asFloatTensor).
 
@@ -21,13 +21,13 @@ AdaptiveMomentEstimationTest >> testAppliedToVector [
 ]
 
 { #category : #Tests }
-AdaptiveMomentEstimationTest >> testAppliedTwice [
+AdamTest >> testAppliedTwice [
 
 	| parameter grad optimizer lrt mt vt gradTensor parameterTensor |
 
 	parameter := 1.0.
 	grad := Float pi.
-	optimizer := AdaptiveMomentEstimation new.
+	optimizer := Adam new.
 
 	gradTensor := tf constantWith: grad.
 	parameterTensor := tf variableNamed: 'var' with: parameter asTensor.
@@ -50,7 +50,7 @@ AdaptiveMomentEstimationTest >> testAppliedTwice [
 ]
 
 { #category : #Tests }
-AdaptiveMomentEstimationTest >> testAppliedTwiceToDifferentParameters [
+AdamTest >> testAppliedTwiceToDifferentParameters [
 
 	| parameter1 grad1 optimizer lrt mt vt parameter2 grad2 weightOptimization biasOptimization |
 
@@ -58,7 +58,7 @@ AdaptiveMomentEstimationTest >> testAppliedTwiceToDifferentParameters [
 	parameter2 := #(1.5 2.0).
 	grad1 := Float pi.
 	grad2 := Array with: Float pi / 2 with: Float pi * 2.
-	optimizer := AdaptiveMomentEstimation new.
+	optimizer := Adam new.
 
 	weightOptimization :=
 		optimizer
@@ -86,7 +86,7 @@ AdaptiveMomentEstimationTest >> testAppliedTwiceToDifferentParameters [
 ]
 
 { #category : #Tests }
-AdaptiveMomentEstimationTest >> testInitializedWithDefaultValues [
+AdamTest >> testInitializedWithDefaultValues [
 
 	| parameter grad optimizer lrt mt vt |
 
@@ -94,7 +94,7 @@ AdaptiveMomentEstimationTest >> testInitializedWithDefaultValues [
 	grad := Float pi.
 
 	optimizer :=
-		AdaptiveMomentEstimation new
+		Adam new
 			apply: (tf constantWith: grad)
 			to: (tf variableNamed: 'var' with: parameter asTensor).
 
@@ -105,11 +105,11 @@ AdaptiveMomentEstimationTest >> testInitializedWithDefaultValues [
 ]
 
 { #category : #Tests }
-AdaptiveMomentEstimationTest >> testPrintString [
+AdamTest >> testPrintString [
 
 	| adam |
 
-	adam := AdaptiveMomentEstimation new.
+	adam := Adam new.
 	self
 		assert: adam shortName equals: 'Adam';
 		assert: adam printString

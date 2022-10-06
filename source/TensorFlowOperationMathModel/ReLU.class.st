@@ -1,5 +1,5 @@
 Class {
-	#name : #RectifiedLinear,
+	#name : #ReLU,
 	#superclass : #ActivationFunction,
 	#instVars : [
 		'neuron'
@@ -8,31 +8,31 @@ Class {
 }
 
 { #category : #'Instance Creation' }
-RectifiedLinear class >> activating: aNeuron [
+ReLU class >> activating: aNeuron [
 
 	^self named: self operationType activating: aNeuron
 ]
 
 { #category : #'Instance Creation' }
-RectifiedLinear class >> named: anOperationName activating: aNeuron [
+ReLU class >> named: anOperationName activating: aNeuron [
 
 	^self new initializeNamed: anOperationName activating: aNeuron
 ]
 
 { #category : #Accessing }
-RectifiedLinear class >> operationType [
+ReLU class >> operationType [
 
 	^'Relu'
 ]
 
 { #category : #Accessing }
-RectifiedLinear >> currentComputation [
+ReLU >> currentComputation [
 
 	^neuron currentComputation
 ]
 
 { #category : #Initialization }
-RectifiedLinear >> initializeNamed: anOperationName activating: aNeuron [
+ReLU >> initializeNamed: anOperationName activating: aNeuron [
 
 	neuron := aNeuron.
 	value :=
@@ -43,7 +43,7 @@ RectifiedLinear >> initializeNamed: anOperationName activating: aNeuron [
 ]
 
 { #category : #Printing }
-RectifiedLinear >> printOn: aStream [
+ReLU >> printOn: aStream [
 
 	aStream nextPutAll: ('relu(<1p>)' expandMacrosWith: neuron)
 ]

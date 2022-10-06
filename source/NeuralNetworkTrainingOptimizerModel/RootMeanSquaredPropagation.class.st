@@ -93,7 +93,7 @@ RootMeanSquaredPropagation >> meanSquaredAccumulatorFor: aVariable [
 	^meanSquaredAccumByVariable
 		at: aVariable
 		ifAbsentPut: [
-			VariableNode on: aVariable currentComputation named: 'ms' filledWithZerosLike: aVariable]
+			VariableTensor on: aVariable currentComputation named: 'ms' filledWithZerosLike: aVariable]
 ]
 
 { #category : #Accessing }
@@ -102,7 +102,7 @@ RootMeanSquaredPropagation >> momentumAccumulatorFor: aVariable [
 	^momentumAccumByVariable
 		at: aVariable
 		ifAbsentPut: [
-			VariableNode on: aVariable currentComputation named: 'mom' filledWithZerosLike: aVariable]
+			VariableTensor on: aVariable currentComputation named: 'mom' filledWithZerosLike: aVariable]
 ]
 
 { #category : #Printing }

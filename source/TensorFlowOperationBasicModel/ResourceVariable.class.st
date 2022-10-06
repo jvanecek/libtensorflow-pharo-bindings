@@ -1,6 +1,6 @@
 Class {
-	#name : #ResourceVariableNode,
-	#superclass : #VariableNodeAbstract,
+	#name : #ResourceVariable,
+	#superclass : #VariableTensorAbstract,
 	#instVars : [
 		'currentComputation',
 		'currentValueAssigned',
@@ -12,7 +12,7 @@ Class {
 }
 
 { #category : #Accessing }
-ResourceVariableNode >> assign: anOperation [
+ResourceVariable >> assign: anOperation [
 
 	currentValueAssigned :=
 		currentComputation
@@ -23,19 +23,19 @@ ResourceVariableNode >> assign: anOperation [
 ]
 
 { #category : #Accessing }
-ResourceVariableNode >> assignedValue [
+ResourceVariable >> assignedValue [
 
 	^variableReader
 ]
 
 { #category : #Accessing }
-ResourceVariableNode >> currentComputation [
+ResourceVariable >> currentComputation [
 
 	^currentComputation
 ]
 
 { #category : #Initialization }
-ResourceVariableNode >> initializeOn: aTensorFlowComputation named: aName of: aType shaped: aShape initializedWith: aVariableInitializer [
+ResourceVariable >> initializeOn: aTensorFlowComputation named: aName of: aType shaped: aShape initializedWith: aVariableInitializer [
 
 	currentComputation := aTensorFlowComputation.
 	value :=
@@ -58,7 +58,7 @@ ResourceVariableNode >> initializeOn: aTensorFlowComputation named: aName of: aT
 ]
 
 { #category : #Accessing }
-ResourceVariableNode >> operationName [
+ResourceVariable >> operationName [
 
 	^value operationName
 ]

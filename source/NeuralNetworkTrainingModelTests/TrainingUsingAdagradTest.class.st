@@ -50,5 +50,5 @@ TrainingUsingAdagradTest >> expectedValidationLossWhenMinimizingMeanSquaredError
 { #category : #Accessing }
 TrainingUsingAdagradTest >> optimizationAlgorithm [
 
-	^AdaptiveGradient new
+	^Adagrad new
 ]

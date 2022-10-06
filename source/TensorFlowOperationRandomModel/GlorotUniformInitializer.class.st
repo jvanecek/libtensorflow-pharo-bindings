@@ -1,6 +1,6 @@
 Class {
 	#name : #GlorotUniformInitializer,
-	#superclass : #VariableNodeInitializer,
+	#superclass : #VariableTensorInitializer,
 	#instVars : [
 		'tensorGenerator'
 	],
@@ -26,12 +26,12 @@ GlorotUniformInitializer class >> withSeed: anIntegerSeed [
 ]
 
 { #category : #Applying }
-GlorotUniformInitializer >> applyTo: aVariableNode [
+GlorotUniformInitializer >> applyTo: aVariableTensor [
 
-	aVariableNode assign: (
+	aVariableTensor assign: (
 		tensorGenerator
-			glorotUniformTensorOn: aVariableNode currentComputation
-			shaped: aVariableNode outputShape)
+			glorotUniformTensorOn: aVariableTensor currentComputation
+			shaped: aVariableTensor outputShape)
 ]
 
 { #category : #Initialization }

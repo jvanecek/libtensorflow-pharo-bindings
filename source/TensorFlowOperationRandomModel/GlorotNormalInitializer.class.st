@@ -1,6 +1,6 @@
 Class {
 	#name : #GlorotNormalInitializer,
-	#superclass : #VariableNodeInitializer,
+	#superclass : #VariableTensorInitializer,
 	#instVars : [
 		'tensorGenerator'
 	],
@@ -26,13 +26,13 @@ GlorotNormalInitializer class >> withSeed: anIntegerSeed [
 ]
 
 { #category : #Applying }
-GlorotNormalInitializer >> applyTo: aVariableNode [
+GlorotNormalInitializer >> applyTo: aVariableTensor [
 
-	aVariableNode
+	aVariableTensor
 		assign:
 			( tensorGenerator
-				glorotNormalTensorOn: aVariableNode currentComputation
-				shaped: aVariableNode outputShape )
+				glorotNormalTensorOn: aVariableTensor currentComputation
+				shaped: aVariableTensor outputShape )
 ]
 
 { #category : #Initialization }

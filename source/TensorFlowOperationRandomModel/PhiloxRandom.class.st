@@ -13,7 +13,7 @@ PhiloxRandom >> createInitialStateOn: aTensorFlowComputation [
 
 	initialStateVector := #(0 0 0).
 
-	^ResourceVariableNode
+	^ResourceVariable
 		on: aTensorFlowComputation
 		named: 'rng-state'
 		of: Int64DataType new

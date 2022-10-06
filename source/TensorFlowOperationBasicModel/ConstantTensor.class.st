@@ -1,5 +1,5 @@
 Class {
-	#name : #ConstantNode,
+	#name : #ConstantTensor,
 	#superclass : #TensorFlowOperationAbstract,
 	#instVars : [
 		'currentComputation'
@@ -8,7 +8,7 @@ Class {
 }
 
 { #category : #'Instance Creation' }
-ConstantNode class >> like: anOperation filledWith: aValue [
+ConstantTensor class >> like: anOperation filledWith: aValue [
 
 	^self
 		on: anOperation currentComputation
@@ -18,7 +18,7 @@ ConstantNode class >> like: anOperation filledWith: aValue [
 ]
 
 { #category : #'Instance Creation' }
-ConstantNode class >> on: aComputation named: aName shaped: aShape filledWith: aTensor [
+ConstantTensor class >> on: aComputation named: aName shaped: aShape filledWith: aTensor [
 
 	^ self
 		on: aComputation
@@ -34,43 +34,43 @@ ConstantNode class >> on: aComputation named: aName shaped: aShape filledWith: a
 ]
 
 { #category : #'Instance Creation' }
-ConstantNode class >> on: aComputation named: aName with: aTensor [
+ConstantTensor class >> on: aComputation named: aName with: aTensor [
 
 	^self on: aComputation named: aName with: aTensor wrappedWith: [:const | const]
 ]
 
 { #category : #'Instance Creation' }
-ConstantNode class >> on: aComputation named: aName with: aTensor wrappedWith: aBlock [
+ConstantTensor class >> on: aComputation named: aName with: aTensor wrappedWith: aBlock [
 
 	^self new initializeOn: aComputation named: aName with: aTensor wrappedWith: aBlock
 ]
 
 { #category : #'Instance Creation' }
-ConstantNode class >> on: aComputation shaped: aShape filledWith: aTensor [
+ConstantTensor class >> on: aComputation shaped: aShape filledWith: aTensor [
 
 	^self on: aComputation named: self operationType shaped: aShape filledWith: aTensor
 ]
 
 { #category : #'Instance Creation' }
-ConstantNode class >> on: aComputation with: aTensor [
+ConstantTensor class >> on: aComputation with: aTensor [
 
 	^self on: aComputation named: self operationType with: aTensor
 ]
 
 { #category : #Accessing }
-ConstantNode class >> operationType [
+ConstantTensor class >> operationType [
 
 	^'Const'
 ]
 
 { #category : #Initialization }
-ConstantNode >> currentComputation [
+ConstantTensor >> currentComputation [
 
 	^currentComputation
 ]
 
 { #category : #Initialization }
-ConstantNode >> initializeOn: aComputation named: aName with: aTFTensor wrappedWith: aWrapper [
+ConstantTensor >> initializeOn: aComputation named: aName with: aTFTensor wrappedWith: aWrapper [
 
 	currentComputation := aComputation.
 	value :=

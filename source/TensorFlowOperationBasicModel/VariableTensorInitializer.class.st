@@ -1,11 +1,11 @@
 Class {
-	#name : #VariableNodeInitializer,
+	#name : #VariableTensorInitializer,
 	#superclass : #Object,
 	#category : #TensorFlowOperationBasicModel
 }
 
 { #category : #Evaluating }
-VariableNodeInitializer >> applyTo: aVariableNode [
+VariableTensorInitializer >> applyTo: aVariableNode [
 	
 	self subclassResponsibility
 	

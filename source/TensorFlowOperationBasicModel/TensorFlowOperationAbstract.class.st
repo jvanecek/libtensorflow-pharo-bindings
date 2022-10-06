@@ -195,7 +195,7 @@ TensorFlowOperationAbstract >> reciprocal [
 { #category : #Operations }
 TensorFlowOperationAbstract >> relu [
 
-	^RectifiedLinear activating: self
+	^ReLU activating: self
 ]
 
 { #category : #Accessing }

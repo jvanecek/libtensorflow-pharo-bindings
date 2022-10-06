@@ -1,22 +1,22 @@
 Class {
-	#name : #VariableNodeSpecification,
+	#name : #VariableTensorSpecification,
 	#superclass : #Object,
 	#instVars : [
 		'type',
 		'variableInitializer',
 		'regularizer'
 	],
-	#category : #NeuralNetworkTrainingModel
+	#category : #NeuralNetworkLayerModel
 }
 
 { #category : #'Instance Creation' }
-VariableNodeSpecification class >> of: aType initializedWith: aVariableInitializer [
+VariableTensorSpecification class >> of: aType initializedWith: aVariableInitializer [
 
 	^self of: aType initializedWith: aVariableInitializer regularizedWith: nil
 ]
 
 { #category : #'Instance Creation' }
-VariableNodeSpecification class >> of: aType initializedWith: aVariableInitializer regularizedWith: aRegularizer [
+VariableTensorSpecification class >> of: aType initializedWith: aVariableInitializer regularizedWith: aRegularizer [
 
 	^self new
 		initializedOf: aType
@@ -25,7 +25,7 @@ VariableNodeSpecification class >> of: aType initializedWith: aVariableInitializ
 ]
 
 { #category : #Initialization }
-VariableNodeSpecification >> initializedOf: aType initializedWith: aVariableInitializer regularizedWith: aRegularizer [
+VariableTensorSpecification >> initializedOf: aType initializedWith: aVariableInitializer regularizedWith: aRegularizer [
 
 	type := aType.
 	variableInitializer := aVariableInitializer.
@@ -33,19 +33,19 @@ VariableNodeSpecification >> initializedOf: aType initializedWith: aVariableInit
 ]
 
 { #category : #Accessing }
-VariableNodeSpecification >> variableInitializer [
+VariableTensorSpecification >> variableInitializer [
 
 	^variableInitializer
 ]
 
 { #category : #Accessing }
-VariableNodeSpecification >> variableType [
+VariableTensorSpecification >> variableType [
 
 	^type
 ]
 
 { #category : #Accessing }
-VariableNodeSpecification >> withRegularizerDo: aBlock [
+VariableTensorSpecification >> withRegularizerDo: aBlock [
 
 	regularizer ifNotNil: aBlock
 ]

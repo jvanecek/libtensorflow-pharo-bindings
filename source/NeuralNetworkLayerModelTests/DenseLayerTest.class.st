@@ -17,7 +17,7 @@ DenseLayerTest >> testCreating [
 		featuresOfInput: 2
 		featuresOfOutput: 1
 		weightSpecifiedBy:
-			( VariableNodeSpecification
+			( VariableTensorSpecification
 				of: Int32DataType new
 				initializedWith: ( ConstantInitializer with: #(#(2) #(3)) asInt32Tensor ) ).
 
@@ -50,11 +50,11 @@ DenseLayerTest >> testCreatingWithBias [
 		featuresOfInput: 2
 		featuresOfOutput: 1
 		weightSpecifiedBy:
-			( VariableNodeSpecification
+			( VariableTensorSpecification
 				of: FloatDataType new
 				initializedWith: ( ConstantInitializer with: #(#(2) #(3)) asFloatTensor ) )
 		biasSpecifiedBy:
-			( VariableNodeSpecification
+			( VariableTensorSpecification
 				of: FloatDataType new
 				initializedWith: ( ConstantInitializer with: #(4) asFloatTensor ) ).
 
@@ -87,11 +87,11 @@ DenseLayerTest >> testCreatingWithBiasAndActivation [
 		featuresOfInput: 2
 		featuresOfOutput: 1
 		weightSpecifiedBy:
-			( VariableNodeSpecification
+			( VariableTensorSpecification
 				of: FloatDataType new
 				initializedWith: ( ConstantInitializer with: #(#(2) #(3)) asFloatTensor ) )
 		biasSpecifiedBy:
-			( VariableNodeSpecification
+			( VariableTensorSpecification
 				of: FloatDataType new
 				initializedWith: ( ConstantInitializer with: #(4) asFloatTensor ) )
 		activatedBy: Sigmoid.
@@ -125,11 +125,11 @@ DenseLayerTest >> testCreatingWithBiasAndActivationUsingFloats [
 		featuresOfInput: 2
 		featuresOfOutput: 1
 		weightSpecifiedBy:
-			( VariableNodeSpecification
+			( VariableTensorSpecification
 				of: FloatDataType new
 				initializedWith: ( ConstantInitializer with: #(#(2) #(3)) asFloatTensor ) )
 		biasSpecifiedBy:
-			( VariableNodeSpecification
+			( VariableTensorSpecification
 				of: FloatDataType new
 				initializedWith: ( ConstantInitializer with: #(4) asFloatTensor ) )
 		activatedBy: Sigmoid.
@@ -165,14 +165,14 @@ DenseLayerTest >> testCreatingWithBiasAndActivationUsingIntegers [
 		featuresOfInput: 2
 		featuresOfOutput: 1
 		weightSpecifiedBy:
-			( VariableNodeSpecification
+			( VariableTensorSpecification
 				of: Int32DataType new
 				initializedWith: ( ConstantInitializer with: #(#(1) #(2)) asInt32Tensor ) )
 		biasSpecifiedBy:
-			( VariableNodeSpecification
+			( VariableTensorSpecification
 				of: Int32DataType new
 				initializedWith: ( ConstantInitializer with: #(1) asInt32Tensor ) )
-		activatedBy: RectifiedLinear.
+		activatedBy: ReLU.
 
 	logicStatements := #(#(0 0) #(0 1) #(1 0) #(1 1)) asInt32Tensor.
 	result := tf
@@ -207,11 +207,11 @@ DenseLayerTest >> testDenseLayerAsInputOfOtherLayer [
 		featuresOfInput: 3
 		featuresOfOutput: 2
 		weightSpecifiedBy:
-			( VariableNodeSpecification
+			( VariableTensorSpecification
 				of: FloatDataType new
 				initializedWith: ( ConstantInitializer with: #(#(1 1.3) #(0.1 -1.1) #(0.2 1.7)) asFloatTensor ) )
 		biasSpecifiedBy:
-			( VariableNodeSpecification
+			( VariableTensorSpecification
 				of: FloatDataType new
 				initializedWith: ( ConstantInitializer with: #(0.7 0.3) asFloatTensor ) )
 		activatedBy: Sigmoid.
@@ -220,11 +220,11 @@ DenseLayerTest >> testDenseLayerAsInputOfOtherLayer [
 		featuresOfInput: 2
 		featuresOfOutput: 1
 		weightSpecifiedBy:
-			( VariableNodeSpecification
+			( VariableTensorSpecification
 				of: FloatDataType new
 				initializedWith: ( ConstantInitializer with: #(#(-2.5) #(-5.2)) asFloatTensor ) )
 		biasSpecifiedBy:
-			( VariableNodeSpecification of: FloatDataType new initializedWith: ConstantInitializer withZeros ).
+			( VariableTensorSpecification of: FloatDataType new initializedWith: ConstantInitializer withZeros ).
 
 	logicStatements := #(#(0 0 1) #(0 1 1) #(1 0 0) #(1 1 1)) asFloatTensor.
 	result := tf

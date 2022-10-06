@@ -19,7 +19,7 @@ LossBuilder >> buildCategoricalCrossEntropy [
 
 	| labels |
 
-	labels := InputNode
+	labels := InputTensor
 		on: model currentComputation
 		named: self targetInputName
 		of: FloatDataType new
@@ -41,7 +41,7 @@ LossBuilder >> buildSparseCategoricalCrossEntropy [
 
 	| labels |
 
-	labels := InputNode on: model currentComputation named: self targetInputName of: Int32DataType new.
+	labels := InputTensor on: model currentComputation named: self targetInputName of: Int32DataType new.
 
 	^ reduction value: ( SparseCategoricalCrossEntropy of: model whenExpectedIs: labels )
 ]
@@ -51,7 +51,7 @@ LossBuilder >> buildSquaredError [
 
 	| expected |
 
-	expected := InputNode
+	expected := InputTensor
 		on: model currentComputation
 		named: self targetInputName
 		of: FloatDataType new

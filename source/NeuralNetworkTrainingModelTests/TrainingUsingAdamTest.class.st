@@ -50,5 +50,5 @@ TrainingUsingAdamTest >> expectedValidationLossWhenMinimizingMeanSquaredErrorInB
 { #category : #Accessing }
 TrainingUsingAdamTest >> optimizationAlgorithm [
 
-	^AdaptiveMomentEstimation new
+	^Adam new
 ]

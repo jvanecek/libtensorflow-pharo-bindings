@@ -1,11 +1,11 @@
 Class {
-	#name : #RectifiedLinearTest,
+	#name : #ReLUTest,
 	#superclass : #TensorFlowComputationBasedTest,
 	#category : #TensorFlowOperationMathModelTests
 }
 
 { #category : #Test }
-RectifiedLinearTest >> testActivatingFloatMatrix [
+ReLUTest >> testActivatingFloatMatrix [
 
 	| input |
 
@@ -28,7 +28,7 @@ RectifiedLinearTest >> testActivatingFloatMatrix [
 ]
 
 { #category : #Test }
-RectifiedLinearTest >> testActivatingFloatScalar [
+ReLUTest >> testActivatingFloatScalar [
 
 	| negative positive |
 
@@ -40,7 +40,7 @@ RectifiedLinearTest >> testActivatingFloatScalar [
 ]
 
 { #category : #Test }
-RectifiedLinearTest >> testActivatingFloatVector [
+ReLUTest >> testActivatingFloatVector [
 
 	| input |
 
@@ -50,7 +50,7 @@ RectifiedLinearTest >> testActivatingFloatVector [
 ]
 
 { #category : #Test }
-RectifiedLinearTest >> testActivatingIntegerScalar [
+ReLUTest >> testActivatingIntegerScalar [
 
 	| negative positive |
 
@@ -62,24 +62,24 @@ RectifiedLinearTest >> testActivatingIntegerScalar [
 ]
 
 { #category : #Test }
-RectifiedLinearTest >> testOperationName [
+ReLUTest >> testOperationName [
 
 	| neuron |
 
 	neuron := tf variableNamed: 'positive' with: 5 asFloatTensor.
 
-	self assert: (RectifiedLinear activating: neuron) isNamedInGraphAs: 'Relu'.
-	self assert: (RectifiedLinear activating: neuron) isNamedInGraphAs: 'Relu_1'.
-	self assert: (RectifiedLinear named: 'output' activating: neuron) isNamedInGraphAs: 'output'.
-	self assert: (RectifiedLinear named: 'output' activating: neuron) isNamedInGraphAs: 'output_1'
+	self assert: (ReLU activating: neuron) isNamedInGraphAs: 'Relu'.
+	self assert: (ReLU activating: neuron) isNamedInGraphAs: 'Relu_1'.
+	self assert: (ReLU named: 'output' activating: neuron) isNamedInGraphAs: 'output'.
+	self assert: (ReLU named: 'output' activating: neuron) isNamedInGraphAs: 'output_1'
 ]
 
 { #category : #Test }
-RectifiedLinearTest >> testPrintString [
+ReLUTest >> testPrintString [
 
 	| neuron |
 
 	neuron := tf variableNamed: 'positive' with: 5 asFloatTensor.
 
-	self assert: (RectifiedLinear activating: neuron) printString equals: 'relu(positive)'
+	self assert: (ReLU activating: neuron) printString equals: 'relu(positive)'
 ]

@@ -3,7 +3,7 @@ Extension { #name : #TFTensor }
 { #category : #'*TensorFlowOperationBasicModel' }
 TFTensor >> asOperationOn: aComputation [
 
-	^ ConstantNode on: aComputation with: self
+	^ ConstantTensor on: aComputation with: self
 ]
 
 { #category : #'*TensorFlowOperationBasicModel' }

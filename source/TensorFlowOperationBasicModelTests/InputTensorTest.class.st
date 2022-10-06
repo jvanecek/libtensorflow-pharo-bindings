@@ -1,15 +1,15 @@
 Class {
-	#name : #InputNodeTest,
+	#name : #InputTensorTest,
 	#superclass : #TensorFlowComputationBasedTest,
 	#category : #TensorFlowOperationBasicModelTests
 }
 
 { #category : #tests }
-InputNodeTest >> testOutputAttributesOfPartiallyUndefinedShapedInput [
+InputTensorTest >> testOutputAttributesOfPartiallyUndefinedShapedInput [
 
 	| input |
 
-	input := InputNode
+	input := InputTensor
 		on: tf
 		named: 'inputWithSize'
 		of: FloatDataType new
@@ -21,11 +21,11 @@ InputNodeTest >> testOutputAttributesOfPartiallyUndefinedShapedInput [
 ]
 
 { #category : #tests }
-InputNodeTest >> testOutputAttributesOfUndefinedShapedInput [
+InputTensorTest >> testOutputAttributesOfUndefinedShapedInput [
 
 	| input |
 
-	input := InputNode on: tf named: 'input' of: FloatDataType new.
+	input := InputTensor on: tf named: 'input' of: FloatDataType new.
 
 	self assert: input value firstOutput rank equals: -1.
 	self assert: input outputShape equals: TensorShape scalar.

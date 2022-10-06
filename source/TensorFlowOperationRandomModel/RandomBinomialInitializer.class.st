@@ -1,6 +1,6 @@
 Class {
 	#name : #RandomBinomialInitializer,
-	#superclass : #VariableNodeInitializer,
+	#superclass : #VariableTensorInitializer,
 	#instVars : [
 		'tensorGenerator',
 		'successProbability',
@@ -52,12 +52,12 @@ RandomBinomialInitializer class >> withSeed: anIntegerSeed [
 ]
 
 { #category : #Applying }
-RandomBinomialInitializer >> applyTo: aVariableNode [
+RandomBinomialInitializer >> applyTo: aVariableTensor [
 
-	aVariableNode assign: (
+	aVariableTensor assign: (
 		tensorGenerator
-			binomialTensorOn: aVariableNode currentComputation
-			shaped: aVariableNode outputShape
+			binomialTensorOn: aVariableTensor currentComputation
+			shaped: aVariableTensor outputShape
 			withProbabilityOfSuccess: successProbability
 			in: numberOfExperiments)
 ]

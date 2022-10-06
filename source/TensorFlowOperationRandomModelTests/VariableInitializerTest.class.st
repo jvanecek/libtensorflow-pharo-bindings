@@ -52,7 +52,7 @@ VariableInitializerTest >> testInitializeMatrixVariable [
 	| variable |
 
 	variable :=
-		VariableNode
+		VariableTensor
 			on: tf
 			named: 'input'
 			forFloatsShaped: (TensorShape matrixSized: 2 by: 3)
@@ -67,7 +67,7 @@ VariableInitializerTest >> testInitializeScalarVariable [
 	| variable |
 
 	variable :=
-		VariableNode
+		VariableTensor
 			on: tf
 			named: 'input'
 			forFloatsShaped: TensorShape scalar
@@ -81,7 +81,7 @@ VariableInitializerTest >> testInitializeScalarVariableWithRandomSeed [
 
 	| variable output |
 
-	variable := VariableNode
+	variable := VariableTensor
 		on: tf
 		named: 'input'
 		forFloatsShaped: TensorShape scalar
@@ -99,7 +99,7 @@ VariableInitializerTest >> testInitializeVectorVariable [
 	| variable |
 
 	variable :=
-		VariableNode
+		VariableTensor
 			on: tf
 			named: 'input'
 			forFloatsShaped: (TensorShape vectorSized: 3)

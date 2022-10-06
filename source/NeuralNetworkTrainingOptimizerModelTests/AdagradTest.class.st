@@ -1,11 +1,11 @@
 Class {
-	#name : #AdaptiveGradientTest,
+	#name : #AdagradTest,
 	#superclass : #TensorFlowComputationBasedTest,
 	#category : #NeuralNetworkTrainingOptimizerModelTests
 }
 
 { #category : #Tests }
-AdaptiveGradientTest >> testAppliedToVector [
+AdagradTest >> testAppliedToVector [
 
 	| parameter grad optimizer |
 
@@ -13,7 +13,7 @@ AdaptiveGradientTest >> testAppliedToVector [
 	grad := #(3.14 2.71).
 
 	optimizer :=
-		AdaptiveGradient new
+		Adagrad new
 			apply: (tf constantWith: grad asFloatTensor)
 			to: (tf variableNamed: 'var' with: parameter asFloatTensor).
 
@@ -21,17 +21,17 @@ AdaptiveGradientTest >> testAppliedToVector [
 ]
 
 { #category : #Tests }
-AdaptiveGradientTest >> testAppliedTwice [
+AdagradTest >> testAppliedTwice [
 
 	| parameter grad optimizer optimization accum epsilon lr |
 	
-	accum := AdaptiveGradient defaultInitialAccumulatorValue. 
-	epsilon := AdaptiveGradient defaultEpsilonValue. 
-	lr := AdaptiveGradient defaultLearningRate. 
+	accum := Adagrad defaultInitialAccumulatorValue. 
+	epsilon := Adagrad defaultEpsilonValue. 
+	lr := Adagrad defaultLearningRate. 
 	
 	parameter := 1.0.
 	grad := Float pi.
-	optimizer := AdaptiveGradient new.
+	optimizer := Adagrad new.
 	optimization :=
 		optimizer
 			apply: (tf constantWith: grad)
@@ -47,7 +47,7 @@ AdaptiveGradientTest >> testAppliedTwice [
 ]
 
 { #category : #Tests }
-AdaptiveGradientTest >> testAppliedTwiceToDifferentParameters [
+AdagradTest >> testAppliedTwiceToDifferentParameters [
 
 	| parameter1 parameter2 grad2 grad1 optimizer accum param1optimization param2optimization |
 
@@ -55,7 +55,7 @@ AdaptiveGradientTest >> testAppliedTwiceToDifferentParameters [
 	parameter2 := #(1.5 2.0).
 	grad1 := Float pi.
 	grad2 := Array with: Float pi / 2 with: Float pi * 2.
-	optimizer := AdaptiveGradient scalingBy: 0.02 startingAccumulatorWith: 0.0 usingForNumericalStability: 0.0.
+	optimizer := Adagrad scalingBy: 0.02 startingAccumulatorWith: 0.0 usingForNumericalStability: 0.0.
 
 	param1optimization :=
 		optimizer
@@ -79,7 +79,7 @@ AdaptiveGradientTest >> testAppliedTwiceToDifferentParameters [
 ]
 
 { #category : #Tests }
-AdaptiveGradientTest >> testAppliedTwiceToSameVariable [
+AdagradTest >> testAppliedTwiceToSameVariable [
 
 	| parameter grad optimization accum epsilon lr |
 
@@ -90,7 +90,7 @@ AdaptiveGradientTest >> testAppliedTwiceToSameVariable [
 	parameter := 1.0.
 	grad := Float pi.
 	optimization :=
-		(AdaptiveGradient
+		(Adagrad
 			scalingBy: lr
 			startingAccumulatorWith: accum
 			usingForNumericalStability: epsilon)
@@ -107,7 +107,7 @@ AdaptiveGradientTest >> testAppliedTwiceToSameVariable [
 ]
 
 { #category : #Tests }
-AdaptiveGradientTest >> testInitializedWithDefaultValues [
+AdagradTest >> testInitializedWithDefaultValues [
 
 	| parameter grad optimizer accum |
 
@@ -115,7 +115,7 @@ AdaptiveGradientTest >> testInitializedWithDefaultValues [
 	grad := Float pi.
 
 	optimizer :=
-		AdaptiveGradient new
+		Adagrad new
 			apply: (tf constantWith: grad)
 			to: (tf variableNamed: 'var' with: parameter asTensor).
 
@@ -125,11 +125,11 @@ AdaptiveGradientTest >> testInitializedWithDefaultValues [
 ]
 
 { #category : #Tests }
-AdaptiveGradientTest >> testPrintString [
+AdagradTest >> testPrintString [
 
 	| adagrad |
 
-	adagrad := AdaptiveGradient new.
+	adagrad := Adagrad new.
 	self
 		assert: adagrad shortName equals: 'AdaGrad';
 		assert: adagrad printString equals: 'AdaGrad (learning rate: 0.001)'

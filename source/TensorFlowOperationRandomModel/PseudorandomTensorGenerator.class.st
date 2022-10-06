@@ -72,8 +72,8 @@ PseudorandomTensorGenerator >> rescale: aTensor centeredTo: aMeanValue spreadedB
 
 	| stddev mean |
 
-	mean := ConstantNode on: aComputation with: aMeanValue asFloatTensor.
-	stddev := ConstantNode on: aComputation with: aStandardDeviation asFloatTensor.
+	mean := ConstantTensor on: aComputation with: aMeanValue asFloatTensor.
+	stddev := ConstantTensor on: aComputation with: aStandardDeviation asFloatTensor.
 	^ ( ElementWiseMultiplication of: aTensor and: stddev ) + mean
 ]
 

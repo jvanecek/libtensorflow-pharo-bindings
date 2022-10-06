@@ -30,7 +30,7 @@ Momentum >> accumulatorFor: aVariable [
 	^accumulatorByVariable
 		at: aVariable
 		ifAbsentPut: [
-			VariableNode
+			VariableTensor
 				on: aVariable currentComputation
 				named: 'accum'
 				filledWithZerosLike: aVariable]

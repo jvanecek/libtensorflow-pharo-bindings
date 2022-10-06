@@ -10,7 +10,7 @@ ResourceVariableNodeTest >> assertCorrectResourceInitializationWhenTyped: dataTy
 	| output resource |
 
 	resource :=
-		ResourceVariableNode
+		ResourceVariable
 			on: tf
 			named: 'my-resource-variable'
 			of: dataType

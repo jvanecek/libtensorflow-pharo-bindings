@@ -63,7 +63,7 @@ ReduceMeanTest >> testReducePlaceholder [
 
 	constant := tf floatConstantWith: inputValue.
 	inputWithoutShape := tf floatInputNamed: 'input'.
-	inputWithSize := InputNode
+	inputWithSize := InputTensor
 		on: tf
 		named: 'inputWithSize'
 		of: FloatDataType new

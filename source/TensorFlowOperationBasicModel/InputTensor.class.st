@@ -1,5 +1,5 @@
 Class {
-	#name : #InputNode,
+	#name : #InputTensor,
 	#superclass : #TensorFlowOperationAbstract,
 	#instVars : [
 		'currentComputation'
@@ -8,19 +8,19 @@ Class {
 }
 
 { #category : #'Instance Creation' }
-InputNode class >> on: aComputation named: anInputName of: aType [
+InputTensor class >> on: aComputation named: anInputName of: aType [
 
 	^self on: aComputation named: anInputName of: aType shaped: nil
 ]
 
 { #category : #'Instance Creation' }
-InputNode class >> on: aComputation named: anInputName of: aType shaped: aShape [
+InputTensor class >> on: aComputation named: anInputName of: aType shaped: aShape [
 
 	^self new initializeOn: aComputation named: anInputName of: aType shaped: aShape
 ]
 
 { #category : #'Instance Creation' }
-InputNode class >> on: aComputation named: anInputName of: aType sized: aNumberOfFeatures [
+InputTensor class >> on: aComputation named: anInputName of: aType sized: aNumberOfFeatures [
 	" This is useful when the placeholder should have the shape of the tensor will be fed with, 
 	 as to create proper operations based on it, for example to create a reduce mean alongside all axis"
 	^self
@@ -31,13 +31,13 @@ InputNode class >> on: aComputation named: anInputName of: aType sized: aNumberO
 ]
 
 { #category : #Accessing }
-InputNode >> currentComputation [
+InputTensor >> currentComputation [
 
 	^currentComputation
 ]
 
 { #category : #Initialization }
-InputNode >> initializeOn: aTensorFlowComputation named: aName of: aType shaped: aShape [
+InputTensor >> initializeOn: aTensorFlowComputation named: aName of: aType shaped: aShape [
 
 	currentComputation := aTensorFlowComputation.
 	value :=
@@ -51,7 +51,7 @@ InputNode >> initializeOn: aTensorFlowComputation named: aName of: aType shaped:
 ]
 
 { #category : #Accessing }
-InputNode >> operationType [
+InputTensor >> operationType [
 
 	^'Placeholder'
 ]

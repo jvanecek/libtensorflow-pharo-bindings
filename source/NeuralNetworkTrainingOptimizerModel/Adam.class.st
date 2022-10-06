@@ -1,5 +1,5 @@
 Class {
-	#name : #AdaptiveMomentEstimation,
+	#name : #Adam,
 	#superclass : #OptimizationAlgorithm,
 	#instVars : [
 		'learningRate',
@@ -17,31 +17,31 @@ Class {
 }
 
 { #category : #Accessing }
-AdaptiveMomentEstimation class >> defaultBeta1Factor [
+Adam class >> defaultBeta1Factor [
 
 	^0.9
 ]
 
 { #category : #Accessing }
-AdaptiveMomentEstimation class >> defaultBeta2Factor [
+Adam class >> defaultBeta2Factor [
 
 	^0.999
 ]
 
 { #category : #Accessing }
-AdaptiveMomentEstimation class >> defaultEpsilonValue [
+Adam class >> defaultEpsilonValue [
 
 	^10e-8
 ]
 
 { #category : #Accessing }
-AdaptiveMomentEstimation class >> defaultLearningRate [
+Adam class >> defaultLearningRate [
 
 	^0.001
 ]
 
 { #category : #'Instance Creation' }
-AdaptiveMomentEstimation class >> new [
+Adam class >> new [
 
 	^self
 		scalingBy: self defaultLearningRate
@@ -51,7 +51,7 @@ AdaptiveMomentEstimation class >> new [
 ]
 
 { #category : #'Instance Creation' }
-AdaptiveMomentEstimation class >> scalingBy: aLearningRate decayingFirstMomentBy: aBeta1Factor decayingSecondMomentBy: aBeta2Factor usingForNumericalStability: anEpsilonValue [
+Adam class >> scalingBy: aLearningRate decayingFirstMomentBy: aBeta1Factor decayingSecondMomentBy: aBeta2Factor usingForNumericalStability: anEpsilonValue [
 
 	^super new
 		initializeScalingBy: aLearningRate
@@ -61,7 +61,7 @@ AdaptiveMomentEstimation class >> scalingBy: aLearningRate decayingFirstMomentBy
 ]
 
 { #category : #Applying }
-AdaptiveMomentEstimation >> apply: aGradient to: aVariable [
+Adam >> apply: aGradient to: aVariable [
 
 	| currentComputation |
 
@@ -86,13 +86,13 @@ AdaptiveMomentEstimation >> apply: aGradient to: aVariable [
 ]
 
 { #category : #Configuring }
-AdaptiveMomentEstimation >> considerCurrentEpochIn: anEpochHolder [
+Adam >> considerCurrentEpochIn: anEpochHolder [
 
 	timestep := anEpochHolder trainingStepAsVariable castedTo: FloatDataType new
 ]
 
 { #category : #Accessing }
-AdaptiveMomentEstimation >> firstMomentDecayingRatePoweredOn: currentComputation [
+Adam >> firstMomentDecayingRatePoweredOn: currentComputation [
 
 	firstMomentDecayingRatePowered ifNil: [
 		firstMomentDecayingRatePowered :=
@@ -101,25 +101,25 @@ AdaptiveMomentEstimation >> firstMomentDecayingRatePoweredOn: currentComputation
 ]
 
 { #category : #Accessing }
-AdaptiveMomentEstimation >> gradientsMeanOf: aVariable [
+Adam >> gradientsMeanOf: aVariable [
 
 	^variableGradientsMean
 		at: aVariable
 		ifAbsentPut: [
-			VariableNode on: aVariable currentComputation named: 'm' filledWithZerosLike: aVariable]
+			VariableTensor on: aVariable currentComputation named: 'm' filledWithZerosLike: aVariable]
 ]
 
 { #category : #Accessing }
-AdaptiveMomentEstimation >> gradientsUncenteredVarianceOf: aVariable [
+Adam >> gradientsUncenteredVarianceOf: aVariable [
 
 	^variableGradientsVariance
 		at: aVariable
 		ifAbsentPut: [
-			VariableNode on: aVariable currentComputation named: 'v' filledWithZerosLike: aVariable]
+			VariableTensor on: aVariable currentComputation named: 'v' filledWithZerosLike: aVariable]
 ]
 
 { #category : #Initialization }
-AdaptiveMomentEstimation >> initializeScalingBy: aLearningRate decayingFirstMomentBy: aBeta1Factor decayingSecondMomentBy: aBeta2Factor usingForNumericalStability: anEpsilonValue [
+Adam >> initializeScalingBy: aLearningRate decayingFirstMomentBy: aBeta1Factor decayingSecondMomentBy: aBeta2Factor usingForNumericalStability: anEpsilonValue [
 
 	learningRate := aLearningRate.
 	firstMomentDecayingRate := aBeta1Factor.
@@ -132,7 +132,7 @@ AdaptiveMomentEstimation >> initializeScalingBy: aLearningRate decayingFirstMome
 ]
 
 { #category : #Printing }
-AdaptiveMomentEstimation >> printOn: aStream [
+Adam >> printOn: aStream [
 
 	aStream nextPutAll: (
 		'Adam (learning rate: <1p>; beta1: <2p>; beta2: <3p>; epsilon: <4p>)'
@@ -143,7 +143,7 @@ AdaptiveMomentEstimation >> printOn: aStream [
 ]
 
 { #category : #Accessing }
-AdaptiveMomentEstimation >> secondMomentDecayingRatePoweredOn: currentComputation [
+Adam >> secondMomentDecayingRatePoweredOn: currentComputation [
 
 	secondMomentDecayingRatePowered ifNil: [
 		secondMomentDecayingRatePowered :=
@@ -152,13 +152,13 @@ AdaptiveMomentEstimation >> secondMomentDecayingRatePoweredOn: currentComputatio
 ]
 
 { #category : #Accessing }
-AdaptiveMomentEstimation >> shortName [
+Adam >> shortName [
 
 	^'Adam'
 ]
 
 { #category : #Configuring }
-AdaptiveMomentEstimation >> useNesterovUpdate [
+Adam >> useNesterovUpdate [
 
 	useNesterov := true 
 ]
