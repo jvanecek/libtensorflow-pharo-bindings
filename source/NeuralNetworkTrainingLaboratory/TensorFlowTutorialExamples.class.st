@@ -6,14 +6,21 @@ Class {
 
 { #category : #Examples }
 TensorFlowTutorialExamples class >> classifyingClothesImages [
-
-	" Example from https://www.tensorflow.org/tutorials/keras/classification"
-
+	" Example from https://www.tensorflow.org/tutorials/keras/classification.
+	The idea is to get the same results as the Experiment 2 in
+	https://colab.research.google.com/drive/1wC0GzDcgHwf227Ivs5TIbirBPD3BqBdg#scrollTo=4M3Oli63F06p
+	"
+	
 	| tf sample model summary |
 
 	tf := TensorFlowComputation new.
 
-	sample := DatasetProvider current fashionDatasetOn: tf.
+	sample := (SampleDatasetComputationAware
+		on: tf
+		transformingFeaturesWith: [:features | features reshapeFlattened / 255.0]
+		transformingLabelsWith: [:labels | labels]
+		applying: [:dataset | dataset inBatchesOf: 32])
+			bindSetsFrom: DatasetProvider current fashionDataset.
 
 	model := ( SequentialModelBuilder on: tf )
 		addDenseLayerSized: 128
@@ -26,7 +33,7 @@ TensorFlowTutorialExamples class >> classifyingClothesImages [
 		buildApplyingToLogits: [ :logits | logits softmax argMaxOnRows ].
 		
 	summary := ( NeuralNetworkTrainer on: tf )
-		minimizeSparseCategoricalCrossEntropyUsing: AdaptiveGradient new;
+		minimizeSparseCategoricalCrossEntropyUsing: Adam new;
 		stopTrainingWhen: ( CompletedNumberOfEpochs after: 10 );
 		trackMetricWith: CategoricalPredictionAccuracyTracker new;
 		trackMetricWith: (TensorboardExperimentTracker storingTo: 'experiment-2/pharo');
