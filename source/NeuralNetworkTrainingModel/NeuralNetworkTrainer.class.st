@@ -115,5 +115,5 @@ NeuralNetworkTrainer >> train: aModel toFit: aDataset [
 { #category : #Configuring }
 NeuralNetworkTrainer >> trainingIterations: aTrainingTimes [
 
-	self stopTrainingWhen: (CompletedNumberOfTraining after: aTrainingTimes)
+	self stopTrainingWhen: (CompletedNumberOfEpochs after: aTrainingTimes)
 ]

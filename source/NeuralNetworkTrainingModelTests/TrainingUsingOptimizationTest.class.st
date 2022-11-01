@@ -125,7 +125,7 @@ TrainingUsingOptimizationTest >> testMinimizingCategoricalCrossEntropy [
 	model := self modelWithTwoOutputUnits.
 	summary :=
 		self trainerMinimizingCategoricalCrossEntropy
-			stopTrainingWhen: (CompletedNumberOfTraining after: 5);
+			stopTrainingWhen: (CompletedNumberOfEpochs after: 5);
 			train: model toFit: self inputDatasetWithLabelsProbabilities.
 
 	self
@@ -146,7 +146,7 @@ TrainingUsingOptimizationTest >> testMinimizingCategoricalCrossEntropyInBatches 
 
 	summary :=
 		self trainerMinimizingCategoricalCrossEntropy
-			stopTrainingWhen: (CompletedNumberOfTraining after: 5);
+			stopTrainingWhen: (CompletedNumberOfEpochs after: 5);
 			train: model toFit: inputInBatches.
 
 	self
@@ -162,7 +162,7 @@ TrainingUsingOptimizationTest >> testMinimizingMeanSquaredError [
 	model := self modelWithTwoOutputUnits.
 	summary :=
 		self trainerMinimizingMeanSquaredError
-			stopTrainingWhen: (CompletedNumberOfTraining after: 5);
+			stopTrainingWhen: (CompletedNumberOfEpochs after: 5);
 			train: model toFit: self inputDatasetWithLabelsProbabilities.
 
 	self
@@ -183,7 +183,7 @@ TrainingUsingOptimizationTest >> testMinimizingMeanSquaredErrorInBatches [
 
 	summary :=
 		self trainerMinimizingMeanSquaredError
-			stopTrainingWhen: (CompletedNumberOfTraining after: 5);
+			stopTrainingWhen: (CompletedNumberOfEpochs after: 5);
 			train: model toFit: inputInBatches.
 
 	self
@@ -199,7 +199,7 @@ TrainingUsingOptimizationTest >> testMinimizingSparseCategoricalCrossEntropy [
 	model := self modelWithTwoOutputUnits.
 	summary :=
 		self trainerMinimizingSparseCategoricalCrossEntropy
-			stopTrainingWhen: (CompletedNumberOfTraining after: 5);
+			stopTrainingWhen: (CompletedNumberOfEpochs after: 5);
 			train: model toFit: self inputDatasetWithLabels.
 
 	self
@@ -220,7 +220,7 @@ TrainingUsingOptimizationTest >> testMinimizingSparseCategoricalCrossEntropyInBa
 
 	summary :=
 		self trainerMinimizingSparseCategoricalCrossEntropy
-			stopTrainingWhen: (CompletedNumberOfTraining after: 5);
+			stopTrainingWhen: (CompletedNumberOfEpochs after: 5);
 			train: model toFit: inputInBatches.
 
 	self
@@ -244,7 +244,7 @@ TrainingUsingOptimizationTest >> testValidationLossWhenMinimizingMeanSquaredErro
 
 	summary :=
 		self trainerMinimizingMeanSquaredError
-			stopTrainingWhen: (CompletedNumberOfTraining after: 5);
+			stopTrainingWhen: (CompletedNumberOfEpochs after: 5);
 			train: model toFit: inputInBatches.
 
 	self

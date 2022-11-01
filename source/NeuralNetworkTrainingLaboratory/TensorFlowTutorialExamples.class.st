@@ -27,7 +27,7 @@ TensorFlowTutorialExamples class >> classifyingClothesImages [
 		
 	summary := ( NeuralNetworkTrainer on: tf )
 		minimizeSparseCategoricalCrossEntropyUsing: AdaptiveGradient new;
-		stopTrainingWhen: ( CompletedNumberOfTraining after: 10 );
+		stopTrainingWhen: ( CompletedNumberOfEpochs after: 10 );
 		trackMetricWith: CategoricalPredictionAccuracyTracker new;
 		trackMetricWith: (TensorboardExperimentTracker storingTo: 'experiment-2/pharo');
 		train: model toFit: sample.

@@ -34,7 +34,7 @@ TrainingUsingOptimizationTest >> testAccuracyMinimizingCategoricalCrossEntropyIn
 	summary :=
 		self trainerMinimizingCategoricalCrossEntropy
 			trackMetricWith: CategoricalPredictionAccuracyTracker new;
-			stopTrainingWhen: (CompletedNumberOfTraining after: 5);
+			stopTrainingWhen: (CompletedNumberOfEpochs after: 5);
 			train: model toFit: inputInBatches.
 
 	self assert: summary historicalTrainingAccuracy isArrayCloseTo: #(0.5 0.5 0.5 0.5 0.5)
@@ -54,7 +54,7 @@ TrainingUsingOptimizationTest >> testAccuracyMinimizingMeanSquaredErrorInBatches
 	summary :=
 		self trainerMinimizingMeanSquaredError
 			trackMetricWith: CategoricalPredictionAccuracyTracker new;
-			stopTrainingWhen: (CompletedNumberOfTraining after: 5);
+			stopTrainingWhen: (CompletedNumberOfEpochs after: 5);
 			train: model toFit: inputInBatches.
 
 	self assert: summary historicalTrainingAccuracy isArrayCloseTo: #(0.5 0.5 0.5 0.5 0.5)
@@ -74,7 +74,7 @@ TrainingUsingOptimizationTest >> testAccuracyMinimizingSparseCategoricalCrossEnt
 	summary :=
 		self trainerMinimizingSparseCategoricalCrossEntropy
 			trackMetricWith: CategoricalPredictionAccuracyTracker new;
-			stopTrainingWhen: (CompletedNumberOfTraining after: 5);
+			stopTrainingWhen: (CompletedNumberOfEpochs after: 5);
 			train: model toFit: inputInBatches.
 
 	self assert: summary historicalTrainingAccuracy isArrayCloseTo: #(0.25 0.25 0.25 0.25 0.25)
@@ -94,7 +94,7 @@ TrainingUsingOptimizationTest >> testEpochDurationWhenMinimizingCategoricalCross
 	summary :=
 		self trainerMinimizingCategoricalCrossEntropy
 			trackMetricWith: EpochDurationTracker new;
-			stopTrainingWhen: (CompletedNumberOfTraining after: 10);
+			stopTrainingWhen: (CompletedNumberOfEpochs after: 10);
 			train: model toFit: inputInBatches.
 
 	self assertConsistencyInDurationsTrackedFor: summary
@@ -114,7 +114,7 @@ TrainingUsingOptimizationTest >> testEpochDurationWhenMinimizingMeanSquaredError
 	summary :=
 		self trainerMinimizingMeanSquaredError
 			trackMetricWith: EpochDurationTracker new;
-			stopTrainingWhen: (CompletedNumberOfTraining after: 10);
+			stopTrainingWhen: (CompletedNumberOfEpochs after: 10);
 			train: model toFit: inputInBatches.
 
 	self assertConsistencyInDurationsTrackedFor: summary
@@ -134,7 +134,7 @@ TrainingUsingOptimizationTest >> testEpochDurationWhenMinimizingSparseCategorica
 	summary :=
 		(self trainerMinimizingSparseCategoricalCrossEntropy)
 			trackMetricWith: EpochDurationTracker new;
-			stopTrainingWhen: (CompletedNumberOfTraining after: 10);
+			stopTrainingWhen: (CompletedNumberOfEpochs after: 10);
 			train: model toFit: inputInBatches.
 			
 	self assertConsistencyInDurationsTrackedFor: summary

@@ -40,7 +40,7 @@ NeuralNetworkTrainerTest >> testAfterTrainingCallback [
 	summary :=
 		(NeuralNetworkTrainer on: tf)
 			minimizeSparseCategoricalCrossEntropyUsing: (GradientDescent scalingBy: 0.2);
-			stopTrainingWhen: (CompletedNumberOfTraining after: 10);
+			stopTrainingWhen: (CompletedNumberOfEpochs after: 10);
 			afterEveryTrainingDo: [:context |
 				runs := runs + 1.
 				self assert: context epochsTrained equals: runs];
@@ -124,7 +124,7 @@ NeuralNetworkTrainerTest >> testSummaryPrintString [
 	summary :=
 		(NeuralNetworkTrainer on: tf)
 			minimizeSparseCategoricalCrossEntropyUsing: (GradientDescent scalingBy: 0.2);
-			stopTrainingWhen: (CompletedNumberOfTraining after: 10);
+			stopTrainingWhen: (CompletedNumberOfEpochs after: 10);
 			train: model toFit: self trainingDatasetWithLabels.
 
 	self

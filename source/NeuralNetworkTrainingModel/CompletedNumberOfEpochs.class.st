@@ -1,5 +1,5 @@
 Class {
-	#name : #CompletedNumberOfTraining,
+	#name : #CompletedNumberOfEpochs,
 	#superclass : #TrainingStopCondition,
 	#instVars : [
 		'stopTrainingEpoch'
@@ -8,26 +8,26 @@ Class {
 }
 
 { #category : #'Instance Creation' }
-CompletedNumberOfTraining class >> after: aTrainingNumber [
+CompletedNumberOfEpochs class >> after: aTrainingNumber [
 
 	^self new initializeAfter: aTrainingNumber
 ]
 
 { #category : #Initialization }
-CompletedNumberOfTraining >> initializeAfter: aTrainingNumber [
+CompletedNumberOfEpochs >> initializeAfter: aTrainingNumber [
 
 	
 	stopTrainingEpoch := aTrainingNumber
 ]
 
 { #category : #Testing }
-CompletedNumberOfTraining >> isModelWellTrainedAccording: aTrainingContext [
+CompletedNumberOfEpochs >> isModelWellTrainedAccording: aTrainingContext [
 
 	^stopTrainingEpoch < aTrainingContext epochsTrained
 ]
 
 { #category : #Printing }
-CompletedNumberOfTraining >> printOn: aStream [
+CompletedNumberOfEpochs >> printOn: aStream [
 
 	aStream nextPutAll: ('Stop training after <1p> epochs' expandMacrosWith: stopTrainingEpoch)
 ]
