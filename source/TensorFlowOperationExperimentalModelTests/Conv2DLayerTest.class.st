@@ -1,11 +1,11 @@
 Class {
-	#name : #Convolution2DLayerTest,
+	#name : #Conv2DLayerTest,
 	#superclass : #TensorFlowComputationBasedTest,
 	#category : #TensorFlowOperationExperimentalModelTests
 }
 
 { #category : #Tests }
-Convolution2DLayerTest >> testInitializingKernelWithFixedTensor [
+Conv2DLayerTest >> testInitializingKernelWithFixedTensor [
 
 	| input layer output filter |
 
@@ -20,7 +20,7 @@ Convolution2DLayerTest >> testInitializingKernelWithFixedTensor [
 			shape: (TensorShape numberOfBatches: 2 height: 2 width: 1 channels: 2).
 
 	layer :=
-		Convolution2DLayer
+		Conv2DLayer
 			filtering: input
 			withKernelLike: (
 				ConvolutionKernelSpecification
@@ -41,7 +41,7 @@ Convolution2DLayerTest >> testInitializingKernelWithFixedTensor [
 ]
 
 { #category : #Tests }
-Convolution2DLayerTest >> testInitializingKernelWithGlorotNormalRandom [
+Conv2DLayerTest >> testInitializingKernelWithGlorotNormalRandom [
 
 	| input layer output |
 
@@ -51,7 +51,7 @@ Convolution2DLayerTest >> testInitializingKernelWithGlorotNormalRandom [
 				fromFloats: #(11 12 13 14 21 22 23 24 31 32 33 34 41 42 43 44)
 				shape: (TensorShape numberOfBatches: 1 height: 4 width: 4 channels: 1)).
 	layer :=
-		Convolution2DLayer
+		Conv2DLayer
 			filtering: input
 			withKernelLike: (
 				ConvolutionKernelSpecification

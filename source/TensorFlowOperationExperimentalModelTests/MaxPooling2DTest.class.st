@@ -88,7 +88,7 @@ MaxPooling2DTest >> testPaddingToSameInputAndOutputSize [
 				reducing: input
 				inWindowsOf: #(2 2)
 				shiftedBy: #(1 1)
-				paddingAccording: Convolution2D paddingToSameInputAndOutputSize).
+				paddingAccording: Conv2D paddingToSameInputAndOutputSize).
 				
 	self
 		assert: maxPooled type equals: input type;

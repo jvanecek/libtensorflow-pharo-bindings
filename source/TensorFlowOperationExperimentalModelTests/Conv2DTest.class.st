@@ -1,11 +1,11 @@
 Class {
-	#name : #Convolution2DTest,
+	#name : #Conv2DTest,
 	#superclass : #TensorFlowComputationBasedTest,
 	#category : #TensorFlowOperationExperimentalModelTests
 }
 
 { #category : #Tests }
-Convolution2DTest >> testConvoluteFloatsInput [
+Conv2DTest >> testConvoluteFloatsInput [
 
 	| inputShape filterShape input filters conv |
 
@@ -18,12 +18,12 @@ Convolution2DTest >> testConvoluteFloatsInput [
 	
 	conv :=
 		tf compute: (
-			Convolution2D
+			Conv2D
 				on: tf
 				filtering: input
 				with: filters
 				shiftedBy: #(1 1)
-				paddedAccording: Convolution2D paddingToSameInputAndOutputSize).
+				paddedAccording: Conv2D paddingToSameInputAndOutputSize).
 	
 	self
 		assert: conv type equals: input type;
@@ -32,7 +32,7 @@ Convolution2DTest >> testConvoluteFloatsInput [
 ]
 
 { #category : #Tests }
-Convolution2DTest >> testConvoluteIntegersInput [
+Conv2DTest >> testConvoluteIntegersInput [
 
 	| inputShape filterShape input filters conv |
 
@@ -45,12 +45,12 @@ Convolution2DTest >> testConvoluteIntegersInput [
 	
 	conv :=
 		tf compute: (
-			Convolution2D
+			Conv2D
 				on: tf
 				filtering: input
 				with: filters
 				shiftedBy: #(1 1)
-				paddedAccording: Convolution2D paddingToSameInputAndOutputSize).
+				paddedAccording: Conv2D paddingToSameInputAndOutputSize).
 	
 	self
 		assert: conv type equals: input type;

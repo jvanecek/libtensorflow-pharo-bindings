@@ -1,5 +1,5 @@
 Class {
-	#name : #Convolution2DLayer,
+	#name : #Conv2DLayer,
 	#superclass : #TensorFlowOperationAbstract,
 	#instVars : [
 		'input'
@@ -8,37 +8,37 @@ Class {
 }
 
 { #category : #'Instance Creation' }
-Convolution2DLayer class >> filtering: anInput withKernelLike: aConvolutionKernelSpecification [
+Conv2DLayer class >> filtering: anInput withKernelLike: aConvolutionKernelSpecification [
 
 	^self new initializeFiltering: anInput withKernelLike: aConvolutionKernelSpecification
 ]
 
 { #category : #Accessing }
-Convolution2DLayer >> currentComputation [
+Conv2DLayer >> currentComputation [
 
 	^input currentComputation
 ]
 
 { #category : #Initialization }
-Convolution2DLayer >> defaultPaddingTechnique [
+Conv2DLayer >> defaultPaddingTechnique [
 
 	^'VALID'
 ]
 
 { #category : #Initialization }
-Convolution2DLayer >> defaultStride [
+Conv2DLayer >> defaultStride [
 
 	^#(1 1)
 ]
 
 { #category : #Initialization }
-Convolution2DLayer >> initializeFiltering: anInput withKernelLike: aConvolutionKernelSpecification [
+Conv2DLayer >> initializeFiltering: anInput withKernelLike: aConvolutionKernelSpecification [
 
 	| filter |
 
 	input := anInput.
 	filter :=
-		VariableNode
+		VariableTensor
 			on: self currentComputation
 			named: 'conv2d-filter'
 			of: anInput outputType
@@ -52,7 +52,7 @@ Convolution2DLayer >> initializeFiltering: anInput withKernelLike: aConvolutionK
 			initializedWith: aConvolutionKernelSpecification variableInitializer.
 			
 	value :=
-		Convolution2D
+		Conv2D
 			on: self currentComputation
 			filtering: anInput
 			with: filter

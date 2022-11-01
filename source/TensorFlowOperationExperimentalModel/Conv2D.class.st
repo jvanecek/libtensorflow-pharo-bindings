@@ -1,5 +1,5 @@
 Class {
-	#name : #Convolution2D,
+	#name : #Conv2D,
 	#superclass : #TensorFlowOperationAbstract,
 	#instVars : [
 		'currentComputation'
@@ -8,7 +8,7 @@ Class {
 }
 
 { #category : #'Instance Creation' }
-Convolution2D class >> on: aTensorFlowComputation filtering: anInputTensor with: aFiltersTensor shiftedBy: stridesAlongHeightAndWeight paddedAccording: aPaddingTechnique [
+Conv2D class >> on: aTensorFlowComputation filtering: anInputTensor with: aFiltersTensor shiftedBy: stridesAlongHeightAndWeight paddedAccording: aPaddingTechnique [
 
 	^self new
 		initializeOn: aTensorFlowComputation
@@ -19,19 +19,19 @@ Convolution2D class >> on: aTensorFlowComputation filtering: anInputTensor with:
 ]
 
 { #category : #Accessing }
-Convolution2D class >> paddingToSameInputAndOutputSize [
+Conv2D class >> paddingToSameInputAndOutputSize [
 
 	^'SAME'
 ]
 
 { #category : #Accessing }
-Convolution2D >> currentComputation [
+Conv2D >> currentComputation [
 
 	^currentComputation
 ]
 
 { #category : #Initialization }
-Convolution2D >> initializeOn: aTensorFlowComputation filtering: anInputTensor with: aFiltersTensor shiftedBy: stridesAlongHeightAndWeight paddedAccording: aPaddingTechnique [
+Conv2D >> initializeOn: aTensorFlowComputation filtering: anInputTensor with: aFiltersTensor shiftedBy: stridesAlongHeightAndWeight paddedAccording: aPaddingTechnique [
 
 	currentComputation := aTensorFlowComputation.
 	value :=
