@@ -16,12 +16,6 @@ Number >> asInt64Tensor [
 ]
 
 { #category : #'*TensorFlowCore' }
-Number >> asOperationOn: aGraph [
-
-	^self asTensor asOperationOn: aGraph
-]
-
-{ #category : #'*TensorFlowCore' }
 Number >> asTensor [
 
 	^self subclassResponsibility

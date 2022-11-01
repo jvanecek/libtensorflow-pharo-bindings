@@ -7,6 +7,12 @@ TFOutput >> currentComputation [
 ]
 
 { #category : #'*TensorFlowComputationModel' }
+TFOutput >> outputOn: aGraph [
+
+	^self
+]
+
+{ #category : #'*TensorFlowComputationModel' }
 TFOutput >> rank [
 
 	^graph rankOf: self
