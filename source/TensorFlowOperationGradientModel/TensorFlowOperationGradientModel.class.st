@@ -1,5 +1,5 @@
 Class {
-	#name : #TFOperationGradientModel,
+	#name : #TensorFlowOperationGradientModel,
 	#superclass : #Application,
 	#category : #TensorFlowOperationGradientModel
 }

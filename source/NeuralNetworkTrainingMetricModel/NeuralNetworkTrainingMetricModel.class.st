@@ -1,5 +1,5 @@
 Class {
-	#name : #MLTrainingMetricModel,
+	#name : #NeuralNetworkTrainingMetricModel,
 	#superclass : #Application,
 	#category : #NeuralNetworkTrainingMetricModel
 }

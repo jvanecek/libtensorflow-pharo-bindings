@@ -1,5 +1,5 @@
 Class {
-	#name : #MLTrainingModelTests,
+	#name : #NeuralNetworkTrainingModelTests,
 	#superclass : #Application,
 	#category : #NeuralNetworkTrainingModelTests
 }

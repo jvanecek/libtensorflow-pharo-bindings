@@ -1,5 +1,5 @@
 Class {
-	#name : #TFVariableSpecificationModelTests,
+	#name : #TensorFlowOperationRandomModelTests,
 	#superclass : #Application,
 	#category : #TensorFlowOperationRandomModelTests
 }

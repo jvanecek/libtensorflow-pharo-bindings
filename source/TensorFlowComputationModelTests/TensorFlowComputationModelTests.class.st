@@ -1,5 +1,5 @@
 Class {
-	#name : #TensorFlowEnvironmentModelTests,
+	#name : #TensorFlowComputationModelTests,
 	#superclass : #Application,
 	#category : #TensorFlowComputationModelTests
 }

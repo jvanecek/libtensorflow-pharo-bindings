@@ -1,5 +1,5 @@
 Class {
-	#name : #TFOperationModelTests,
+	#name : #TensorFlowOperationMathModelTests,
 	#superclass : #Application,
 	#category : #TensorFlowOperationMathModelTests
 }
