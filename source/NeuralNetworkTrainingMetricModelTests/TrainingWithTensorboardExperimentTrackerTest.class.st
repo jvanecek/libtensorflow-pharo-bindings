@@ -35,7 +35,7 @@ TrainingWithTensorboardExperimentTrackerTest >> testTrackExperimentWithNoValidat
 		content := folder allFileAndDirectoryEntries.
 		self assert: content size equals: 4.
 		self assert: (content at: 1) basename equals: 'train'.
-		self assert: (content at: 2) size equals: 518.
+		self assert: (content at: 2) size equals: 4695.
 		self assert: (content at: 3) basename equals: 'validation'.
 		self assert: (content at: 4) size equals: 40]
 			ensure: [folder deleteAll]
@@ -59,7 +59,7 @@ TrainingWithTensorboardExperimentTrackerTest >> testTrackExperimentWithValidatio
 		content := folder allFileAndDirectoryEntries.
 		self assert: content size equals: 4.
 		self assert: (content at: 1) basename equals: 'train'.
-		self assert: (content at: 2) size equals: 518.
+		self assert: (content at: 2) size equals: 4695.
 		self assert: (content at: 3) basename equals: 'validation'.
 		self assert: (content at: 4) size equals: 518]
 			ensure: [folder deleteAll]

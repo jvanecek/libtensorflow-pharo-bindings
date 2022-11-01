@@ -10,9 +10,34 @@ Class {
 }
 
 { #category : #'Instance Creation' }
+TensorboardExperimentTracker class >> formattedTimestamp [
+
+	| now timestamp |
+
+	now := DateAndTime now.
+	timestamp := String streamContents: [ :stream | 
+		             stream print: now year.
+		             stream nextPutAll: ( now month printPaddedWith: $0 to: 2 ).
+		             stream
+			             nextPutAll: ( now dayOfMonth printPaddedWith: $0 to: 2 );
+			             nextPut: $-;
+			             nextPutAll: ( now hour printPaddedWith: $0 to: 2 );
+			             nextPutAll: ( now minute printPaddedWith: $0 to: 2 );
+			             nextPutAll: ( now second printPaddedWith: $0 to: 2 )
+		             ].
+	^ timestamp
+]
+
+{ #category : #'Instance Creation' }
+TensorboardExperimentTracker class >> new [
+
+	^ self storingTo: self formattedTimestamp
+]
+
+{ #category : #'Instance Creation' }
 TensorboardExperimentTracker class >> storingTo: aLogsLocation [
 
-	^self new initializeStoringTo: aLogsLocation
+	^super new initializeStoringTo: aLogsLocation
 ]
 
 { #category : #Initialization }
@@ -57,10 +82,14 @@ TensorboardExperimentTracker >> measureMetricDuring: aTrainingStage onStepStartU
 { #category : #Preprocessing }
 TensorboardExperimentTracker >> prepareMetricsWithin: aNeuralNetworkTrainingContext [
 
-   trainingWriter := aNeuralNetworkTrainingContext buildSummaryWriterTo:
-                        ( logsFolder asFileReference / 'train' ) pathString.
-   validationWriter := aNeuralNetworkTrainingContext buildSummaryWriterTo:
-                          ( logsFolder asFileReference / 'validation' ) pathString
+	trainingWriter :=
+		aNeuralNetworkTrainingContext
+			buildSummaryWriterTo: (logsFolder asFileReference / 'train') pathString.
+	validationWriter :=
+		aNeuralNetworkTrainingContext
+			buildSummaryWriterTo: (logsFolder asFileReference / 'validation') pathString.
+			
+	trainingWriter writeGraphSummaryAtStep: 0
 ]
 
 { #category : #Processing }
@@ -79,7 +108,15 @@ TensorboardExperimentTracker >> writeLastAccuracyValueDuring: aFittingStage with
 			writer
 				writeScalar: accuracyValues last
 				atStep: accuracyValues size - 1
-				tagged: 'epoch_accuracy']
+				tagged: 'epoch_accuracy'.
+						
+			aFittingStage
+				whenTrainDo: []
+				whenValidationDo: [
+					writer
+						writeScalar: accuracyValues last
+						atStep: aTrainingContext trainingStepValue 
+						tagged: 'evaluation_accuracy_vs_iterations']]
 ]
 
 { #category : #Processing }
