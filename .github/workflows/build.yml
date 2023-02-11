@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         smalltalk: [ Pharo64-9.0, Pharo64-8.0, Pharo64-7.0 ]
-        tensorflow: [ 2.10.0 ]
+        tensorflow: [ 2.11.0 ]
     name: TF ${{ matrix.tensorflow }}+${{ matrix.smalltalk }}
     steps:
       - uses: actions/checkout@v2

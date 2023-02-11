@@ -2,7 +2,7 @@
 
 if [ -z "$VERSION" ]
 then
-	VERSION=${1:-2.7.0}
+	VERSION=${1:-2.11.0}
 fi
 
 curl -0 "https://storage.googleapis.com/tensorflow/libtensorflow/libtensorflow-cpu-linux-x86_64-${VERSION}.tar.gz" >> libtensorflow.tar.gz

@@ -7,7 +7,7 @@ This is a fork of the [PolyMathOrg](https://github.com/PolyMathOrg/libtensorflow
 
 This library is available for [Cuis](https://github.com/Cuis-Smalltalk/Machine-Learning)'s and [VA Smalltalk](http://github.com/vast-community-hub/tensorflow-vast/).
 
-You will need a 64 bits Pharo VM in order to run the code. The code has only been tested in Pharo 7.0 to 9.0 with [TensorFlow 2.3.1](https://github.com/tensorflow/tensorflow/releases/tag/v2.3.1)
+You will need a 64 bits Pharo VM in order to run the code. The code has only been tested in Pharo 7.0 to 9.0 with [TensorFlow 2.11.0](https://github.com/tensorflow/tensorflow/releases/tag/v2.11.0)
 
 ## Installation
 
@@ -40,7 +40,7 @@ In Linux you can use the [installation script](scripts/install-tensorflow.sh). F
 - Check method ```TensorFlowCAPI>>macModulename``` to put the path to where Tensorflow libraries are located on your computer:
 ```Smalltalk
 TensorFlowCAPI>>macModulename
-  ^ '/usr/local/Cellar/libtensorflow/1.12.0/lib/libtensorflow.so'
+  ^ '/usr/local/Cellar/libtensorflow/2.11.0/lib/libtensorflow.so'
   ```
   
 ### On Linux
