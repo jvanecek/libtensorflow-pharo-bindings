@@ -5,7 +5,7 @@ Class {
 		'output',
 		'tf'
 	],
-	#category : 'LibTensorFlowExamplesApp'
+	#category : #LibTensorFlowExamplesApp
 }
 
 { #category : #'Instance Creation' }
@@ -38,6 +38,6 @@ BackpropagationAlgorithm >> initialize [
 
 	inputVariable := tf floatInputNamed: 'input'.
 	weights := tf floatInputNamed: 'weights'.
-	learningRate := VariableNode on: tf named: 'learningRate' with: 0.9 asTensor.
+	learningRate := VariableTensor on: tf named: 'learningRate' with: 0.9 asTensor.
 	output := weights - (learningRate * gradient * inputVariable)
 ]
