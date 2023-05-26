@@ -7,7 +7,7 @@ A Tensor is a symbolic handle to one of the outputs of an Operation. It does not
 "
 Class {
 	#name : #TFTensor,
-	#superclass : #FFIOpaqueObject,
+	#superclass : #ExternalStructure,
 	#category : #'TensorFlowCore-Structures'
 }
 
