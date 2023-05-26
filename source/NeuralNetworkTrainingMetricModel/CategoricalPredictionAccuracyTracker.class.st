@@ -11,13 +11,13 @@ Class {
 { #category : #Accessing }
 CategoricalPredictionAccuracyTracker class >> metricKey [
 
-	^'accuracy'
+	^'categorical_accuracy'
 ]
 
 { #category : #Accessing }
 CategoricalPredictionAccuracyTracker class >> stepsMetricKey [
 
-	^'accuracy-by-step'
+	^'categorical_accuracy_by_step'
 ]
 
 { #category : #Processing }
