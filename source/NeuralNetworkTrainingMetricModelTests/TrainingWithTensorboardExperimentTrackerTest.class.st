@@ -12,13 +12,29 @@ TrainingWithTensorboardExperimentTrackerTest >> expectedLogFileSize [
 	osKey := { 
 		         OSPlatform current version.
 		         OSPlatform current subtype.
-		         ( OSPlatform current linuxIdentificationParameters at: #ID ifAbsent: [ 'n/a' ] ) }.
+		         ( self linuxIdentificationParameters at: #ID ifAbsent: [ 'n/a' ] ) }.
 
 	^ Dictionary new
 		  at: { 'linux-gnu'. 'x86_64'. 'linuxmint' } put: 4695;
+		  at: { 'linux-gnu'. 'x86_64'. 'ubuntu' } put: 4773;
 		  at: { 'Win64'. 'x86_64'. 'n/a' } put: 4561;
 		  at: osKey
-		  ifAbsent: [ self fail: ( 'Do not know the expected size in <1s>' expandMacrosWith: osKey ) ]
+		  ifAbsent: [ self fail: ( 'Do not know the expected size for <1p>' expandMacrosWith: osKey ) ]
+]
+
+{ #category : #tests }
+TrainingWithTensorboardExperimentTrackerTest >> linuxIdentificationParameters [
+	"see https://www.freedesktop.org/software/systemd/man/os-release.html "
+
+	| props extractor |
+	props := Dictionary new.
+	OSPlatform current isUnix ifFalse: [ ^props ].
+	extractor := [ '/etc/os-release' asFileReference contents linesDo: [ :each | 
+		props at: (each copyUpTo: $=) asSymbol put: (each copyAfter: $=) ]].
+
+	"Do nothing when it does not exist"
+	[ extractor value ] on: FileDoesNotExistException do: [ self error: 'Only available on distributions supporting the linux standard base (LSB)' ].
+	^ props
 ]
 
 { #category : #accessing }
