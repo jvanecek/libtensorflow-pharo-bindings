@@ -108,7 +108,7 @@ TensorboardExperimentTracker >> writeLastAccuracyValueDuring: aFittingStage with
 			writer
 				writeScalar: accuracyValues last
 				atStep: accuracyValues size - 1
-				tagged: 'epoch_accuracy'.
+				tagged: 'epoch_categorical_accuracy'.
 						
 			aFittingStage
 				whenTrainDo: []
@@ -116,7 +116,7 @@ TensorboardExperimentTracker >> writeLastAccuracyValueDuring: aFittingStage with
 					writer
 						writeScalar: accuracyValues last
 						atStep: aTrainingContext trainingStepValue 
-						tagged: 'evaluation_accuracy_vs_iterations']]
+						tagged: 'evaluation_categorical_accuracy_vs_iterations']]
 ]
 
 { #category : #Processing }
