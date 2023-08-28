@@ -15,7 +15,7 @@ Class {
 		'modelOutput',
 		'optimization'
 	],
-	#category : 'LibTensorFlowExamplesApp'
+	#category : #LibTensorFlowExamplesApp
 }
 
 { #category : #Initialization }
@@ -88,7 +88,7 @@ LSTMNeuralNetwork >> predictFrom: aFeaturesCollection [
 		compute: modelOutput
 		feedingInputsWith: (
 			Dictionary new
-				at: 'input' put: aFeaturesCollection asFloatTensor;
+				at: modelOutput inputVariableName put: aFeaturesCollection asFloatTensor;
 				yourself)
 ]
 
@@ -99,8 +99,8 @@ LSTMNeuralNetwork >> predictFrom: aFeatureTensor andCompareTo: anExpectedTensor 
 		computeAllNamed: (Array with: modelOutput operationName with: loss operationName)
 		feedingInputsWith: (
 			Dictionary new
-				at: 'input' put: aFeatureTensor asFloatTensor;
-				at: 'expected' put: anExpectedTensor;
+				at: modelOutput inputVariableName put: aFeatureTensor asFloatTensor;
+				at: loss targetInputName put: anExpectedTensor;
 				yourself)
 
 

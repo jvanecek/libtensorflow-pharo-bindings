@@ -77,7 +77,7 @@ Sigmoid3LayerNeuralNetwork >> predictFrom: aFeatureTensor [
 		compute: prediction
 		feedingInputsWith: (
 			Dictionary new
-				at: 'input' put: aFeatureTensor asFloatTensor;
+				at: prediction inputVariableName put: aFeatureTensor asFloatTensor;
 				yourself)
 ]
 
@@ -88,8 +88,8 @@ Sigmoid3LayerNeuralNetwork >> predictFrom: aFeatureTensor andCompareTo: anExpect
 		computeAllNamed: (Array with: prediction operationName with: loss operationName)
 		feedingInputsWith: (
 			Dictionary new
-				at: 'input' put: aFeatureTensor asFloatTensor;
-				at: 'expected' put: anExpectedTensor asInt32Tensor;
+				at: prediction inputVariableName put: aFeatureTensor asFloatTensor;
+				at: loss targetInputName put: anExpectedTensor asInt32Tensor;
 				yourself)
 ]
 
@@ -106,7 +106,7 @@ Sigmoid3LayerNeuralNetwork >> updateWeightsToFitPredictionFrom: aFeatureTensor t
 		computeAllNamed: (Array with: optimization operationName)
 		feedingInputsWith: (
 			Dictionary new
-				at: 'input' put: aFeatureTensor asFloatTensor;
-				at: 'expected' put: aTrainingLabelTensor asInt32Tensor;
+				at: prediction inputVariableName put: aFeatureTensor asFloatTensor;
+				at: loss targetInputName put: aTrainingLabelTensor asInt32Tensor;
 				yourself)
 ]

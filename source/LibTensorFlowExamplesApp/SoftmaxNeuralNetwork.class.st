@@ -68,7 +68,7 @@ SoftmaxNeuralNetwork >> predictFrom: inputs [
 		compute: prediction
 		feedingInputsWith: (
 			Dictionary new
-				at: 'inference/input' put: inputs asFloatTensor;
+				at: prediction inputVariableName put: inputs asFloatTensor;
 				yourself)
 ]
 
@@ -79,8 +79,8 @@ SoftmaxNeuralNetwork >> predictFrom: aFeatureTensor andCompareTo: anExpectedTens
 		computeAllNamed: (Array with: prediction operationName with: loss operationName)
 		feedingInputsWith: (
 			Dictionary new
-				at: 'inference/input' put: aFeatureTensor asFloatTensor;
-				at: 'loss/expected' put: anExpectedTensor asInt32Tensor;
+				at: prediction inputVariableName put: aFeatureTensor asFloatTensor;
+				at: loss targetInputName put: anExpectedTensor asInt32Tensor;
 				yourself)
 ]
 
@@ -91,7 +91,7 @@ SoftmaxNeuralNetwork >> updateWeightsToFitPredictionFrom: aFeatureTensor to: aTr
 		computeAllNamed: (Array with: optimization operationName)
 		feedingInputsWith: (
 			Dictionary new
-				at: 'inference/input' put: aFeatureTensor asFloatTensor;
-				at: 'loss/expected' put: aTrainingLabelTensor asInt32Tensor;
+				at: prediction inputVariableName put: aFeatureTensor asFloatTensor;
+				at: loss targetInputName put: aTrainingLabelTensor asInt32Tensor;
 				yourself)
 ]
