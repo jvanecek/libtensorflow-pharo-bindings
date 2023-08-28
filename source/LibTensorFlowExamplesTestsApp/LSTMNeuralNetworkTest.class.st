@@ -1,7 +1,7 @@
 Class {
 	#name : #LSTMNeuralNetworkTest,
 	#superclass : #TensorFlowComputationBasedTest,
-	#category : 'LibTensorFlowExamplesTestsApp'
+	#category : #LibTensorFlowExamplesTestsApp
 }
 
 { #category : #Test }
@@ -21,7 +21,7 @@ LSTMNeuralNetworkTest >> testPredictAndCompare [
 	prediction := nn predictFrom: images andCompareTo: expected.
 
 	self
-		assert: (prediction at: 'Tanh_2')
+		assert: (prediction at: 'activation_2')
 		isMatrixCloseTo: #(-1.625294535188e-4 -2.54893238889053e-4).
 	self assert: (prediction at: 'MSE') isFloatScalarCloseTo: 51.5479850769043
 ]
