@@ -19,13 +19,14 @@ LossBuilder >> buildCategoricalCrossEntropy [
 
 	| labels |
 
-	labels := InputTensor
-		on: model currentComputation
-		named: self targetInputName
-		of: FloatDataType new
-		shaped: model outputShape.
+	labels :=
+		InputTensor
+			on: model currentComputation
+			named: self targetInputName
+			of: FloatDataType new
+			shaped: model outputShape.
 
-	^ reduction value: ( CategoricalCrossEntropy of: model whenExpectedProbabilityIs: labels )
+	^reduction value: (CategoricalCrossEntropy of: model whenExpectedProbabilityIs: labels)
 ]
 
 { #category : #Building }
@@ -41,9 +42,14 @@ LossBuilder >> buildSparseCategoricalCrossEntropy [
 
 	| labels |
 
-	labels := InputTensor on: model currentComputation named: self targetInputName of: Int32DataType new.
+	labels :=
+		InputTensor
+			on: model currentComputation
+			named: self targetInputName
+			of: Int32DataType new
+			shaped: TensorShape unknown.
 
-	^ reduction value: ( SparseCategoricalCrossEntropy of: model whenExpectedIs: labels )
+	^reduction value: (SparseCategoricalCrossEntropy of: model whenExpectedIs: labels)
 ]
 
 { #category : #Building }
@@ -51,13 +57,14 @@ LossBuilder >> buildSquaredError [
 
 	| expected |
 
-	expected := InputTensor
-		on: model currentComputation
-		named: self targetInputName
-		of: FloatDataType new
-		shaped: model outputShape.
+	expected :=
+		InputTensor
+			on: model currentComputation
+			named: self targetInputName
+			of: FloatDataType new
+			shaped: model outputShape.
 
-	^ reduction value: ( SquaredDifference between: model and: expected )
+	^reduction value: (SquaredDifference between: model and: expected)
 ]
 
 { #category : #Initialization }
@@ -76,7 +83,7 @@ LossBuilder >> reducedUsingMean [
 { #category : #Accessing }
 LossBuilder >> targetInputName [
 
-	^'expected'
+	^'target'
 ]
 
 { #category : #Configuring }

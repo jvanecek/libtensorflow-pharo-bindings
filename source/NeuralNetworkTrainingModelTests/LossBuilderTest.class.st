@@ -19,7 +19,7 @@ LossBuilderTest >> inputAndExpectedLabels [
 
 	^(Dictionary new)
 		at: 'dense/input' put: self logictStatements;
-		at: 'expected' put: #(0 1 0 0) asInt32Tensor;
+		at: 'target' put: #(0 1 0 0) asInt32Tensor;
 		yourself
 ]
 
@@ -28,7 +28,7 @@ LossBuilderTest >> inputAndExpectedProbabilities [
 
 	^(Dictionary new)
 		at: 'dense/input' put: self logictStatements;
-		at: 'expected' put: #((0) (1) (0) (0)) asFloatTensor;
+		at: 'target' put: #((0) (1) (0) (0)) asFloatTensor;
 		yourself
 ]
 

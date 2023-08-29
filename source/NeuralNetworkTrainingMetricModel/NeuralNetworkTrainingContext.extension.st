@@ -1,14 +1,6 @@
 Extension { #name : #NeuralNetworkTrainingContext }
 
 { #category : #'*NeuralNetworkTrainingMetricModel' }
-NeuralNetworkTrainingContext >> buildCategoricalPredictionAccuracy [
-
-	^CategoricalPredictionAccuracy
-		of: modelToTrain
-		whenExpectedIs: optimization lossToMinimize targetInputAsLabels
-]
-
-{ #category : #'*NeuralNetworkTrainingMetricModel' }
 NeuralNetworkTrainingContext >> buildSummaryWriterTo: aLogsLocation [
 
 	^SummaryWriter

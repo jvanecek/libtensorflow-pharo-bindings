@@ -5,6 +5,12 @@ Class {
 }
 
 { #category : #Accessing }
+TrainingMinimizingCategoricalCrossEntropyTest >> accuracyTracker [
+
+	^CategoricalPredictionAccuracyTracker new
+]
+
+{ #category : #Accessing }
 TrainingMinimizingCategoricalCrossEntropyTest >> expectedLogitsAfterOneEpoch [
 
 	^#((0.27597973 0.82402027) (0.34054536 0.8094547) (0.2436969 0.8563031) (0.355111 0.84488904))

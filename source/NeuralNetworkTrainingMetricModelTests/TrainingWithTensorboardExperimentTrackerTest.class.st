@@ -15,7 +15,7 @@ TrainingWithTensorboardExperimentTrackerTest >> expectedLogFileSize [
 		         ( self linuxIdentificationParameters at: #ID ifAbsent: [ 'n/a' ] ) }.
 
 	^ Dictionary new
-		  at: { 'linux-gnu'. 'x86_64'. 'linuxmint' } put: 4857;
+		  at: { 'linux-gnu'. 'x86_64'. 'linuxmint' } put: 5072;
 		  at: { 'linux-gnu'. 'x86_64'. 'ubuntu' } put: 4773;
 		  at: { 'Win64'. 'x86_64'. 'n/a' } put: 4561;
 		  at: osKey
@@ -98,7 +98,7 @@ TrainingWithTensorboardExperimentTrackerTest >> testTrackExperimentWithValidatio
 	self assert: ( content at: 1 ) basename equals: 'train'.
 	self assert: ( content at: 2 ) size equals: self expectedLogFileSize.
 	self assert: ( content at: 3 ) basename equals: 'validation'.
-	self assert: ( content at: 4 ) size equals: 518
+	self assert: ( content at: 4 ) size equals: 1188
 	] ensure: [ folder deleteAll ]
 ]
 

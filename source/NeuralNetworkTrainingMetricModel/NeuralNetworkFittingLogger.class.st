@@ -21,6 +21,12 @@ NeuralNetworkFittingLogger class >> on: aStream [
 	^super new initializeOn: aStream
 ]
 
+{ #category : #'Instance Creation' }
+NeuralNetworkFittingLogger class >> toFileNamed: aFileName [
+
+	^ self on: aFileName asFileReference writeStream
+]
+
 { #category : #Processing }
 NeuralNetworkFittingLogger >> batchStepAt: aFittingStage [
 
@@ -57,7 +63,8 @@ NeuralNetworkFittingLogger >> measureMetricDuring: aFittingStage onEpochEndWithi
 			expandMacrosWith: aFittingStage description
 			with: (self epochAt: aFittingStage)).
 	epochByStage at: aFittingStage description put: (self epochAt: aFittingStage) + 1.
-	batchStepByStage at: aFittingStage description put: 1
+	batchStepByStage at: aFittingStage description put: 1.
+	stream flush
 ]
 
 { #category : #Processing }

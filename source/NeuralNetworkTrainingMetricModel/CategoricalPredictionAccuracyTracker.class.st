@@ -14,12 +14,6 @@ CategoricalPredictionAccuracyTracker class >> metricKey [
 	^'categorical_accuracy'
 ]
 
-{ #category : #Accessing }
-CategoricalPredictionAccuracyTracker class >> stepsMetricKey [
-
-	^'categorical_accuracy_by_step'
-]
-
 { #category : #Processing }
 CategoricalPredictionAccuracyTracker >> measureMetricDuring: aFittingStage onEpochEndWithin: aTrainingContext [
 
@@ -38,12 +32,7 @@ CategoricalPredictionAccuracyTracker >> measureMetricDuring: aFittingStage onEpo
 { #category : #Processing }
 CategoricalPredictionAccuracyTracker >> measureMetricDuring: aFittingStage onStepEndUsing: aStepInput within: aTrainingContext [
 
-	accuraciesDuringOneEpoch add: (accuracy computeWith: aStepInput) scalarOutput.
-
-	aTrainingContext
-		addMetricValued: accuraciesDuringOneEpoch last
-		during: aFittingStage
-		to: self class stepsMetricKey
+	accuraciesDuringOneEpoch add: (accuracy computeWith: aStepInput) scalarOutput
 ]
 
 { #category : #Processing }

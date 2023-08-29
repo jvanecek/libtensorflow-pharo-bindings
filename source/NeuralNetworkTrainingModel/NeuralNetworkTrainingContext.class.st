@@ -30,6 +30,14 @@ NeuralNetworkTrainingContext >> addMetricValued: aValue during: aFittingStage to
 			add: aValue
 ]
 
+{ #category : #Building }
+NeuralNetworkTrainingContext >> buildCategoricalPredictionAccuracy [
+
+	^CategoricalPredictionAccuracy
+		of: modelToTrain
+		whenExpectedIs: optimization lossToMinimize targetInput
+]
+
 { #category : #Accessing }
 NeuralNetworkTrainingContext >> buildInputWithFeatures: features andTarget: target [
 
@@ -37,6 +45,14 @@ NeuralNetworkTrainingContext >> buildInputWithFeatures: features andTarget: targ
 		at: modelToTrain inputVariableName put: features;
 		at: optimization lossToMinimize targetInputName put: target;
 		yourself
+]
+
+{ #category : #Building }
+NeuralNetworkTrainingContext >> buildSparseCategoricalPredictionAccuracy [
+
+	^SparseCategoricalPredictionAccuracy
+		of: modelToTrain
+		whenExpectedIs: optimization lossToMinimize targetInputAsLabels
 ]
 
 { #category : #Computing }
@@ -127,9 +143,12 @@ NeuralNetworkTrainingContext >> historicalTrainingLoss [
 { #category : #Initialization }
 NeuralNetworkTrainingContext >> initializeMetricsTrackedBy: aMetricTrackerCollection [
 
-	metricTrackers := aMetricTrackerCollection.
-	metricsCollected := Dictionary new.
-	metricTrackers do: [:each | each prepareMetricsWithin: self]
+	modelToTrain currentComputation
+		inScopeNamed: 'metrics'
+		do: [
+			metricTrackers := aMetricTrackerCollection.
+			metricsCollected := Dictionary new.
+			metricTrackers do: [:each | each prepareMetricsWithin: self]]
 ]
 
 { #category : #Initialization }
@@ -227,6 +246,19 @@ NeuralNetworkTrainingContext >> trainingStepValue [
 NeuralNetworkTrainingContext >> validationMetricKnownAs: aMetricKey [
 
 	^self metricKnownAs: aMetricKey during: ValidationStage new
+]
+
+{ #category : #Accessing }
+NeuralNetworkTrainingContext >> withAllMetricsCollectedDuring: aTrainingStage do: aTwoArgBlock [
+
+	metricsCollected keysAndValuesDo: [:key :values |
+		(aTrainingStage wasMetricMeasuredDuringStage: key)
+			ifTrue: [
+				aTwoArgBlock
+					value: (key allButFirst: ('<1s>-' expandMacrosWith: aTrainingStage description) size)
+					value: values]]
+
+
 ]
 
 { #category : #Accessing }

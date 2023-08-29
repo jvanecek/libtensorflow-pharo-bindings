@@ -1,6 +1,6 @@
 Class {
 	#name : #DenseLayer,
-	#superclass : #TensorFlowOperationAbstract,
+	#superclass : #SequentialModelLayer,
 	#instVars : [
 		'inputSize',
 		'outputSize',

@@ -13,40 +13,6 @@ TrainingMinimizingLossFunctionTest >> expectedAccuracyThroughTenEpochs [
 ]
 
 { #category : #'*NeuralNetworkTrainingMetricModelTests' }
-TrainingMinimizingLossFunctionTest >> testAccuracyAfterOneEpoch [
-
-	| model summary |
-
-	model := self modelWithTwoOutputUnits.
-	summary :=
-		self neuralNetworkTrainer
-			trackMetricWith: CategoricalPredictionAccuracyTracker new; 
-			stopTrainingWhen: (CompletedNumberOfEpochs after: 1);
-			train: model toFit: self trainingDataset.
-
-	self
-		assert: summary historicalTrainingAccuracy
-		isArrayCloseTo: self expectedAccuracyAfterOneEpoch
-]
-
-{ #category : #'*NeuralNetworkTrainingMetricModelTests' }
-TrainingMinimizingLossFunctionTest >> testAccuracyThroughTenEpochs [
-
-	| model summary |
-
-	model := self modelWithTwoOutputUnits.
-	summary :=
-		self neuralNetworkTrainer
-			trackMetricWith: CategoricalPredictionAccuracyTracker new;
-			stopTrainingWhen: (CompletedNumberOfEpochs after: 10);
-			train: model toFit: self trainingDataset.
-
-	self
-		assert: summary historicalTrainingAccuracy
-		isArrayCloseTo: self expectedAccuracyThroughTenEpochs
-]
-
-{ #category : #'*NeuralNetworkTrainingMetricModelTests' }
 TrainingMinimizingLossFunctionTest >> testEpochDuration [
 
 	| model summary durations |

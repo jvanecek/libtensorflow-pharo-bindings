@@ -5,6 +5,12 @@ Class {
 }
 
 { #category : #Accessing }
+TrainingMinimizingMeanSquaredErrorTest >> accuracyTracker [
+
+	^CategoricalPredictionAccuracyTracker new
+]
+
+{ #category : #Accessing }
 TrainingMinimizingMeanSquaredErrorTest >> expectedLogitsAfterOneEpoch [
 
 	^#((0.32999998 0.77000004) (0.41 0.74) (0.29 0.81) (0.44 0.76))

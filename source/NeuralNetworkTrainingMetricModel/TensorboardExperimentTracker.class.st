@@ -52,9 +52,22 @@ TensorboardExperimentTracker >> measureMetricDuring: aFittingStage onEpochEndWit
 	| writer |
 
 	writer := self suitableWriterFor: aFittingStage.
-	self
-		writeLastLossValueDuring: aFittingStage within: aTrainingContext using: writer;
-		writeLastAccuracyValueDuring: aFittingStage within: aTrainingContext using: writer
+
+	aTrainingContext
+		withAllMetricsCollectedDuring: aFittingStage
+		do: [:metricName :metricValues |
+			writer
+				writeScalar: metricValues last
+				atStep: metricValues size - 1
+				tagged: ('epoch_<1s>' expandMacrosWith: metricName).
+
+			aFittingStage
+				whenTrainDo: []
+				whenValidationDo: [
+					writer
+						writeScalar: metricValues last
+						atStep: aTrainingContext trainingStepValue
+						tagged: ('evaluation_<1s>_vs_iterations' expandMacrosWith: metricName)]]
 ]
 
 { #category : #Processing }
@@ -66,9 +79,9 @@ TensorboardExperimentTracker >> measureMetricDuring: aTrainingStage onEpochStart
 ]
 
 { #category : #Processing }
-TensorboardExperimentTracker >> measureMetricDuring: aTrainingStage onStepEndUsing: aStepInput within: aNeuralNetworkTrainingContext [
-
-
+TensorboardExperimentTracker >> measureMetricDuring: aFittingStage onStepEndUsing: aStepInput within: aTrainingContext [
+	
+	" do nothing - jvanecek " 
 ]
 
 { #category : #Processing }
@@ -96,35 +109,4 @@ TensorboardExperimentTracker >> prepareMetricsWithin: aNeuralNetworkTrainingCont
 TensorboardExperimentTracker >> suitableWriterFor: aFittingStage [
 
 	^aFittingStage whenTrainDo: [trainingWriter] whenValidationDo: [validationWriter]
-]
-
-{ #category : #Processing }
-TensorboardExperimentTracker >> writeLastAccuracyValueDuring: aFittingStage within: aTrainingContext using: writer [
-
-	aTrainingContext
-		withMetricKnownAs: CategoricalPredictionAccuracyTracker metricKey
-		during: aFittingStage
-		do: [:accuracyValues |
-			writer
-				writeScalar: accuracyValues last
-				atStep: accuracyValues size - 1
-				tagged: 'epoch_categorical_accuracy'.
-						
-			aFittingStage
-				whenTrainDo: []
-				whenValidationDo: [
-					writer
-						writeScalar: accuracyValues last
-						atStep: aTrainingContext trainingStepValue 
-						tagged: 'evaluation_categorical_accuracy_vs_iterations']]
-]
-
-{ #category : #Processing }
-TensorboardExperimentTracker >> writeLastLossValueDuring: aFittingStage within: aTrainingContext using: writer [
-
-	aTrainingContext
-		withMetricKnownAs: aTrainingContext lossMetricKey
-		during: aFittingStage
-		do: [:lossValues |
-			writer writeScalar: lossValues last atStep: lossValues size - 1 tagged: 'epoch_loss']
 ]
