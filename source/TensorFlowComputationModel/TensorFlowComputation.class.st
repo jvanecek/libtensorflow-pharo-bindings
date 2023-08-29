@@ -115,6 +115,12 @@ TensorFlowComputation >> gradientsOf: aFunctionCollection withRespectTo: aVariab
 ]
 
 { #category : #Accessing }
+TensorFlowComputation >> importGraphFrom: aFileName [
+
+	graph importFileNamed:  aFileName
+]
+
+{ #category : #Accessing }
 TensorFlowComputation >> inScopeNamed: aScopeName do: aBlock [
 
 	^graph inScopeNamed: aScopeName do: aBlock
@@ -174,6 +180,12 @@ TensorFlowComputation >> operationNamed: aName [
 		withOperationNamed: aName
 		do: [:op | ^op]
 		ifNone: [self error: (#'Operation named <1p> not found in the graph' expandMacrosWith: aName)]
+]
+
+{ #category : #Accessing }
+TensorFlowComputation >> storeGraphInto: aFileName [
+
+	graph writeDefToFileNamed: aFileName
 ]
 
 { #category : #Accessing }

@@ -1,9 +1,6 @@
 Class {
 	#name : #DenseLayerTest,
 	#superclass : #TensorFlowComputationBasedTest,
-	#instVars : [
-		'tff1'
-	],
 	#category : #NeuralNetworkLayerModelTests
 }
 
