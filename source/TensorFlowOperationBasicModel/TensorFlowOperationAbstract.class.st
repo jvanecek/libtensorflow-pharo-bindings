@@ -78,6 +78,7 @@ TensorFlowOperationAbstract >> printOn: aStream [
 
 { #category : #'Accessing - TF Operation' }
 TensorFlowOperationAbstract >> value [
-
-	^value
+	
+	value ifNil: [self error: 'value must be initialized']. 
+	^value 
 ]

@@ -18,7 +18,7 @@ LossBuilderTest >> gradientDescentOf: aLossFunction withRespectTo: aVariable [
 LossBuilderTest >> inputAndExpectedLabels [
 
 	^(Dictionary new)
-		at: 'input' put: self logictStatements;
+		at: 'dense/input' put: self logictStatements;
 		at: 'expected' put: #(0 1 0 0) asInt32Tensor;
 		yourself
 ]
@@ -27,7 +27,7 @@ LossBuilderTest >> inputAndExpectedLabels [
 LossBuilderTest >> inputAndExpectedProbabilities [
 
 	^(Dictionary new)
-		at: 'input' put: self logictStatements;
+		at: 'dense/input' put: self logictStatements;
 		at: 'expected' put: #((0) (1) (0) (0)) asFloatTensor;
 		yourself
 ]
@@ -333,5 +333,5 @@ LossBuilderTest >> testSparseCategoricalCrossEntropyWithoutReducingGradient [
 { #category : #Accessing }
 LossBuilderTest >> weight [
 
-	^tf operationNamed: 'weight'
+	^tf operationNamed: 'dense/kernel'
 ]

@@ -91,7 +91,7 @@ TrainingMinimizingLossFunctionTest >> testLogitsAfterOneEpoch [
 		assert: (
 			model logits computeWith: (
 				Dictionary new
-					at: 'input' put: self inputTensor;
+					at: 'dense/input' put: self inputTensor;
 					yourself))
 		isMatrixCloseTo: self expectedLogitsAfterOneEpoch
 ]

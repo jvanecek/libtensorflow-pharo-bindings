@@ -8,17 +8,6 @@ Class {
 }
 
 { #category : #'Instance Creation' }
-TensorShape class >> assertHasValidDimensionsSize: aDimensionsSizeArray [
-
-	((aDimensionsSizeArray isA: Array) and: [ 
-		 aDimensionsSizeArray allSatisfy: [ :dimensionSize | 
-			 (dimensionSize isA: Integer) and: [ dimensionSize >= -1 ] ] ]) 
-		ifFalse: [ 
-			AssertionFailure signal:
-				#'Dimensions sizes should be a greater or equal than -1 integer array' ]
-]
-
-{ #category : #'Instance Creation' }
 TensorShape class >> matrixSized: aNumberOfRows by: aNumberOfColumns [
 
 	^self withDimensionsSized: (Array with: aNumberOfRows with: aNumberOfColumns)
@@ -40,13 +29,19 @@ TensorShape class >> scalar [
 { #category : #'Instance Creation' }
 TensorShape class >> unknown [
 
-	^self new initializeDimensionSized: #(-1)
+	^ self withDimensionsSized: { self unknownSize }
 ]
 
 { #category : #'Instance Creation' }
 TensorShape class >> unknownBatchSizeWith: aNumberOfFeatures [
 
-	^self matrixSized: -1 by: aNumberOfFeatures
+	^ self matrixSized: self unknownSize by: aNumberOfFeatures
+]
+
+{ #category : #'Instance Creation' }
+TensorShape class >> unknownSize [
+
+	^ -1
 ]
 
 { #category : #'Instance Creation' }
@@ -58,8 +53,9 @@ TensorShape class >> vectorSized: anInteger [
 { #category : #'Instance Creation' }
 TensorShape class >> withDimensionsSized: aDimensionsSizeArray [
 
-	self assertHasValidDimensionsSize: aDimensionsSizeArray.
-	^ self new initializeDimensionSized: aDimensionsSizeArray
+	(aDimensionsSizeArray isA: Array)
+		ifFalse: [AssertionFailure signal: #'Dimensions sizes should be an array'].
+	^self new initializeDimensionSized: aDimensionsSizeArray
 ]
 
 { #category : #Comparing }
@@ -87,6 +83,12 @@ TensorShape >> asTensorShape [
 	^self
 ]
 
+{ #category : #'as yet unclassified' }
+TensorShape >> batchDimension [
+
+	^self dimensionSizes first
+]
+
 { #category : #Accessing }
 TensorShape >> description [
 
@@ -106,13 +108,13 @@ TensorShape >> dimensionSizes [
 	^dimensionSizes
 ]
 
-{ #category : #Converting }
+{ #category : #'as yet unclassified' }
 TensorShape >> flattened [
 
 	self rank < 2 ifTrue: [^self].
 	self representsMatrix
-		ifTrue: [^self class vectorSized: dimensionSizes first * dimensionSizes second].
-	^self class matrixSized: dimensionSizes first by: dimensionSizes second * dimensionSizes third
+		ifTrue: [^self class vectorSized: self batchDimension * self numberOfFeatures].
+	^self class matrixSized: self batchDimension by: self nonBatchDimensionsSize
 ]
 
 { #category : #Comparing }
@@ -133,6 +135,18 @@ TensorShape >> isCompatibleWithNHWShapes [
 	"NHW shape is those with (number of images in the batch, height, width) shape "
 	
 	^self rank = 3
+]
+
+{ #category : #'as yet unclassified' }
+TensorShape >> nonBatchDimensions [
+
+	^self dimensionSizes allButFirst
+]
+
+{ #category : #'as yet unclassified' }
+TensorShape >> nonBatchDimensionsSize [
+
+	^self nonBatchDimensions inject: 1 into: [:prev :actual | prev * actual]
 ]
 
 { #category : #Accessing }
@@ -173,14 +187,24 @@ TensorShape >> representsVector [
 	^self rank = 1
 ]
 
-{ #category : #Accessing }
+{ #category : #'as yet unclassified' }
 TensorShape >> size [
 
-	^dimensionSizes size
+	^self dimensionSizes size
 ]
 
 { #category : #Accessing }
 TensorShape >> totalAmountOfElements [
 
 	^self dimensionSizes inject: 1 into: [ :prev :next | prev * next ]
+]
+
+{ #category : #Accessing }
+TensorShape >> withUnknowBatchDimension [
+
+	^self class withDimensionsSized: (
+		OrderedCollection new
+			add: self class unknownSize;
+			addAll: self dimensionSizes;
+			asArray)
 ]

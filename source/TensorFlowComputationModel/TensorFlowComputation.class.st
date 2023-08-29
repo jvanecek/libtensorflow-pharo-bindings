@@ -179,6 +179,5 @@ TensorFlowComputation >> operationNamed: aName [
 { #category : #Accessing }
 TensorFlowComputation >> withOperationNamed: aName do: aBlock ifNone: aNoneBlock [
 
-
 	^graph operationNamed: aName ifFound: aBlock ifNotFound: aNoneBlock
 ]

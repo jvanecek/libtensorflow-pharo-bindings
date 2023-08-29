@@ -24,7 +24,7 @@ BatchDataset >> currentComputation [
 BatchDataset >> initializeSplitting: aDataset in: aBatchSize [
 
 	currentComputation := aDataset currentComputation.
-	outputDomains := aDataset outputDomains collect: #withNewUnknownDimension.
+	outputDomains := aDataset outputDomains collect: #withUnknowBatchDimension.
 	value := currentComputation
 		newOperationOf: 'BatchDatasetV2'
 		namePrefixed: 'BatchDataset'

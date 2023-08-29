@@ -4,6 +4,12 @@ Class {
 	#category : #NeuralNetworkLayerModelTests
 }
 
+{ #category : #Tests }
+SequentialModelBuilderTest >> firstDenseLayerWeights [
+
+	^tf operationNamed: 'dense/kernel'
+]
+
 { #category : #Accessing }
 SequentialModelBuilderTest >> inputWithFourFeatures [
 
@@ -45,6 +51,38 @@ SequentialModelBuilderTest >> testBuildWithArgMaxOnLogits [
 					yourself))
 		isMatrixCloseTo: #((0.6 2.2) (0.9 0.8)).
 	self assert: (model predictFrom: inputValues) isVectorTyped: Int64DataType new closeTo: #(1 0)
+]
+
+{ #category : #Tests }
+SequentialModelBuilderTest >> testOneFlattenLayer [
+
+	| model result expectedOutput |
+
+	model :=
+		(SequentialModelBuilder on: tf)
+			addFlattenLayerSized: #( 2 2 ) asTensorShape;
+			build.
+
+	result := model predictFrom: #((
+	((1.11 1.12) (1.21 1.22))
+	((2.11 2.12) (2.21 2.22))
+	((3.11 3.12) (3.21 3.22))
+)) asFloatTensor.
+
+	expectedOutput := #((
+	(1.11 1.12 1.21 1.22)
+	(2.11 2.12 2.21 2.22)
+	(3.11 3.12 3.21 3.22)
+)).
+
+	self
+		assert: result
+		isOf: FloatDataType new
+		with: #(3 4) asTensorShape
+		comparedTo: expectedOutput flattened
+		complying: [:actual :expected | self assert: actual closeTo: expected]
+
+
 ]
 
 { #category : #Tests }
@@ -119,7 +157,7 @@ SequentialModelBuilderTest >> testOneLayerModelCharacteristics [
 
 	self
 		assert: model trainableVariables
-		hasTheSameOperationsAs: (Array with: (tf operationNamed: 'weight')).
+		hasTheSameOperationsAs: (Array with: (tf operationNamed: 'dense/kernel')).
 
 	self assert: model printString equals: 'Sequential Model with 1 layer
 Dense Layer[2 -> 1]'
@@ -148,7 +186,7 @@ SequentialModelBuilderTest >> testOneLayerModelPrediction [
 				yourself).
 	self
 		assert: model trainableVariables
-		hasTheSameOperationsAs: (Array with: (tf operationNamed: 'weight'))
+		hasTheSameOperationsAs: (Array with: (tf operationNamed: 'dense/kernel'))
 ]
 
 { #category : #Tests }
@@ -220,10 +258,10 @@ SequentialModelBuilderTest >> testTwoLayersModelCharacteristics [
 		assert: model trainableVariables
 		hasTheSameOperationsAs: (
 			Array
-				with: (tf operationNamed: 'weight')
-				with: (tf operationNamed: 'bias')
-				with: (tf operationNamed: 'weight_2')
-				with: (tf operationNamed: 'bias_2')).
+				with: (tf operationNamed: 'dense/kernel')
+				with: (tf operationNamed: 'dense/bias')
+				with: (tf operationNamed: 'dense_1/kernel')
+				with: (tf operationNamed: 'dense_1/bias')).
 
 	self
 		assert: model printString
@@ -257,8 +295,8 @@ SequentialModelBuilderTest >> testTwoLayersModelPrediction [
 		assert: model trainableVariables
 		hasTheSameOperationsAs: (
 			Array
-				with: (tf operationNamed: 'weight')
-				with: (tf operationNamed: 'bias')
-				with: (tf operationNamed: 'weight_2')
-				with: (tf operationNamed: 'bias_2'))
+				with: (tf operationNamed: 'dense/kernel')
+				with: (tf operationNamed: 'dense/bias')
+				with: (tf operationNamed: 'dense_1/kernel')
+				with: (tf operationNamed: 'dense_1/bias'))
 ]

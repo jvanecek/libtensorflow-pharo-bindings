@@ -75,7 +75,18 @@ TensorDomain >> type [
 ]
 
 { #category : #Accessing }
-TensorDomain >> withNewUnknownDimension [
+TensorDomain >> withSlicedShape [
+
+	self shape representsScalar
+		ifTrue: [ AssertionFailure signal: 'A scalar shaped can''t be sliced' ].
+
+	^ TensorDomain
+		of: self type
+		withShape: ( TensorShape withDimensionsSized: self shape dimensionSizes allButFirst )
+]
+
+{ #category : #Accessing }
+TensorDomain >> withUnknowBatchDimension [
 
 	^TensorDomain
 		of: self type
@@ -85,15 +96,4 @@ TensorDomain >> withNewUnknownDimension [
 					add: -1;
 					addAll: self shape dimensionSizes;
 					asArray))
-]
-
-{ #category : #Accessing }
-TensorDomain >> withSlicedShape [
-
-	self shape representsScalar
-		ifTrue: [ AssertionFailure signal: 'A scalar shaped can''t be sliced' ].
-
-	^ TensorDomain
-		of: self type
-		withShape: ( TensorShape withDimensionsSized: self shape dimensionSizes allButFirst )
 ]

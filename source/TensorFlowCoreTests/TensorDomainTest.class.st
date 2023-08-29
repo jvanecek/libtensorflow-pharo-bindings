@@ -17,8 +17,8 @@ TensorDomainTest >> testFloatMatrixDomain [
 		assert: domain printString equals: 'Float 2x1 matrix'.
 
 	self
-		assert: domain withNewUnknownDimension shape equals: #(-1 2 1) asTensorShape;
-		assert: domain withNewUnknownDimension type equals: FloatDataType new.
+		assert: domain withUnknowBatchDimension shape equals: #(-1 2 1) asTensorShape;
+		assert: domain withUnknowBatchDimension type equals: FloatDataType new.
 
 	self
 		assert: domain withSlicedShape shape equals: ( TensorShape vectorSized: 1 );
@@ -38,8 +38,8 @@ TensorDomainTest >> testFloatScalarDomain [
 		assert: domain printString equals: 'Float Scalar'.
 
 	self
-		assert: domain withNewUnknownDimension shape equals: TensorShape unknown;
-		assert: domain withNewUnknownDimension type equals: FloatDataType new.
+		assert: domain withUnknowBatchDimension shape equals: TensorShape unknown;
+		assert: domain withUnknowBatchDimension type equals: FloatDataType new.
 
 	self
 		should: [ domain withSlicedShape ]
@@ -60,8 +60,8 @@ TensorDomainTest >> testFloatVectorDomain [
 		assert: domain printString equals: 'Float Vector size 3'.
 
 	self
-		assert: domain withNewUnknownDimension shape equals: #(-1 3) asTensorShape;
-		assert: domain withNewUnknownDimension type equals: FloatDataType new.
+		assert: domain withUnknowBatchDimension shape equals: #(-1 3) asTensorShape;
+		assert: domain withUnknowBatchDimension type equals: FloatDataType new.
 
 	self
 		assert: domain withSlicedShape shape equals: TensorShape scalar;
@@ -81,8 +81,8 @@ TensorDomainTest >> testIntegerScalarDomain [
 		assert: domain printString equals: 'Int32 Scalar'.
 
 	self
-		assert: domain withNewUnknownDimension shape equals: TensorShape unknown;
-		assert: domain withNewUnknownDimension type equals: Int32DataType new.
+		assert: domain withUnknowBatchDimension shape equals: TensorShape unknown;
+		assert: domain withUnknowBatchDimension type equals: Int32DataType new.
 
 	self
 		should: [ domain withSlicedShape ]
@@ -103,8 +103,8 @@ TensorDomainTest >> testLargeIntegerScalarDomain [
 		assert: domain printString equals: 'Int64 Scalar'.
 
 	self
-		assert: domain withNewUnknownDimension shape equals: TensorShape unknown;
-		assert: domain withNewUnknownDimension type equals: Int64DataType new.
+		assert: domain withUnknowBatchDimension shape equals: TensorShape unknown;
+		assert: domain withUnknowBatchDimension type equals: Int64DataType new.
 
 	self
 		should: [ domain withSlicedShape ]

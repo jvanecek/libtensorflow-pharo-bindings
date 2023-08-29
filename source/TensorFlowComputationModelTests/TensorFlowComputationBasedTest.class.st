@@ -53,6 +53,17 @@ TensorFlowComputationBasedTest >> assert: anOutput isFloatScalarCloseTo: aScalar
 		complying: [ :actual :expected | self assert: actual closeTo: expected ]
 ]
 
+{ #category : #Asserting }
+TensorFlowComputationBasedTest >> assert: result isFloatTensorClosedTo: expectedOutput [
+
+	self
+		assert: result
+		isOf: FloatDataType new
+		with: expectedOutput inferTensorShape
+		comparedTo: expectedOutput flattened
+		complying: [:actual :expected | self assert: actual closeTo: expected]
+]
+
 { #category : #'Test Support' }
 TensorFlowComputationBasedTest >> assert: anOutput isFloatVectorCloseTo: anExpectedArray [
 
