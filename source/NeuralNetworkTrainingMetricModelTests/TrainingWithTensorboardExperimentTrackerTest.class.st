@@ -16,7 +16,7 @@ TrainingWithTensorboardExperimentTrackerTest >> expectedLogFileSize [
 
 	^ Dictionary new
 		  at: { 'linux-gnu'. 'x86_64'. 'linuxmint' } put: 5072;
-		  at: { 'linux-gnu'. 'x86_64'. 'ubuntu' } put: 4773;
+		  at: { 'linux-gnu'. 'x86_64'. 'ubuntu' } put: 5149;
 		  at: { 'Win64'. 'x86_64'. 'n/a' } put: 4561;
 		  at: osKey
 		  ifAbsent: [ self fail: ( 'Do not know the expected size for <1p>' expandMacrosWith: osKey ) ]

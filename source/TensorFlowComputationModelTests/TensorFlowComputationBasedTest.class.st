@@ -168,7 +168,7 @@ TensorFlowComputationBasedTest >> assert: anOperation isNamedInGraphAs: aName [
 	tf
 		withOperationNamed: aName
 		do: [:op | self assert: op equals: anOperation value]
-		ifNone: [self fail: ('No operation named %1 found in graph' bindWith: aName)].
+		ifNone: [self fail: ('No operation named <1s> found in graph' expandMacrosWith: aName)].
 
 	self assert: anOperation operationName equals: aName
 ]
