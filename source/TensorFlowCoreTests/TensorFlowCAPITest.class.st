@@ -75,12 +75,13 @@ TensorFlowCAPITest >> assertTensorFromStrings: strings shape: shape [
 { #category : #graphs }
 TensorFlowCAPITest >> constantFloatGraphDef [
 	" This GraphDef corresponds to simple Graph, defined as
+	
+		tf.constant(42, dtype=tf.float16, name='a')
 		
-		tf.constant(0.42, name='a')
-		
-		saved as ProtoBuf "
-	^ #[16r0A 16r2E 16r0A 16r01 16r61 16r12 16r05 16r43 16r6F 16r6E 16r73 16r74 16r2A 16r15 16r0A 16r05 16r76 16r61 16r6C 16r75 16r65 16r12 16r0C 16r42 16r0A 16r08 16r01 16r12 16r00 16r2A 16r04 16r3D 16r0A 16rD7 16r3E 16r2A 16r0B 16r0A 16r05 16r64 16r74 16r79 16r70 16r65 16r12 16r02 16r30 16r01 16r0A 16r0C 16r0A 16r04 16r69 16r6E 16r69 16r74 16r12 16r04 16r4E 16r6F 16r4F 16r70 16r22 16r02 16r08 16r0F]
-		asString
+	 saved as ProtoBuf "
+
+	^ #[ 10 45 10 1 97 18 5 67 111 110 115 116 42 11 10 5 100 116 121 112 101 18 2 48 19 42 20 10 5 118
+	     97 108 117 101 18 11 66 9 8 19 18 0 106 3 192 162 1 34 3 8 230 13 ]
 ]
 
 { #category : #graphs }
@@ -92,14 +93,12 @@ TensorFlowCAPITest >> constantFloatGraphFromDef [
 TensorFlowCAPITest >> constantInt32GraphDef [
 	" This GraphDef corresponds to simple Graph, defined as
 	
-		tf.constant(0.42, name='a')
+		tf.constant(42, dtype=tf.int32, name='a')
 		
 	 saved as ProtoBuf "
-	^ #[
- 16r0A 16r2B 16r0A 16r01 16r61 16r12 16r05 16r43 16r6F 16r6E 16r73 16r74 16r2A 16r12 16r0A 16r05
- 16r76 16r61 16r6C 16r75 16r65 16r12 16r09 16r42 16r07 16r08 16r03 16r12 16r00 16r3A 16r01 16r2A
- 16r2A 16r0B 16r0A 16r05 16r64 16r74 16r79 16r70 16r65 16r12 16r02 16r30 16r03 16r0A 16r0C 16r0A
- 16r04 16r69 16r6E 16r69 16r74 16r12 16r04 16r4E 16r6F 16r4F 16r70 16r22 16r02 16r08 16r0F] asString
+
+	^ #[ 10 43 10 1 97 18 5 67 111 110 115 116 42 11 10 5 100 116 121 112 101 18 2 48 3 42 18 10 5 118
+	     97 108 117 101 18 9 66 7 8 3 18 0 58 1 42 34 3 8 230 13 ]
 ]
 
 { #category : #graphs }
@@ -108,24 +107,15 @@ TensorFlowCAPITest >> constantInt32GraphFromDef [
 ]
 
 { #category : #graphs }
-TensorFlowCAPITest >> constantInt64Graph [
-	| graph operation constant |
-	graph := TFGraph create.
-	constant := TFTensor fromInt64: 16r4242424242424242.
-	operation := graph const: 'a' value: constant.
-	self deny: operation isNull.
-	^ graph
-]
-
-{ #category : #graphs }
 TensorFlowCAPITest >> constantInt64GraphDef [
 	" This GraphDef corresponds to simple Graph, defined as
 	
-		tf.constant(0.42, name='a')
+		tf.constant(42, dtype=tf.int64, name='a')
 		
 	 saved as ProtoBuf "
-^ #[
-	10 12 10 4 105 110 105 116 18 4 78 111 79 112 10 51 10 1 97 18 5 67 111 110 115 116 42 11 10 5 100 116 121 112 101 18 2 48 9 42 26 10 5 118 97 108 117 101 18 17 66 15 8 9 18 0 82 9 194 132 137 146 164 200 144 161 66 18 0 34 2 8 15] asString
+
+	^ #[ 10 43 10 1 97 18 5 67 111 110 115 116 42 11 10 5 100 116 121 112 101 18 2 48 9 42 18 10 5 118
+	     97 108 117 101 18 9 66 7 8 9 18 0 82 1 42 34 3 8 230 13 ]
 ]
 
 { #category : #graphs }
@@ -474,31 +464,6 @@ TensorFlowCAPITest >> testGraph: aTF_Graph outputType: anInteger [
 	operation := aTF_Graph operationNamed: 'a'.
 	output := operation output: 0.
 	self assert: output type equals: anInteger
-]
-
-{ #category : #'testing graph' }
-TensorFlowCAPITest >> testGraphDeletionDoesntBreakOperations [
-	| graph in1 in2 add |
-	self skip: 'This method crash until we are able to remove instances from finalization list.
-TFGraph>>#delete is not even available anymore'.
-	graph := self addGraphTwoInputsInt64.
-	graph ignoreFinalization.
-	in1 := graph operationNamed: 'in1'.
-	in2 := graph operationNamed: 'in2'.
-	add := graph operationNamed: 'add'.
-	self assert: in1 name equals: 'in1'.
-	self assert: in2 name equals: 'in2'.
-	self assert: add name equals: 'add'.
-	graph delete.
-	self assert: in1 name equals: 'in1'.
-	self assert: in2 name equals: 'in2'.
-	self assert: add name equals: 'add'.
-	graph := self mulGraphTwoInputsInt64.
-	graph ignoreFinalization.
-	graph delete.
-	self assert: in1 name equals: 'in1'.
-	self assert: in2 name equals: 'in2'.
-	self assert: add name equals: 'add'
 ]
 
 { #category : #'testing graph' }
@@ -1302,7 +1267,7 @@ TensorFlowCAPITest >> testWriteDefToFileNamed [
 	filename := 'temporaryGraph.pb'.
 	graph := self constantInt64GraphFromDef.
 	graph writeDefToFileNamed: filename.
-	filedata := filename asFileReference readStream upToEnd.
+	filedata := filename asFileReference binaryReadStream contents. 
 	filename asFileReference delete.
-	self assert: filedata size equals: self constantInt64GraphDef size
+	self assert: filedata equals: self constantInt64GraphDef 
 ]

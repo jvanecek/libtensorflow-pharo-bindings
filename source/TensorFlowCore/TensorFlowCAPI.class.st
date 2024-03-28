@@ -319,14 +319,14 @@ TensorFlowCAPI >> graph: aTFGraph setShapeOf: aTFOutput to: aShape [
 
 { #category : #graph }
 TensorFlowCAPI >> graphDefinitionOf: aTFGraph [
-
 	"Return the protobuff serialisation of the graph"
 
 	| buffer |
 
 	buffer := TFBuffer new.
-	platformLibrary checkStatusAfter: [:status | platformLibrary graph: aTFGraph toGraphDef: buffer status: status].
-	^buffer dataBytes asString
+	platformLibrary checkStatusAfter: [ :status |
+		platformLibrary graph: aTFGraph toGraphDef: buffer status: status ].
+	^ buffer dataBytes asString asByteString
 ]
 
 { #category : #graph }
