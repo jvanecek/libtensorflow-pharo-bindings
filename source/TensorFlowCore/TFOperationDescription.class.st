@@ -7,18 +7,6 @@ Class {
 	#category : #'TensorFlowCore-Structures'
 }
 
-{ #category : #finalization }
-TFOperationDescription class >> basicNew [
-
-^super basicNew autoRelease
-]
-
-{ #category : #finalization }
-TFOperationDescription class >> finalizeResourceData: handle [
-
-
-]
-
 { #category : #inputs }
 TFOperationDescription >> addControlInput: aTFOutputOrInput [
 	^ self library description: self addControlInput: aTFOutputOrInput
@@ -121,10 +109,4 @@ TFOperationDescription >> finish [
 { #category : #attributes }
 TFOperationDescription >> library [
 	^ TensorFlowCAPI current
-]
-
-{ #category : #accessing }
-TFOperationDescription >> makeNull [
-	
-	"handle := nil."
 ]

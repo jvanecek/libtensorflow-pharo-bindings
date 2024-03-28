@@ -5,7 +5,7 @@ A Graph contains a set of Operation objects, which represent units of computatio
 "
 Class {
 	#name : #TFGraph,
-	#superclass : #FFIOpaqueObject,
+	#superclass : #TFAutoReleasableResource,
 	#instVars : [
 		'context'
 	],
@@ -19,10 +19,9 @@ TFGraph class >> create [
 ]
 
 { #category : #'instance creation' }
-TFGraph class >> finalizeResourceData: handle [
-	handle isNull ifTrue: [ ^ self ].
-	(TensorFlowCAPI current) deleteGraph: handle
-	
+TFGraph class >> deleteExternalResource: aResource [
+
+	TensorFlowCAPI current deleteGraph: aResource
 ]
 
 { #category : #'instance creation' }

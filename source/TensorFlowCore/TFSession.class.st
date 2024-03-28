@@ -1,16 +1,14 @@
 Class {
 	#name : #TFSession,
-	#superclass : #FFIOpaqueObject,
+	#superclass : #TFAutoReleasableResource,
 	#category : #'TensorFlowCore-Structures'
 }
 
 { #category : #'instance creation' }
-TFSession class >> finalizeResourceData: handle [
+TFSession class >> deleteExternalResource: aResource [
 
-	handle isNull
-		ifTrue: [ ^ self ].
-	TensorFlowCAPI current closeSession: handle.
-	TensorFlowCAPI current deleteSession: handle
+	TensorFlowCAPI current closeSession: aResource.
+	TensorFlowCAPI current deleteSession: aResource
 ]
 
 { #category : #'instance creation' }

@@ -3,7 +3,7 @@ TF_Status holds error information.  It either has an OK code, or else an error c
 "
 Class {
 	#name : #TFStatus,
-	#superclass : #FFIOpaqueObject,
+	#superclass : #TFAutoReleasableResource,
 	#category : #'TensorFlowCore-Structures'
 }
 
@@ -13,10 +13,9 @@ TFStatus class >> create [
 ]
 
 { #category : #'finalize resources' }
-TFStatus class >> finalizeResourceData: handle [
+TFStatus class >> deleteExternalResource: aResource [
 
-	handle isNull ifTrue: [ ^ self ].
-	TensorFlowCAPI current deleteStatus: handle
+	TensorFlowCAPI current deleteStatus: aResource
 ]
 
 { #category : #testing }

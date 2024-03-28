@@ -1,6 +1,6 @@
 Class {
 	#name : #TFSessionOptions,
-	#superclass : #FFIOpaqueObject,
+	#superclass : #TFAutoReleasableResource,
 	#category : #'TensorFlowCore-Structures'
 }
 
@@ -10,10 +10,9 @@ TFSessionOptions class >> create [
 ]
 
 { #category : #'instance creation' }
-TFSessionOptions class >> finalizeResourceData: handle [
+TFSessionOptions class >> deleteExternalResource: aResource [
 
-	handle isNull ifTrue: [ ^ self ].
-	TensorFlowCAPI current deleteSessionOptions: handle
+	TensorFlowCAPI current deleteSessionOptions: aResource
 ]
 
 { #category : #'instance creation' }

@@ -254,7 +254,6 @@ TensorFlowCAPI >> finishOperation: aTFOperationDescription [
 
 	^platformLibrary checkStatusAfter: [:status | | answer |
 		answer := platformLibrary finishOperation: aTFOperationDescription status: status.
-		aTFOperationDescription makeNull.
 		answer]
 ]
 
