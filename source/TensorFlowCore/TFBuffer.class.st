@@ -30,13 +30,6 @@ TFBuffer class >> fieldsDesc [
 ]
 
 { #category : #'instance creation' }
-TFBuffer class >> fromBinaryFileNamed: aString [
-	| fileContents |
-	fileContents := aString asFileReference binaryReadStream contents.
-	^ self fromString: fileContents
-]
-
-{ #category : #'instance creation' }
 TFBuffer class >> fromFileNamed: aString [
 	| fileContents |
 	fileContents := aString asFileReference readStream contents.
@@ -47,6 +40,24 @@ TFBuffer class >> fromFileNamed: aString [
 TFBuffer class >> fromString: aString [
 
 	^ TensorFlowCAPI current newBufferFromString: aString
+]
+
+{ #category : #'instance creation' }
+TFBuffer class >> newFromFileNamed: aString deleteAfter: aBlock [
+
+	| buffer |
+
+	buffer := self fromFileNamed: aString.
+	[ aBlock value: buffer ] ensure: [ buffer delete ]
+]
+
+{ #category : #'instance creation' }
+TFBuffer class >> newWith: aString deleteAfter: aBlock [
+
+	| buffer |
+
+	buffer := self fromString: aString.
+	[ aBlock value: buffer ] ensure: [ buffer delete ]
 ]
 
 { #category : #'accessing structure variables' }

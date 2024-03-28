@@ -658,7 +658,7 @@ TensorFlowPharoLibrary >> graph: aTF_Graph getShapeOf: aTF_OutputOrInput into: a
 TensorFlowPharoLibrary >> graph: aTF_Graph operationAt: contextULongLongPtr [
 	| answer |
 	answer := self graph: aTF_Graph operationAtAsVoid: contextULongLongPtr.
-	answer handle: answer getHandle.
+	answer setHandle: answer getHandle.
 	answer graph: aTF_Graph.
 	^ answer
 ]

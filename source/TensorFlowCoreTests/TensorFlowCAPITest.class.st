@@ -330,24 +330,28 @@ TensorFlowCAPITest >> testAttrSetStrings: aAnArrayOfStrings [
 
 { #category : #'testing buffer' }
 TensorFlowCAPITest >> testBufferDataBytes [
-	| buffer string data |
+
+	| string data |
+
 	string := ' hola manola'.
-	buffer := TFBuffer fromString: string.
-	data := buffer dataBytes.
-	self assert: string equals: data asString.
-	buffer delete
+	TFBuffer newWith: string deleteAfter: [ :buffer |
+		data := buffer dataBytes.
+		self assert: string equals: data asString
+		]
 ]
 
 { #category : #'testing buffer' }
 TensorFlowCAPITest >> testBufferNoNeedExternalize [
-	| buffer string data |
+
+	| string data |
+
 	string := ' hola manola'.
-	buffer := TFBuffer fromString: string.
-	string := string copy.
-	Smalltalk garbageCollect.
-	data := buffer dataBytes.
-	self assert: string equals: data asString.
-	buffer delete
+	TFBuffer newWith: string deleteAfter: [ :buffer |
+		string := string copy.
+		Smalltalk garbageCollect.
+		data := buffer dataBytes.
+		self assert: string equals: data asString
+		]
 ]
 
 { #category : #'testing structures size' }
@@ -499,11 +503,13 @@ TFGraph>>#delete is not even available anymore'.
 
 { #category : #'testing graph' }
 TensorFlowCAPITest >> testImportBad [
-	| graph buffer |
+
+	| graph |
+
 	graph := TFGraph create.
-	buffer := TFBuffer fromString: 'ouch'.
-	self should: [ graph import: buffer ] raiseError: 'INVALID_ARGUMENT: Invalid GraphDef'.
-	buffer delete
+	TFBuffer newWith: 'ouch'
+		deleteAfter: [ :buffer |
+		self should: [ graph import: buffer ] raiseError: 'INVALID_ARGUMENT: Invalid GraphDef' ]
 ]
 
 { #category : #'testing graph' }
@@ -536,33 +542,36 @@ TensorFlowCAPITest >> testInputStructureSizeIs16bits [
 
 { #category : #'testing buffer' }
 TensorFlowCAPITest >> testNewBufferFromFileNamed [
-	| buffer string data temporaryFile |
+
+	| string data temporaryFile |
+
 	string := ' hola manola'.
 	temporaryFile := 'temporaryFile.txt'.
 	temporaryFile asFileReference writeStream
 		nextPutAll: string;
 		close.
-	buffer := TFBuffer fromFileNamed: temporaryFile.
-	temporaryFile asFileReference delete.
-	self deny: buffer isNull.
-	self assert: buffer length equals: string size.
-	data := buffer data fromCString first: string size.
-	self assert: string equals: data.
-	buffer delete.
-	self assert: buffer isNull
+
+	TFBuffer newFromFileNamed: temporaryFile deleteAfter: [ :buffer |
+		temporaryFile asFileReference delete.
+		self deny: buffer isNull.
+		self assert: buffer length equals: string size.
+		data := buffer data bytesFromCString utf8Decoded first: string size.
+		self assert: string equals: data
+		]
 ]
 
 { #category : #'testing buffer' }
 TensorFlowCAPITest >> testNewBufferFromString [
-	| buffer string data |
+
+	| string data |
+
 	string := ' hola manola'.
-	buffer := TFBuffer fromString: string.
-	self deny: buffer isNull.
-	self assert: buffer length equals: string size.
-	data := buffer data fromCString first: string size.
-	self assert: string equals: data.
-	buffer delete.
-	self assert: buffer isNull
+	TFBuffer newWith: string deleteAfter: [ :buffer |
+		self deny: buffer isNull.
+		self assert: buffer length equals: string size.
+		data := buffer data bytesFromCString utf8Decoded first: string size.
+		self assert: string equals: data
+		]
 ]
 
 { #category : #'testing options' }

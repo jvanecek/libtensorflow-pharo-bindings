@@ -25,11 +25,6 @@ TFGraph class >> deleteExternalResource: aResource [
 ]
 
 { #category : #'instance creation' }
-TFGraph class >> fromBinaryFileNamed: aString [
-	^ self create importBinaryFileNamed: aString
-]
-
-{ #category : #'instance creation' }
 TFGraph class >> fromBlock: aBlockClosure [
 	| output graph |
 	graph := self create.
@@ -82,25 +77,15 @@ TFGraph >> import: aTFBuffer [
 ]
 
 { #category : #'initialize-release' }
-TFGraph >> importBinaryFileNamed: aString [
-	| buffer |
-	buffer := TFBuffer fromBinaryFileNamed: aString.
-	[self import: buffer] ensure: [buffer delete].
-]
-
-{ #category : #'initialize-release' }
 TFGraph >> importFileNamed: aString [
-	| buffer |
-	buffer := TFBuffer fromFileNamed: aString.
-	[ self import: buffer ]
-		ensure: [ buffer delete ]
+
+	TFBuffer newFromFileNamed: aString deleteAfter: [ :buffer | self import: buffer ]
 ]
 
 { #category : #'initialize-release' }
 TFGraph >> importString: aString [
-	| buffer |
-	buffer := TFBuffer fromString: aString.
-	[self import: buffer] ensure: ["buffer delete"].
+	
+	TFBuffer newWith: aString deleteAfter: [ :buffer | self import: buffer ]
 ]
 
 { #category : #'initialize-release' }
