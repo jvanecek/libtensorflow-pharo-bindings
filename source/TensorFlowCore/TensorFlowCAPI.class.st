@@ -87,7 +87,7 @@ TensorFlowCAPI >> deleteSessionOptions: aTFSessionOptions [
 TensorFlowCAPI >> deleteStatus: aTFStatus [
 
 	platformLibrary deleteStatus: aTFStatus. 
-	aTFStatus beNull
+	
 ]
 
 { #category : #deleting }

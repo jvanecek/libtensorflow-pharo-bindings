@@ -11,10 +11,17 @@ TFAutoReleasableResource class >> deleteExternalResource: aResource [
 ]
 
 { #category : #finalization }
-TFAutoReleasableResource class >> finalizeResourceData: handle [
-	handle isNull ifTrue: [ ^ self ].
-	self deleteExternalResource: handle
-	
+TFAutoReleasableResource class >> finalizeResourceData: aResource [
+
+	aResource getHandle isNull ifTrue: [ ^ self ].
+	self deleteExternalResource: aResource.
+	aResource getHandle beNull
+]
+
+{ #category : #'external resource management' }
+TFAutoReleasableResource >> beNull [
+
+	self getHandle beNull
 ]
 
 { #category : #'external resource management' }
