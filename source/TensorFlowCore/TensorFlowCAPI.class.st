@@ -326,7 +326,7 @@ TensorFlowCAPI >> graphDefinitionOf: aTFGraph [
 	buffer := TFBuffer new.
 	platformLibrary checkStatusAfter: [ :status |
 		platformLibrary graph: aTFGraph toGraphDef: buffer status: status ].
-	^ buffer dataBytes asString asByteString
+	^ buffer dataBytes asString
 ]
 
 { #category : #graph }

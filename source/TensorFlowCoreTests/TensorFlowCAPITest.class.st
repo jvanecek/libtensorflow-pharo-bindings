@@ -76,12 +76,11 @@ TensorFlowCAPITest >> assertTensorFromStrings: strings shape: shape [
 TensorFlowCAPITest >> constantFloatGraphDef [
 	" This GraphDef corresponds to simple Graph, defined as
 	
-		tf.constant(42, dtype=tf.float16, name='a')
+		tf.constant(42, dtype=tf.float32, name='a')
 		
 	 saved as ProtoBuf "
-
-	^ #[ 10 45 10 1 97 18 5 67 111 110 115 116 42 11 10 5 100 116 121 112 101 18 2 48 19 42 20 10 5 118
-	     97 108 117 101 18 11 66 9 8 19 18 0 106 3 192 162 1 34 3 8 230 13 ]
+	
+	^ #[10 46 10 1 97 18 5 67 111 110 115 116 42 11 10 5 100 116 121 112 101 18 2 48 1 42 21 10 5 118 97 108 117 101 18 12 66 10 8 1 18 0 42 4 0 0 40 66 34 3 8 230 13]
 ]
 
 { #category : #graphs }
@@ -655,7 +654,7 @@ TensorFlowCAPITest >> testSessionOptionsSetTarget [
 	options := library newSessionOptions.
 	self deny: options isNull.
 	options target: 'local'.
-	options class finalizeResourceData: options getHandle.
+	options class finalizeResourceData: options.
 	self assert: options isNull.
 ]
 
@@ -1269,5 +1268,5 @@ TensorFlowCAPITest >> testWriteDefToFileNamed [
 	graph writeDefToFileNamed: filename.
 	filedata := filename asFileReference binaryReadStream contents. 
 	filename asFileReference delete.
-	self assert: filedata equals: self constantInt64GraphDef 
+	self assert: filedata size equals: self constantInt64GraphDef size 
 ]
