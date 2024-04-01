@@ -764,6 +764,14 @@ TensorFlowPharoLibrary >> newAutoreleaseStatus [
 ]
 
 { #category : #buffer }
+TensorFlowPharoLibrary >> newBuffer [
+
+	^ self
+		  ffiCall: #( #TFBuffer * TF_NewBuffer #(  ) )
+		  module: TensorFlowPharoLibrary
+]
+
+{ #category : #buffer }
 TensorFlowPharoLibrary >> newBufferFromString: aString size: anInteger [
 	"<cdecl: TF_Buffer* 'TF_NewBufferFromString' (char* size_t)>"
 

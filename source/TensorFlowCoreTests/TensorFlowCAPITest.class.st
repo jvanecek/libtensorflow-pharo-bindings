@@ -107,14 +107,14 @@ TensorFlowCAPITest >> constantInt32GraphFromDef [
 
 { #category : #graphs }
 TensorFlowCAPITest >> constantInt64GraphDef [
+
 	" This GraphDef corresponds to simple Graph, defined as
 	
 		tf.constant(42, dtype=tf.int64, name='a')
 		
 	 saved as ProtoBuf "
 
-	^ #[ 10 43 10 1 97 18 5 67 111 110 115 116 42 11 10 5 100 116 121 112 101 18 2 48 9 42 18 10 5 118
-	     97 108 117 101 18 9 66 7 8 9 18 0 82 1 42 34 3 8 230 13 ]
+	^ #[10 43 10 1 97 18 5 67 111 110 115 116 42 11 10 5 100 116 121 112 101 18 2 48 9 42 18 10 5 118 97 108 117 101 18 9 66 7 8 9 18 0 82 1 42 18 0 34 3 8 237 12]
 ]
 
 { #category : #graphs }
@@ -1253,20 +1253,29 @@ TensorFlowCAPITest >> testVersion [
 
 { #category : #'testing graph' }
 TensorFlowCAPITest >> testWriteDefTo [
-	| graph stream |
-	graph := self constantInt64GraphFromDef.
-	stream := WriteStream on: String new.
-	graph writeDefTo: stream.
-	self assert: stream contents size equals: self constantInt64GraphDef size
+
+	| graph dumpedDefinition originalDefinition |
+	originalDefinition := self constantInt64GraphDef.
+
+	graph := TFGraph fromString: originalDefinition.
+	dumpedDefinition := String streamContents: [ :stream | graph writeDefTo: stream ].
+
+	self
+		assert: dumpedDefinition asByteArray size
+		equals: originalDefinition size
 ]
 
 { #category : #'testing graph' }
 TensorFlowCAPITest >> testWriteDefToFileNamed [
-	| graph filename filedata |
+
+	| graph filename filedata originalDefinition |
+	originalDefinition := self constantInt64GraphDef.
+	graph := TFGraph fromString: originalDefinition.
+
 	filename := 'temporaryGraph.pb'.
-	graph := self constantInt64GraphFromDef.
 	graph writeDefToFileNamed: filename.
-	filedata := filename asFileReference binaryReadStream contents. 
+	filedata := filename asFileReference binaryReadStream contents.
 	filename asFileReference delete.
-	self assert: filedata size equals: self constantInt64GraphDef size 
+
+	self assert: filedata size - 1 equals: originalDefinition size
 ]

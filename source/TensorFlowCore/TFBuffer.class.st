@@ -43,6 +43,12 @@ TFBuffer class >> fromString: aString [
 ]
 
 { #category : #'instance creation' }
+TFBuffer class >> newEmpty [
+
+	^ TensorFlowCAPI current newBuffer
+]
+
+{ #category : #'instance creation' }
 TFBuffer class >> newFromFileNamed: aString deleteAfter: aBlock [
 
 	| buffer |
