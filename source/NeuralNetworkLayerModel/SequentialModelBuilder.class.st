@@ -21,6 +21,24 @@ SequentialModelBuilder class >> on: aTensorFlowComputation [
 ]
 
 { #category : #Configuring }
+SequentialModelBuilder >> addConv2DLayerOutputSized: anOutputSize kernelSized: aTensorShape builtWith: aBlock [
+	 
+	self
+		inScopeNamed: 'conv2d'
+		withCountOf: Conv2DLayer
+		do: [| input layerBuilder |
+			input := layers isEmpty ifTrue: [tf floatInputNamed: 'input'] ifFalse: [layers last].
+			layerBuilder := 
+				Conv2DLayerBuilder 
+					ofSize: anOutputSize 
+					kernelSized: aTensorShape 
+					receiving: input.
+			layers isEmpty ifFalse: [layerBuilder makeInputSizeOptional].
+			aBlock value: layerBuilder.
+			self addLayer: layerBuilder build]
+]
+
+{ #category : #Configuring }
 SequentialModelBuilder >> addDenseLayerSized: anOutputSize builtWith: aBlock [
 
 	self
@@ -53,10 +71,26 @@ SequentialModelBuilder >> addFlattenLayerSized: aTensorShape [
 			self addLayer: (FlattenLayer receiving: input)]
 ]
 
-{ #category : #Configuring }
+{ #category : #'private-configuring' }
 SequentialModelBuilder >> addLayer: aDenseLayer [
 
 	layers add: aDenseLayer
+]
+
+{ #category : #Configuring }
+SequentialModelBuilder >> addMaxPooling2DLayer [
+
+	self
+		inScopeNamed: 'maxPool2d'
+		withCountOf: MaxPooling2D
+		do: [ | input layerBuilder |
+
+			input := layers isEmpty
+				ifTrue: [ tf floatInputNamed: 'input' ]
+				ifFalse: [ layers last ].
+			layerBuilder := MaxPooling2DLayerBuilder receiving: input.
+			self addLayer: layerBuilder build
+			]
 ]
 
 { #category : #Building }
@@ -71,7 +105,7 @@ SequentialModelBuilder >> buildApplyingToLogits: aBlock [
 	^SequentialModel composedOf: layers applyingToLogits: aBlock
 ]
 
-{ #category : #Configuring }
+{ #category : #'private-configuring' }
 SequentialModelBuilder >> inScopeNamed: aLayerName withCountOf: aLayerClass do: aBlock [
 
 	| denseCount |

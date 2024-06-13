@@ -1,6 +1,6 @@
 Class {
 	#name : #Conv2DLayer,
-	#superclass : #TensorFlowOperationAbstract,
+	#superclass : #SequentialModelLayer,
 	#instVars : [
 		'input'
 	],
@@ -8,9 +8,21 @@ Class {
 }
 
 { #category : #'Instance Creation' }
+Conv2DLayer class >> filtering: anInput shaped: anInputShape withKernelLike: aConvolutionKernelSpecification [
+
+	^ self new
+		initializeFiltering: anInput
+		shaped: anInputShape
+		withKernelLike: aConvolutionKernelSpecification
+]
+
+{ #category : #'Instance Creation' }
 Conv2DLayer class >> filtering: anInput withKernelLike: aConvolutionKernelSpecification [
 
-	^self new initializeFiltering: anInput withKernelLike: aConvolutionKernelSpecification
+	^ self
+		filtering: anInput
+		shaped: anInput outputShape
+		withKernelLike: aConvolutionKernelSpecification
 ]
 
 { #category : #Accessing }
@@ -32,7 +44,9 @@ Conv2DLayer >> defaultStride [
 ]
 
 { #category : #Initialization }
-Conv2DLayer >> initializeFiltering: anInput withKernelLike: aConvolutionKernelSpecification [
+Conv2DLayer >> initializeFiltering: anInput 
+	shaped: anInputShape
+	withKernelLike: aConvolutionKernelSpecification [
 
 	| filter |
 
@@ -46,7 +60,7 @@ Conv2DLayer >> initializeFiltering: anInput withKernelLike: aConvolutionKernelSp
 				TensorShape withDimensionsSized: (
 					(OrderedCollection new)
 						addAll: aConvolutionKernelSpecification kernelShape;
-						add: input outputShape dimensionSizes last;
+						add: anInputShape channelDimension;
 						add: aConvolutionKernelSpecification amountOfFilters;
 						asArray))
 			initializedWith: aConvolutionKernelSpecification variableInitializer.
@@ -58,4 +72,10 @@ Conv2DLayer >> initializeFiltering: anInput withKernelLike: aConvolutionKernelSp
 			with: filter
 			shiftedBy: self defaultStride
 			paddedAccording: self defaultPaddingTechnique
+]
+
+{ #category : #Accessing }
+Conv2DLayer >> inputVariableName [
+
+	^input operationName
 ]

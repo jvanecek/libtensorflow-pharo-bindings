@@ -7,6 +7,12 @@ Class {
 	#category : #TensorFlowOperationExperimentalModel
 }
 
+{ #category : #Accessing }
+Conv2D class >> noPadding [
+
+	^'VALID'
+]
+
 { #category : #'Instance Creation' }
 Conv2D class >> on: aTensorFlowComputation filtering: anInputTensor with: aFiltersTensor shiftedBy: stridesAlongHeightAndWeight paddedAccording: aPaddingTechnique [
 

@@ -54,6 +54,105 @@ SequentialModelBuilderTest >> testBuildWithArgMaxOnLogits [
 ]
 
 { #category : #Tests }
+SequentialModelBuilderTest >> testOneConv2DLayer [
+
+	| model result filter |
+	
+	 filter := TFTensor 
+		fromFloats: #(
+			(
+				((0.11 0.12))
+				((0.21 0.22))
+			)
+			(
+				((1.11 1.12))
+				((1.21 1.22))
+			)
+		)
+ 	   shape: (TensorShape withDimensionsSized: #(2 2 1 2)).
+
+	model :=
+		(SequentialModelBuilder on: tf)
+			addConv2DLayerOutputSized: 2
+				kernelSized: #( 2 2 ) asTensorShape 
+				builtWith: [:layer | 
+					layer 
+						inputSize: #(4 4 1);
+						kernelInitializedWith: filter
+					];
+			build.
+
+	result := model predictFrom: (
+		TFTensor 
+			fromFloats: #((
+			((11) (12) (13) (14))
+			((21) (22) (23) (24))
+			((31) (32) (33) (34))
+			((41) (42) (43) (44)) )) 
+		shape: (TensorShape withDimensionsSized: #(1 4 4 1))).
+
+	self
+		assert: result
+		isOf: FloatDataType new
+		with: #(1 3 3 2) asTensorShape
+		comparedTo: #((
+			((53.660004 54.32) (56.300003 57.0) (58.940002 59.68))
+			((80.06 81.12) (82.700005 83.8) (85.34 86.48))
+			((106.46001 107.92) (109.100006 110.600006) (111.740005 113.28))
+		)) flattened
+		complying: [:actual :expected | self assert: actual closeTo: expected]
+
+]
+
+{ #category : #Tests }
+SequentialModelBuilderTest >> testOneConv2DLayerAndOneMaxPooling2D [
+
+	| model result filter |
+	
+	 filter := TFTensor 
+		fromFloats: #(
+			(
+				((0.11 0.12))
+				((0.21 0.22))
+			)
+			(
+				((1.11 1.12))
+				((1.21 1.22))
+			)
+		)
+ 	   shape: (TensorShape withDimensionsSized: #(2 2 1 2)).
+
+	model :=
+		(SequentialModelBuilder on: tf)
+			addConv2DLayerOutputSized: 2
+				kernelSized: #( 2 2 ) asTensorShape 
+				builtWith: [:layer | 
+					layer 
+						inputSize: #(4 4 1);
+						kernelInitializedWith: filter
+					];
+			addMaxPooling2DLayer;
+			build.
+
+	result := model predictFrom: (
+		TFTensor 
+			fromFloats: #((
+			((11) (12) (13) (14))
+			((21) (22) (23) (24))
+			((31) (32) (33) (34))
+			((41) (42) (43) (44)) )) 
+		shape: (TensorShape withDimensionsSized: #(1 4 4 1))).
+
+	self
+		assert: result
+		isOf: FloatDataType new
+		with: #(1 1 1 2) asTensorShape
+		comparedTo: #(82.700005 83.8) flattened
+		complying: [:actual :expected | self assert: actual closeTo: expected]
+
+]
+
+{ #category : #Tests }
 SequentialModelBuilderTest >> testOneFlattenLayer [
 
 	| model result expectedOutput |

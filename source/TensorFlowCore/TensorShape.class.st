@@ -89,6 +89,13 @@ TensorShape >> batchDimension [
 	^self dimensionSizes first
 ]
 
+{ #category : #'as yet unclassified' }
+TensorShape >> channelDimension [
+
+	" This assumes the (batch_size, height, width, input_channels) shape "
+	^self dimensionSizes last
+]
+
 { #category : #Accessing }
 TensorShape >> description [
 
