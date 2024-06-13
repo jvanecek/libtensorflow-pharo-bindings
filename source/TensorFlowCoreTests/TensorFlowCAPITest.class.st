@@ -1248,7 +1248,7 @@ TensorFlowCAPITest >> testTensorTypes [
 TensorFlowCAPITest >> testVersion [
 	| version |
 	version := library version.
-	self assert: ('2.11.0*' match: version)
+	self assert: ('2.15.0*' match: version)
 ]
 
 { #category : #'testing graph' }
