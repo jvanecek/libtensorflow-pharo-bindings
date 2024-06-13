@@ -107,7 +107,7 @@ TensorFlowPharoLibrary >> arrayWithPointerToEach: elements [
 { #category : #converting }
 TensorFlowPharoLibrary >> calloutAPIClass [ 
 
-	^ TFCalloutAPI
+	^ FFICalloutAPI calloutAPIClass
 ]
 
 { #category : #status }
