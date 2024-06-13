@@ -136,6 +136,14 @@ TensorShape >> initializeDimensionSized: anArray [
 	dimensionSizes := anArray
 ]
 
+{ #category : #testing }
+TensorShape >> isCompatibleWithNHWCShapes [
+
+	"NHWC shape is those with (number of images in the batch, height, width, channel) shape "
+	
+	^ self rank = 4
+]
+
 { #category : #Testing }
 TensorShape >> isCompatibleWithNHWShapes [
 	

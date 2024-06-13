@@ -519,22 +519,20 @@ TensorFlowCAPITest >> testNewBufferFromFileNamed [
 		temporaryFile asFileReference delete.
 		self deny: buffer isNull.
 		self assert: buffer length equals: string size.
-		data := buffer data bytesFromCString utf8Decoded first: string size.
-		self assert: string equals: data
+		self assert: string equals: buffer data fromCString
 		]
 ]
 
 { #category : #'testing buffer' }
 TensorFlowCAPITest >> testNewBufferFromString [
 
-	| string data |
+	| string |
 
 	string := ' hola manola'.
 	TFBuffer newWith: string deleteAfter: [ :buffer |
 		self deny: buffer isNull.
 		self assert: buffer length equals: string size.
-		data := buffer data bytesFromCString utf8Decoded first: string size.
-		self assert: string equals: data
+		self assert: string equals: buffer data fromCString
 		]
 ]
 

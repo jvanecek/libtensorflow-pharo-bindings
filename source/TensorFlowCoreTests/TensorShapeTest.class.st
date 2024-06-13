@@ -7,10 +7,40 @@ Class {
 { #category : #Tests }
 TensorShapeTest >> testCantCreateShapeWithBigNegativeNumbers [
 
+	| shape | 
+	
+	shape := TensorShape withDimensionsSized: #( -2 10 ). 
+	
 	self
-		should: [ TensorShape withDimensionsSized: #( -2 10 ) ]
-		raise: AssertionFailure
-		withDescription: 'Dimensions sizes should be a greater or equal than -1 integer array'
+		assert: shape dimensionSizes equals: #( -2 10 );
+		deny: shape representsScalar;
+		deny: shape representsVector;
+		assert: shape representsMatrix;
+		assert: shape size equals: 2;
+		assert: shape rank equals: 2;
+		assert: shape description equals: '-2x10 matrix'
+]
+
+{ #category : #Tests }
+TensorShapeTest >> testFourDimensionalShape [
+
+	| shape |
+
+	shape := TensorShape withDimensionsSized: #(5 2 3 1).
+
+	self
+		assert: shape dimensionSizes equals: #(5 2 3 1);
+		deny: shape representsScalar;
+		deny: shape representsVector;
+		deny: shape representsMatrix;
+		assert: shape totalAmountOfElements equals: 30;
+		assert: shape size equals: 4;
+		assert: shape rank equals: 4;
+		assert: shape description equals: '#(5 2 3 1)';
+		assert: shape isCompatibleWithNHWCShapes;
+		assert: shape flattened equals: ( TensorShape matrixSized: 5 by: 6 );
+		assert: shape batchDimension equals: 5;
+		assert: shape channelDimension equals: 1
 ]
 
 { #category : #Tests }
