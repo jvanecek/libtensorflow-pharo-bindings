@@ -32,6 +32,12 @@ Conv2DLayer >> currentComputation [
 ]
 
 { #category : #Initialization }
+Conv2DLayer >> defaultPaddingTechnique [
+
+	^ Conv2D noPadding
+]
+
+{ #category : #Initialization }
 Conv2DLayer >> defaultStride [
 
 	^#(1 1)
