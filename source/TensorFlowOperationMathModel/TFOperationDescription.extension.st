@@ -7,9 +7,21 @@ TFOperationDescription >> atDataTypePut: aType [
 ]
 
 { #category : #'*TensorFlowOperationMathModel' }
+TFOperationDescription >> atPaddingPut: aListOfIntegers [
+
+	^self at: 'padding' putString: aListOfIntegers
+]
+
+{ #category : #'*TensorFlowOperationMathModel' }
 TFOperationDescription >> atShapePut: aShape [
 
 	self at: TFAttributeName shape putShape: aShape
+]
+
+{ #category : #'*TensorFlowOperationMathModel' }
+TFOperationDescription >> atStridesPut: aListOfIntegers [
+
+	^self at: 'strides' putInts: aListOfIntegers
 ]
 
 { #category : #'*TensorFlowOperationMathModel' }

@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'input'
 	],
-	#category : #TensorFlowOperationExperimentalModel
+	#category : #NeuralNetworkLayerModel
 }
 
 { #category : #'Instance Creation' }
@@ -29,12 +29,6 @@ Conv2DLayer class >> filtering: anInput withKernelLike: aConvolutionKernelSpecif
 Conv2DLayer >> currentComputation [
 
 	^input currentComputation
-]
-
-{ #category : #Initialization }
-Conv2DLayer >> defaultPaddingTechnique [
-
-	^'VALID'
 ]
 
 { #category : #Initialization }

@@ -1,7 +1,7 @@
 Class {
 	#name : #Regularizer,
 	#superclass : #Object,
-	#category : #TensorFlowOperationExperimentalModel
+	#category : #TensorFlowOperationMathModel
 }
 
 { #category : #Processing }

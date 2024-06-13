@@ -1,7 +1,7 @@
 Class {
 	#name : #Conv2DLayerTest,
 	#superclass : #TensorFlowComputationBasedTest,
-	#category : #TensorFlowOperationExperimentalModelTests
+	#category : #NeuralNetworkLayerModelTests
 }
 
 { #category : #Tests }

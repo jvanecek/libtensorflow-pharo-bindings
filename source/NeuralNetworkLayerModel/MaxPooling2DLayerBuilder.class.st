@@ -22,7 +22,6 @@ MaxPooling2DLayerBuilder >> build [
 		reducing: input
 		inWindowsOf: poolSize
 		shiftedBy: poolSize
-		paddingAccording: Conv2D noPadding
 ]
 
 { #category : #initialization }

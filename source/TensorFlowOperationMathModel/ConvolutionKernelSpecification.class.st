@@ -6,7 +6,7 @@ Class {
 		'kernelInitializer',
 		'kernelShape'
 	],
-	#category : #TensorFlowOperationExperimentalModel
+	#category : #TensorFlowOperationMathModel
 }
 
 { #category : #'Instance Creation' }

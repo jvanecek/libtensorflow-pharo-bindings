@@ -4,8 +4,19 @@ Class {
 	#instVars : [
 		'currentComputation'
 	],
-	#category : #TensorFlowOperationExperimentalModel
+	#category : #TensorFlowOperationMathModel
 }
+
+{ #category : #'Instance Creation' }
+MaxPooling2D class >> on: aTensorFlowComputation reducing: anInput inWindowsOf: aWindowSizes shiftedBy: aStrideAlongsideHeightAndWidth [
+
+	^ self
+		on: aTensorFlowComputation
+		reducing: anInput
+		inWindowsOf: aWindowSizes
+		shiftedBy: aStrideAlongsideHeightAndWidth
+		paddingAccording: Conv2D noPadding
+]
 
 { #category : #'Instance Creation' }
 MaxPooling2D class >> on: aTensorFlowComputation reducing: anInput inWindowsOf: aWindowSizes shiftedBy: aStrideAlongsideHeightAndWidth paddingAccording: aPaddingTechnique [

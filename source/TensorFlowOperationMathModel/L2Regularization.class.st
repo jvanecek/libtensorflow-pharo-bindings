@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'lambda'
 	],
-	#category : #TensorFlowOperationExperimentalModel
+	#category : #TensorFlowOperationMathModel
 }
 
 { #category : #'Instance Creation' }

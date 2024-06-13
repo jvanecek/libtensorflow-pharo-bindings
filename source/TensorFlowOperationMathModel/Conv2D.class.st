@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'currentComputation'
 	],
-	#category : #TensorFlowOperationExperimentalModel
+	#category : #TensorFlowOperationMathModel
 }
 
 { #category : #Accessing }

@@ -1,7 +1,7 @@
 Class {
 	#name : #MaxPooling2DTest,
 	#superclass : #TensorFlowComputationBasedTest,
-	#category : #TensorFlowOperationExperimentalModelTests
+	#category : #TensorFlowOperationMathModelTests
 }
 
 { #category : #Tests }
@@ -18,8 +18,7 @@ MaxPooling2DTest >> testMaxPooling3x3Input [
 				on: tf
 				reducing: input
 				inWindowsOf: #(2 2)
-				shiftedBy: #(1 1)
-				paddingAccording: 'VALID').
+				shiftedBy: #(1 1)).
 	self
 		assert: maxPooled type equals: input type;
 		assert: maxPooled shape
@@ -41,8 +40,7 @@ MaxPooling2DTest >> testMaxPooling3x4Input [
 				on: tf
 				reducing: input
 				inWindowsOf: #(2 2)
-				shiftedBy: #(1 1)
-				paddingAccording: 'VALID').
+				shiftedBy: #(1 1)).
 	self
 		assert: maxPooled type equals: input type;
 		assert: maxPooled shape
@@ -64,8 +62,7 @@ MaxPooling2DTest >> testMaxPooling4x4Input [
 				on: tf
 				reducing: input
 				inWindowsOf: #(2 2)
-				shiftedBy: #(2 2)
-				paddingAccording: 'VALID').
+				shiftedBy: #(2 2)).
 	self
 		assert: maxPooled type equals: input type;
 		assert: maxPooled shape
