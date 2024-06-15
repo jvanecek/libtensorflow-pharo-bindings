@@ -37,7 +37,7 @@ Conv2DLayerBuilder >> build [
 
 	layer := Conv2DLayer
 		filtering: input
-		shaped: inputSize asTensorShape
+		shaped: ( inputSize ifNil: [ input outputShape ] ifNotNil: [ inputSize asTensorShape ] )
 		withKernelLike:
 			( ConvolutionKernelSpecification
 				totalFilters: filters
@@ -54,7 +54,8 @@ Conv2DLayerBuilder >> initializeOfSize: anInteger kernelSized: aTensorShape rece
 	
 	filters := anInteger. 
 	kernelShape := aTensorShape.
-	input := anInputTensor
+	input := anInputTensor.
+	kernelInitializer := GlorotUniformInitializer new
 ]
 
 { #category : #configuring }
@@ -67,4 +68,9 @@ Conv2DLayerBuilder >> inputSize: aNumberOfInputFeatures [
 Conv2DLayerBuilder >> kernelInitializedWith: aFilterTensor [ 
 	
 	kernelInitializer := ConstantInitializer with: aFilterTensor
+]
+
+{ #category : #configuring }
+Conv2DLayerBuilder >> makeInputSizeOptional [
+	
 ]

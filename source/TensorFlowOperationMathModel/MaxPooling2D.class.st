@@ -61,3 +61,9 @@ MaxPooling2D >> initializeOn: aTensorFlowComputation reducing: anInput inWindows
 							yourself);
 					atPaddingPut: aPaddingTechnique]
 ]
+
+{ #category : #accessing }
+MaxPooling2D >> trainableVariables [
+
+	^#()
+]

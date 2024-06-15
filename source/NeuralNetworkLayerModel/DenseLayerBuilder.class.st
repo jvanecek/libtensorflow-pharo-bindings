@@ -38,6 +38,12 @@ DenseLayerBuilder >> activatedBySigmoid [
 ]
 
 { #category : #Configuring }
+DenseLayerBuilder >> activatedBySoftmax [
+
+	self activatedBy: Softmax
+]
+
+{ #category : #Configuring }
 DenseLayerBuilder >> activatedByTanh [
 
 	self activatedBy: Tanh

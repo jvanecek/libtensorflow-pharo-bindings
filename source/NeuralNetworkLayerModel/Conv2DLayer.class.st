@@ -2,7 +2,8 @@ Class {
 	#name : #Conv2DLayer,
 	#superclass : #SequentialModelLayer,
 	#instVars : [
-		'input'
+		'input',
+		'trainableVariables'
 	],
 	#category : #NeuralNetworkLayerModel
 }
@@ -71,11 +72,19 @@ Conv2DLayer >> initializeFiltering: anInput
 			filtering: anInput
 			with: filter
 			shiftedBy: self defaultStride
-			paddedAccording: self defaultPaddingTechnique
+			paddedAccording: self defaultPaddingTechnique. 
+			
+	trainableVariables := OrderedCollection with: filter
 ]
 
 { #category : #Accessing }
 Conv2DLayer >> inputVariableName [
 
 	^input operationName
+]
+
+{ #category : #accessing }
+Conv2DLayer >> trainableVariables [
+	
+	^ trainableVariables
 ]

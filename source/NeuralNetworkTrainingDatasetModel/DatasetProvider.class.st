@@ -120,7 +120,7 @@ DatasetProvider >> initializeHandwrittenDataset [
 					self
 						tensorTyped: Int32DataType new
 						fromFileNamed: baseDirectory / 'train-labels-idx1-ubyte.gz');
-			bindTestingSetTo: (
+			bindValidationSetTo: (
 					self
 						tensorTyped: FloatDataType new
 						fromFileNamed: baseDirectory / 't10k-images-idx3-ubyte.gz')
