@@ -1446,7 +1446,10 @@ TensorFlowPharoLibrary >> tensorType: aTF_Tensor [
 
 { #category : #'accessing platform' }
 TensorFlowPharoLibrary >> unixModuleName [
-	^ '/usr/local/lib/libtensorflow.so'
+
+	^ OSPlatform current environment
+		at: 'LIBTENSORFLOW_PATH'
+		ifAbsent: [ '/usr/local/lib/libtensorflow.so' ]
 ]
 
 { #category : #utils }
