@@ -19,7 +19,7 @@ SummaryWriterTest >> testWriteOneScalar [
 
 		files := folder allFileAndDirectoryEntries.
 		self assert: files size equals: 1.
-		self assert: files any size equals: 87]
+		self assert: files any size equals: 125]
 			ensure: [folder deleteAll]
 ]
 
@@ -39,7 +39,7 @@ SummaryWriterTest >> testWriteSeveralScalar [
 
 		files := folder allFileAndDirectoryEntries.
 		self assert: files size equals: 1.
-		self assert: files any size equals: 334]
+		self assert: files any size equals: 372]
 			ensure: [folder deleteAll]
 ]
 
@@ -63,6 +63,6 @@ SummaryWriterTest >> testWritingImmediatly [
 
 		files := folder allFileAndDirectoryEntries.
 		self assert: files size equals: 1.
-		self assert: files any size equals: 334]
+		self assert: files any size equals: 372]
 			ensure: [folder deleteAll]
 ]

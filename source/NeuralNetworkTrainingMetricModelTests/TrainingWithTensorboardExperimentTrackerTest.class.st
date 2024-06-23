@@ -15,7 +15,7 @@ TrainingWithTensorboardExperimentTrackerTest >> expectedLogFileSize [
 		         ( self linuxIdentificationParameters at: #ID ifAbsent: [ 'n/a' ] ) }.
 
 	^ Dictionary new
-		  at: { 'linux-gnu'. 'x86_64'. 'linuxmint' } put: 5173;
+		  at: { 'linux-gnu'. 'x86_64'. 'linuxmint' } put: 5177;
 		  at: { 'linux-gnu'. 'x86_64'. 'ubuntu' } put: 5149;
 		  at: { 'Win64'. 'x86_64'. 'n/a' } put: 4561;
 		  at: osKey
