@@ -57,7 +57,7 @@ BaselineOfLibTensorFlowPharoBinding >> experimentingGroupsIn: spec [
 
 	spec
 		group: 'Examples' with: #('LibTensorFlowExamplesApp' 'LibTensorFlowExamplesTestsApp');
-		group: 'MachineLearning-Experimenting' with: #('NeuralNetworkTrainingVisualizationModel' 'TensorFlowOperationExperimentalModel' 'TensorFlowOperationExperimentalModelTests' 'Examples')
+		group: 'MachineLearning-Experimenting' with: #('NeuralNetworkTrainingVisualizationModel' 'Examples')
 ]
 
 { #category : #baseline }
@@ -66,10 +66,7 @@ BaselineOfLibTensorFlowPharoBinding >> experimentingPackageIn: spec [
 	spec
 		package: 'LibTensorFlowExamplesApp' with: [ spec requires: #('TensorFlowCore' 'Roassal2') ];
 		package: 'LibTensorFlowExamplesTestsApp' with: [ spec requires: #('LibTensorFlowExamplesApp' 'TensorFlowComputationModelTests') ];
-		package: 'NeuralNetworkTrainingVisualizationModel' with: [ spec requires: #('NeuralNetworkTrainingModel' 'Roassal2') ];
-		
-		package: 'TensorFlowOperationExperimentalModel' with: [ spec requires: #('TensorFlowOperationBasicModel') ];
-		package: 'TensorFlowOperationExperimentalModelTests' with: [ spec requires: #('TensorFlowOperationExperimentalModel' 'TensorFlowComputationModelTests') ]
+		package: 'NeuralNetworkTrainingVisualizationModel' with: [ spec requires: #('NeuralNetworkTrainingModel' 'Roassal2') ]
 ]
 
 { #category : #baseline }
