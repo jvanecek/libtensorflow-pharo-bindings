@@ -125,7 +125,7 @@ TensorFlowOperationAbstract >> relu [
 { #category : #'*TensorFlowOperationMathModel' }
 TensorFlowOperationAbstract >> reshapeFlattened [
 
-	^self reshapeTo: self outputShape flattened
+	^self reshapeTo: self shape flattenedShape
 ]
 
 { #category : #'*TensorFlowOperationMathModel' }

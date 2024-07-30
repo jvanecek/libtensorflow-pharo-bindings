@@ -7,7 +7,8 @@ Class {
 		'input',
 		'activation',
 		'kernelInitializer',
-		'inputSize'
+		'inputSize',
+		'inputSizeAsserter'
 	],
 	#category : #NeuralNetworkLayerModel
 }
@@ -32,17 +33,21 @@ Conv2DLayerBuilder >> activatedByRelu [
 
 { #category : #building }
 Conv2DLayerBuilder >> build [
+	| layer numberOfInputFeatures |
 
-	| layer |
+	inputSizeAsserter value.
+	numberOfInputFeatures := inputSize
+		ifNil: [ input outputShape ]
+		ifNotNil: [ inputSize asTensorShape withUnknowBatchDimension ].
 
 	layer := Conv2DLayer
 		filtering: input
-		shaped: ( inputSize ifNil: [ input outputShape ] ifNotNil: [ inputSize asTensorShape ] )
+		shaped: numberOfInputFeatures 
 		withKernelLike:
-			( ConvolutionKernelSpecification
+			(ConvolutionKernelSpecification
 				totalFilters: filters
 				sized: kernelShape
-				initializedWith: kernelInitializer ).
+				initializedWith: kernelInitializer).
 
 	activation ifNotNil: [ layer := activation activating: layer ].
 
@@ -54,8 +59,7 @@ Conv2DLayerBuilder >> initializeOfSize: anInteger kernelSized: aTensorShape rece
 	
 	filters := anInteger. 
 	kernelShape := aTensorShape.
-	input := anInputTensor.
-	kernelInitializer := GlorotUniformInitializer new
+	input := anInputTensor
 ]
 
 { #category : #configuring }
@@ -68,9 +72,4 @@ Conv2DLayerBuilder >> inputSize: aNumberOfInputFeatures [
 Conv2DLayerBuilder >> kernelInitializedWith: aFilterTensor [ 
 	
 	kernelInitializer := ConstantInitializer with: aFilterTensor
-]
-
-{ #category : #configuring }
-Conv2DLayerBuilder >> makeInputSizeOptional [
-	
 ]

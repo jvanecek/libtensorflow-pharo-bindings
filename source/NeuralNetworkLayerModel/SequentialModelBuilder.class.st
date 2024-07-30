@@ -34,7 +34,7 @@ SequentialModelBuilder >> addConv2DLayerOutputSized: anOutputSize kernelSized: a
 					kernelSized: aTensorShape 
 					receiving: input.
 			layers isEmpty ifFalse: [layerBuilder makeInputSizeOptional].
-			aBlock value: layerBuilder.
+			aBlock cull: layerBuilder.
 			self addLayer: layerBuilder build]
 ]
 
@@ -53,22 +53,37 @@ SequentialModelBuilder >> addDenseLayerSized: anOutputSize builtWith: aBlock [
 ]
 
 { #category : #Configuring }
-SequentialModelBuilder >> addFlattenLayerSized: aTensorShape [
-
+SequentialModelBuilder >> addFlattenLayer [
+	layers isEmpty
+		ifTrue: [ AssertionFailure
+				signal:
+					'Should use addFlattenLayerSized: message, since there is no layer to deduce the size from' ].
+	
 	self
 		inScopeNamed: 'flatten'
 		withCountOf: FlattenLayer
-		do: [| input |
-			input :=
-				layers isEmpty
-					ifTrue: [
-						InputTensor
-							on: tf
-							named: 'input'
-							of: FloatDataType new
-							shaped: aTensorShape withUnknowBatchDimension]
-					ifFalse: [layers last].
-			self addLayer: (FlattenLayer receiving: input)]
+		do: [ | input |
+			input := layers last. 
+			self addLayer: (FlattenLayer receiving: input) ]
+]
+
+{ #category : #Configuring }
+SequentialModelBuilder >> addFlattenLayerSized: aTensorShape [
+	layers isEmpty
+		ifFalse: [ AssertionFailure
+				signal:
+					'Should use addFlattenLayer message, since the input size can be deduced from the last layer' ].
+	
+	self
+		inScopeNamed: 'flatten'
+		withCountOf: FlattenLayer
+		do: [ | input |
+			input := InputTensor
+				on: tf
+				named: 'input'
+				of: FloatDataType new
+				shaped: aTensorShape withUnknowBatchDimension.
+			self addLayer: (FlattenLayer receiving: input) ]
 ]
 
 { #category : #'private-configuring' }

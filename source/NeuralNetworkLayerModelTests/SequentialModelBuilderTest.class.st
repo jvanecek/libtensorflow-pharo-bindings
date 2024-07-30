@@ -162,11 +162,11 @@ SequentialModelBuilderTest >> testOneFlattenLayer [
 			addFlattenLayerSized: #( 2 2 ) asTensorShape;
 			build.
 
-	result := model predictFrom: #((
+	result := model predictFrom: #(
 	((1.11 1.12) (1.21 1.22))
 	((2.11 2.12) (2.21 2.22))
 	((3.11 3.12) (3.21 3.22))
-)) asFloatTensor.
+) asFloatTensor.
 
 	expectedOutput := #((
 	(1.11 1.12 1.21 1.22)

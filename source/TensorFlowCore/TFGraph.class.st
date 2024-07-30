@@ -231,7 +231,7 @@ TFGraph >> runOutput: aTFOutput [
 	| session |
 	session := TFSession on: self.
 	self initializeOn: session.
-	^ session runOutput: aTFOutput
+	^ (session runOutputs: {aTFOutput}) first
 ]
 
 { #category : #running }

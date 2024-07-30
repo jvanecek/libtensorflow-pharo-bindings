@@ -45,11 +45,11 @@ FlattenLayerTest >> testFlatten3DimensionTensor [
 			compute: layer
 			feedingInputsWith: (
 				Dictionary new
-					at: 'flatten_input' put: #((
+					at: 'flatten_input' put: #(
 	((1.11 1.12) (1.21 1.22))
 	((2.11 2.12) (2.21 2.22))
 	((3.11 3.12) (3.21 3.22))
-)) asFloatTensor;
+) asFloatTensor;
 					yourself).
 	
 	expectedOutput := #(
@@ -93,6 +93,58 @@ FlattenLayerTest >> testFlatten3DimensionTensorCase1 [
 	expectedOutput := #((0 1)
  (2 3)
  (4 5)
+).
+
+	self assert: result isFloatTensorClosedTo: expectedOutput
+]
+
+{ #category : #Test }
+FlattenLayerTest >> testFlatten3DimensionTensorCase2 [
+
+	| input layer result expectedOutput |
+
+	input :=
+		VariableTensor
+			on: tf
+			named: 'flatten_input'
+			of: FloatDataType new
+			shaped: #(3 4 2) asTensorShape
+			initializedWith: (ConstantInitializer with: 1).
+
+	layer := FlattenLayer receiving: input.
+
+	result := tf 	compute: layer.
+	
+	expectedOutput := #(
+	(1 1 1 1 1 1 1 1)
+ 	(1 1 1 1 1 1 1 1)
+ 	(1 1 1 1 1 1 1 1)
+).
+
+	self assert: result isFloatTensorClosedTo: expectedOutput
+]
+
+{ #category : #Test }
+FlattenLayerTest >> testFlatten4DimensionTensorCase2 [
+
+	| input layer result expectedOutput |
+
+	input :=
+		VariableTensor
+			on: tf
+			named: 'flatten_input'
+			of: FloatDataType new
+			shaped: #(3 4 2 3) asTensorShape
+			initializedWith: (ConstantInitializer with: 1).
+
+	layer := FlattenLayer receiving: input.
+
+	result := tf 	compute: layer.
+	
+	expectedOutput := #(
+	(1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1)
+ 	(1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1)
+ 	(1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1)
 ).
 
 	self assert: result isFloatTensorClosedTo: expectedOutput

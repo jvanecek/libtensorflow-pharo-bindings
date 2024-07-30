@@ -22,15 +22,8 @@ FlattenLayer >> currentComputation [
 { #category : #Initialization }
 FlattenLayer >> initializeReceiving: anInputTensor [
 
-	| outputShape |
-
 	input := anInputTensor.
-	outputShape := input outputShape.
-	value :=
-		input reshapeTo: (
-			TensorShape
-				matrixSized: outputShape batchDimension
-				by: outputShape nonBatchDimensionsSize)
+	value := input reshapeFlattened 
 ]
 
 { #category : #Accessing }

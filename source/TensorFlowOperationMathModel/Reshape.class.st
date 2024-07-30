@@ -42,5 +42,5 @@ Reshape >> initializeNamed: aName of: aTFOperation to: aNewShape [
 			newOperationOf: self class operationType
 			namePrefixed: aName
 			with: operand
-			with: (self currentComputation integerConstantWith: newShape)
+			with: newShape
 ]

@@ -34,7 +34,7 @@ SparseCategoricalPredictionAccuracy >> initializeOf: aPrediction whenExpectedIs:
 	| predictionsMatches count |
 
 	prediction := aPrediction argMaxAcross: -1.
-	target := aTarget reshapeTo: aTarget outputShape flattened.
+	target := aTarget reshapeFlattened.
 	predictionsMatches :=
 		(prediction comparedWith: (target castedTo: prediction outputType))
 			castedTo: FloatDataType new.

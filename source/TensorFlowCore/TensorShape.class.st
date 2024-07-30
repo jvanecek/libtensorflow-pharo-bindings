@@ -83,13 +83,13 @@ TensorShape >> asTensorShape [
 	^self
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #Accessing }
 TensorShape >> batchDimension [
 
 	^self dimensionSizes first
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #Accessing }
 TensorShape >> channelDimension [
 
 	" This assumes the (batch_size, height, width, input_channels) shape "
@@ -115,13 +115,19 @@ TensorShape >> dimensionSizes [
 	^dimensionSizes
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #Accessing }
 TensorShape >> flattened [
 
 	self rank < 2 ifTrue: [^self].
 	self representsMatrix
 		ifTrue: [^self class vectorSized: self batchDimension * self numberOfFeatures].
-	^self class matrixSized: self batchDimension by: self nonBatchDimensionsSize
+	^self class matrixSized: self batchDimension by: self flattenedDimensionSize
+]
+
+{ #category : #Accessing }
+TensorShape >> flattenedDimensionSize [
+
+	^self nonBatchDimensions inject: 1 into: [:prev :actual | prev * actual]
 ]
 
 { #category : #Comparing }
@@ -136,7 +142,7 @@ TensorShape >> initializeDimensionSized: anArray [
 	dimensionSizes := anArray
 ]
 
-{ #category : #testing }
+{ #category : #Testing }
 TensorShape >> isCompatibleWithNHWCShapes [
 
 	"NHWC shape is those with (number of images in the batch, height, width, channel) shape "
@@ -152,16 +158,18 @@ TensorShape >> isCompatibleWithNHWShapes [
 	^self rank = 3
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #Testing }
+TensorShape >> isNonBatchDimensionFullyDefined [
+
+	^ self nonBatchDimensions
+		allSatisfy:
+			[ :dimensionSize | (dimensionSize = self class unknownSize) not ]
+]
+
+{ #category : #Accessing }
 TensorShape >> nonBatchDimensions [
 
 	^self dimensionSizes allButFirst
-]
-
-{ #category : #'as yet unclassified' }
-TensorShape >> nonBatchDimensionsSize [
-
-	^self nonBatchDimensions inject: 1 into: [:prev :actual | prev * actual]
 ]
 
 { #category : #Accessing }
@@ -169,6 +177,12 @@ TensorShape >> numberOfFeatures [
 	" When shape represents a matrix, the second dimensions is the total amount of columns, 
 	 which is the numbe of features in a dataset"
 	^self dimensionSizes second
+]
+
+{ #category : #Accessing }
+TensorShape >> outputOn: aTensorFlowComputation [
+	^ (TFTensor fromInt32s: dimensionSizes)
+		outputOn: aTensorFlowComputation
 ]
 
 { #category : #Printing }
@@ -202,7 +216,7 @@ TensorShape >> representsVector [
 	^self rank = 1
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #Accessing }
 TensorShape >> size [
 
 	^self dimensionSizes size
