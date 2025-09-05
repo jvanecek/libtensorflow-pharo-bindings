@@ -476,12 +476,12 @@ TensorFlowPharoLibrary >> externalizeString: aString [
 
 { #category : #'operation description' }
 TensorFlowPharoLibrary >> finishOperation: aTF_OperationDescription status: aTF_Status [
+
 	| answer |
-	
+
 	answer := self finishOperationAsVoid: aTF_OperationDescription status: aTF_Status.
-	aTF_OperationDescription handle: nil.
-	"answer handle: answer getHandle getHandle."
-	^answer
+	aTF_OperationDescription setHandle: nil "answer handle: answer getHandle getHandle.".
+	^ answer
 ]
 
 { #category : #'operation description' }
