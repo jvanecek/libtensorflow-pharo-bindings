@@ -30,6 +30,7 @@ jobs:
         run: smalltalkci -s ${{ matrix.smalltalk }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LIBTENSORFLOW_PATH: /usr/local/lib/libtensorflow.so
         timeout-minutes: 20
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
