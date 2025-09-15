@@ -447,19 +447,18 @@ TensorFlowCAPITest >> testInputStructureSizeIs16bits [
 TensorFlowCAPITest >> testNewBufferFromFileNamed [
 
 	| string temporaryFile |
-
 	string := ' hola manola'.
 	temporaryFile := 'temporaryFile.txt'.
 	temporaryFile asFileReference writeStream
 		nextPutAll: string;
 		close.
 
-	TFBuffer newFromFileNamed: temporaryFile deleteAfter: [ :buffer |
-		temporaryFile asFileReference delete.
+	[ 
+	TFBuffer newFromFileNamed: temporaryFile deleteAfter: [ :buffer | 
 		self deny: buffer isNull.
 		self assert: buffer length equals: string size.
-		self assert: string equals: buffer data fromCString
-		]
+		self assert: string equals: buffer data fromCString ] ] ensure: [ 
+		temporaryFile asFileReference delete ]
 ]
 
 { #category : #'testing buffer' }
