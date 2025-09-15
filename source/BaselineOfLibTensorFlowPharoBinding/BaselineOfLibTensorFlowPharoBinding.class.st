@@ -27,7 +27,7 @@ BaselineOfLibTensorFlowPharoBinding >> baseline: spec [
 				group: 'Development'
 					with:
 					#('Core-Development' 'Computation-Development' 'MachineLearning-Development' 'MachineLearning-Experimenting');
-				group: 'CI' with: #('Core-Development' 'Computation-Development' 'MachineLearning-Development');
+				group: 'CI' with: #('Core-CI' 'Computation-Development' 'MachineLearning-Development');
 				group: 'Deprecated'
 					with: #('TensorFlowDeprecatedCore' 'TensorFlowDeprecatedCoreTests' 'TensorFlowEnvironmentDeprecatedModel')
 			]
@@ -38,7 +38,8 @@ BaselineOfLibTensorFlowPharoBinding >> coreGroupsIn: spec [
 
 	spec
 		group: 'Core' with: #( 'TensorFlowCore' 'TensorFlowPharoCore' 'VAST-Compatibility-Model' );
-		group: 'Core-Development' with: #( 'Core' 'TensorFlowCoreTests' )
+		group: 'Core-CI' with: #( 'Core' 'TensorFlowCoreTests' );
+		group: 'Core-Development' with: #( 'Core-CI' 'TensorFlowCoreUnstableTests' )
 ]
 
 { #category : #baseline }

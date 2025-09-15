@@ -284,39 +284,6 @@ TensorFlowCAPITest >> testAttrSetShape: anIntegerArray [
 
 ]
 
-{ #category : #'testing operation' }
-TensorFlowCAPITest >> testAttrSetString: aString [
-	| graph in op copy |
-	graph := TFGraph create.
-	copy := aString asByteArray.
-	
-	in := graph placeholder: 'in' type: DoubleDataType new.
-	op := graph newOperation: 'AsString' named: 'out' described: [:description |
-		description at: 'fill' putString: copy.
-		description addInput: (in output: 0)].
-	
-	copy at: 1 put: 65.	"Change Smalltalk String to see if TensorFlow makes a copy"	
-	
-	self assert: (op stringAt: 'fill') equals: aString.
-
-]
-
-{ #category : #'testing operation' }
-TensorFlowCAPITest >> testAttrSetStrings: aAnArrayOfStrings [
-	| graph template in op |
-	graph := TFGraph create.
-	template := #((1 2 3) (4 5 6) (7 8 9)).
-	in := graph const: 'in' value: (TFTensor fromFloats: template).
-	op := graph newOperation: 'DebugIdentity' named: 'out' described: [:description |
-		description at: 'debug_urls' putStrings: aAnArrayOfStrings.
-		description addInput: (in output: 0)].
-	
-	(TFSession on: graph)
-		runOutput: (op output: 0).
-
-
-]
-
 { #category : #'testing buffer' }
 TensorFlowCAPITest >> testBufferDataBytes [
 
@@ -346,34 +313,6 @@ TensorFlowCAPITest >> testBufferNoNeedExternalize [
 { #category : #'testing structures size' }
 TensorFlowCAPITest >> testBufferStructureSizeIs24bits [
 	self assert: TFBuffer byteSize equals: 24
-]
-
-{ #category : #'testing operation' }
-TensorFlowCAPITest >> testDecodeCSVGraphRunCSV: csvLines [
-	| defaults graph output records session results values |
-	defaults := {
-		TFTensor fromInt64s: #(-1).
-		TFTensor fromInt64s: #(-1).
-		TFTensor fromInt64s: #(-1).
-		TFTensor fromInt64s: #(-1)}.
-		
-	graph := self decodeCSVGraphDefaults: defaults.
-	records := (graph operationNamed: 'records') input: 0.
-	output := graph operationNamed: 'output'.
-	values := TFTensor fromStrings: csvLines.
-	
-	session := TFSession on: graph.
-	results := session
-		runInputs: {records}
-		values: {values}
-		outputs: {
-			(output output: 0).
-			(output output: 1).
-			(output output: 2).
-			(output output: 3)}.
-	^ (1 to: 4) collect: [:i |
-		(results at: i) allInt64s].
-
 ]
 
 { #category : #'testing tensor' }
@@ -507,7 +446,7 @@ TensorFlowCAPITest >> testInputStructureSizeIs16bits [
 { #category : #'testing buffer' }
 TensorFlowCAPITest >> testNewBufferFromFileNamed [
 
-	| string data temporaryFile |
+	| string temporaryFile |
 
 	string := ' hola manola'.
 	temporaryFile := 'temporaryFile.txt'.
@@ -654,32 +593,6 @@ TensorFlowCAPITest >> testSessionOptionsSetTarget [
 	options target: 'local'.
 	options class finalizeResourceData: options.
 	self assert: options isNull.
-]
-
-{ #category : #'testing session' }
-TensorFlowCAPITest >> testSessionRunOutputOnGraph: graph [
-	| operation session output tensor |
-	session := TFSession on: graph.
-	operation := graph operationNamed: 'a'.
-	output := operation output: 0.
-	tensor := session runOutput: output.
-	self deny: tensor isNull.
-	self deny: tensor data isNull.
-	self assert: (tensor data getHandle signedLongLongAt: 1) equals: 16r4242424242424242
-]
-
-{ #category : #'testing session' }
-TensorFlowCAPITest >> testSessionRunTargetOutputOnGraph: graph [
-	| operation session output tensor |
-	session := TFSession on: graph.
-	operation := graph operationNamed: 'a'.
-	output := operation output: 0.
-	
-	tensor := session runOperation: operation output: output.
-	
-	self deny: tensor isNull.
-	self deny: tensor data isNull.
-	self assert: (tensor data getHandle signedLongLongAt: 1) equals: 16r4242424242424242
 ]
 
 { #category : #'testing tensor' }

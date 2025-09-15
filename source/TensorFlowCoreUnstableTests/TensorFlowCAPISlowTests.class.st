@@ -1,7 +1,7 @@
 Class {
 	#name : #TensorFlowCAPISlowTests,
 	#superclass : #TensorFlowTestCase,
-	#category : #TensorFlowCoreTests
+	#category : #TensorFlowCoreUnstableTests
 }
 
 { #category : #accessing }
