@@ -13,7 +13,6 @@ jobs:
       fail-fast: false
       matrix:
         smalltalk:
-          - Pharo64-10
           - Pharo64-11
         tensorflow: [ 2.15.0 ]
     name: TF ${{ matrix.tensorflow }}+${{ matrix.smalltalk }}
