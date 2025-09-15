@@ -111,7 +111,9 @@ TensorFlowPharoLibrary >> arrayWithPointerToEach: elements [
 TensorFlowPharoLibrary >> assertTensorFlowLibraryExists [
 
 	libtensorflowPath asFileReference exists ifFalse: [
-		self error: 'tensorflow library not found!' ]
+		self error:
+			('TensorFlow library not found at <1s>' expandMacrosWith:
+				 libtensorflowPath) ]
 ]
 
 { #category : #converting }
