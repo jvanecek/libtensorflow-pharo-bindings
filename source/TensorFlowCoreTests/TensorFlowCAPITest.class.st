@@ -953,7 +953,7 @@ TensorFlowCAPITest >> testTensorFromDoublesShape [
 { #category : #'testing tensor' }
 TensorFlowCAPITest >> testTensorFromFloats [
 	| tensor template values |
-	template := #(1.23456 0.0 -1.234567 3.402823466e38 1.175494351e-38).
+	template := #(1.23456 0.0 -1.234567 3.4028234663852886e38 1.175494351e-38).
 	tensor := TFTensor fromFloats: template.
 	values := tensor allFloats.
 		
