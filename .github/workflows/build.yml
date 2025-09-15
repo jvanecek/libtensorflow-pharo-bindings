@@ -12,11 +12,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        smalltalk: [ Pharo64-9.0, Pharo64-8.0 ]
+        smalltalk:
+          - Pharo64-10
+          - Pharo64-11
         tensorflow: [ 2.15.0 ]
     name: TF ${{ matrix.tensorflow }}+${{ matrix.smalltalk }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: hpi-swa/setup-smalltalkCI@v1
         with:
           smalltalk-image: ${{ matrix.smalltalk }}
@@ -33,7 +35,7 @@ jobs:
           LIBTENSORFLOW_PATH: /usr/local/lib/libtensorflow.so
         timeout-minutes: 20
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v5
         with:
           name: ${{matrix.os}}-${{matrix.smalltalk}}
           token: ${{ secrets.CODECOV_TOKEN }}
