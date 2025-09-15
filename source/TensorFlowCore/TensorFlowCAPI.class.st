@@ -658,6 +658,12 @@ TensorFlowCAPI >> tensorType: aTFTensor [
 	^ TensorDataType identifiedWith: ( platformLibrary tensorType: aTFTensor )
 ]
 
+{ #category : #configuring }
+TensorFlowCAPI >> useTensorFlowLibraryAt: aString [ 
+	
+	platformLibrary useTensorFlowLibraryAt: aString 
+]
+
 { #category : #utils }
 TensorFlowCAPI >> version [
 	

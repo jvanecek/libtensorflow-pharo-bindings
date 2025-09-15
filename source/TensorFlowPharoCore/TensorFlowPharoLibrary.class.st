@@ -1,6 +1,9 @@
 Class {
 	#name : #TensorFlowPharoLibrary,
 	#superclass : #FFILibrary,
+	#instVars : [
+		'libtensorflowPath'
+	],
 	#classInstVars : [
 		'current'
 	],
@@ -102,6 +105,13 @@ TensorFlowPharoLibrary >> arrayWithPointerToEach: elements [
 	elements
 		withIndexDo: [ :each :index | pointers pointerAt: ( index - 1 ) * Smalltalk wordSize + 1 put: each getHandle ].
 	^ pointers
+]
+
+{ #category : #accessing }
+TensorFlowPharoLibrary >> assertTensorFlowLibraryExists [
+
+	libtensorflowPath asFileReference exists ifFalse: [
+		self error: 'tensorflow library not found!' ]
 ]
 
 { #category : #converting }
@@ -1447,9 +1457,20 @@ TensorFlowPharoLibrary >> tensorType: aTF_Tensor [
 { #category : #'accessing platform' }
 TensorFlowPharoLibrary >> unixModuleName [
 
-	^ OSPlatform current environment
-		at: 'LIBTENSORFLOW_PATH'
-		ifAbsent: [ '/usr/local/lib/libtensorflow.so' ]
+	libtensorflowPath ifNil: [
+		libtensorflowPath := OSPlatform current environment
+			at: 'LIBTENSORFLOW_PATH'
+			ifAbsent: [ (FileLocator vmDirectory / 'libtensorflow.so') absolutePath pathString  ] ].
+		
+	self assertTensorFlowLibraryExists.
+
+	^ libtensorflowPath
+]
+
+{ #category : #configuring }
+TensorFlowPharoLibrary >> useTensorFlowLibraryAt: aPath [
+
+	libtensorflowPath := aPath. 
 ]
 
 { #category : #utils }
@@ -1465,8 +1486,12 @@ TensorFlowPharoLibrary >> version [
 
 { #category : #accessing }
 TensorFlowPharoLibrary >> win32ModuleName [
-	#('tensorflow.dll')
-		detect: [ :each | (FileLocator vmDirectory / each) exists ]
-		ifFound: [ :each | ^ each ].
-	self error: 'tensorflow library not found!'
+
+	libtensorflowPath ifNil: [
+		libtensorflowPath := (FileLocator vmDirectory / 'tensorflow.dll')
+			                     absolutePath pathString ].
+
+	self assertTensorFlowLibraryExists.
+
+	^ libtensorflowPath
 ]
