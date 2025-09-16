@@ -1,51 +1,40 @@
 # libtensorflow-pharo-bindings
 
-[![Build Status](https://github.com/jvanecek/libtensorflow-pharo-bindings/workflows/Build/badge.svg?branch=new-model)](https://github.com/jvanecek/libtensorflow-pharo-bindings/actions?query=workflow%3ABuild)
+[![Unit Tests](https://github.com/jvanecek/libtensorflow-pharo-bindings/actions/workflows/build.yml/badge.svg?branch=new-model)](https://github.com/jvanecek/libtensorflow-pharo-bindings/actions?query=workflow%3ABuild)
 [![Coverage Status](https://codecov.io/github/jvanecek/libtensorflow-pharo-bindings/coverage.svg?branch=new-model)](https://codecov.io/gh/jvanecek/libtensorflow-pharo-bindings/branch/new-model)
+[![Pharo 11](https://img.shields.io/badge/Pharo-11-informational)](https://pharo.org)
+[![TF 2.15.0](https://zenodo.org/badge/DOI/10.5281/zenodo.10126399.svg)](https://doi.org/10.5281/zenodo.10126399)
 
-This is a fork of the [PolyMathOrg](https://github.com/PolyMathOrg/libtensorflow-pharo-bindings)'s TensorFlow C++ library binding for Pharo. 
+This project is a fork of [PolyMathOrg](https://github.com/PolyMathOrg/libtensorflow-pharo-bindings), a binding of the TensorFlow C++ library for Pharo Smalltalk.
 
-This library is available for [Cuis](https://github.com/Cuis-Smalltalk/Machine-Learning)'s and [VA Smalltalk](http://github.com/vast-community-hub/tensorflow-vast/).
+On top of the low-level binding, this repository adds a set of abstraction layers for building and training neural networks in Pharo, including:
 
-You will need a 64 bits Pharo VM in order to run the code. The code has only been tested in Pharo 7.0 to 9.0 with [TensorFlow 2.11.0](https://github.com/tensorflow/tensorflow/releases/tag/v2.11.0)
+- **TensorFlowComputation** – execution context and graph management  
+- **Math Operations** – basic and advanced tensor operations  
+- **Model / Layers** – sequential and dense layers, etc.  
+- **Training** – model update routines and training workflows  
+- **Gradient-Based Optimizers** – Adam, RMSProp, and more  
+- **Datasets** – input pipelines for CSV, text, random and batch datasets  
+
+The same framework is also available for other Smalltalk dialects: [VA Smalltalk](http://github.com/vast-community-hub/tensorflow-vast/) and [Cuis Smalltalk](https://github.com/jvanecek/Machine-Learning) (which is still in early development).
+
+This project is the result of the undergraduate thesis *"Deep Learning on Dynamically-Typed Object-Oriented Languages"* for the **Computer Science Master at Universidad de Buenos Aires**.
+
+## Quick links
+
+- [**Explore the docs**](docs/Installation.md)
+- [Report a defect](https://github.com/jvanecek/libtensorflow-pharo-bindings/issues/new?labels=Type%3A+Defect)
+- [Request a feature](https://github.com/jvanecek/libtensorflow-pharo-bindings/issues/new?labels=Type%3A+Feature)
+
+## License
+
+- The code is licensed under [MIT](LICENSE).
+- The documentation is licensed under [CC BY-SA 4.0](http://creativecommons.org/licenses/by-sa/4.0/).
 
 ## Installation
 
-- Install any Pharo 7.0, 8.0 or 9.0 (64 bit VM and image) from the command line: https://pharo.org/download
-- Install the project in Pharo executing the following script:
+To load the project in a Pharo image follow these [instructions](docs/Installation.md).
 
-```Smalltalk
-    Metacello new
-    	githubUser: 'jvanecek' project: 'libtensorflow-pharo-bindings' commitish: 'new-model' path: 'source';
-    	baseline: 'LibTensorFlowPharoBinding';
-    	load: #('Development')
-```
+## Contributing
 
-Alternatively you can use Iceberg to load the code of this repository (See the video [here](https://youtu.be/U6Ttcc1KJUg))
-
-To add the project to your baseline just add this:
-
-```Smalltalk
-    spec
-    	baseline: 'LibTensorFlowPharoBinding'
-    	with: [ spec repository: 'github://jvanecek/libtensorflow-pharo-bindings' ]
-```
-
-## Installation of TensorFlow C API 
-
-In Linux you can use the [installation script](scripts/install-tensorflow.sh). For Windows and MacOS check the Tensorflow for C [installation guide](https://www.tensorflow.org/install/lang_c). 
-
-
-### On MacOS
-- Check method ```TensorFlowCAPI>>macModulename``` to put the path to where Tensorflow libraries are located on your computer:
-```Smalltalk
-TensorFlowCAPI>>macModulename
-  ^ '/usr/local/Cellar/libtensorflow/2.11.0/lib/libtensorflow.so'
-  ```
-  
-### On Linux
-- Check method ```TensorFlowCAPI>>unixModulename``` to put the path to where Tensorflow libraries are located on your computer:
-```Smalltalk
-TensorFlowCAPI>>unixModulename
-  ^ '/usr/local/lib/libtensorflow.so'
-  ```
+Check the [Contribution Guidelines](CONTRIBUTING.md)
