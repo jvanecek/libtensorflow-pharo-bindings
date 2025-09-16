@@ -1,4 +1,4 @@
-name: Build
+name: Unit tests
 
 on:
   push:
@@ -22,16 +22,14 @@ jobs:
         with:
           smalltalk-image: ${{ matrix.smalltalk }}
       - name: Install TensorFlow
-        run: ./scripts/install-tensorflow.sh
-        env:
-          VERSION: ${{ matrix.tensorflow }}
+        run: ./scripts/install-tensorflow.sh --version=${{ matrix.tensorflow }} --path=$(pwd)
       - name: Install Pharo Dependencies
         run: ./scripts/install-pharo-dependencies.sh
       - name: Load Image and Run Tests
         run: smalltalkci -s ${{ matrix.smalltalk }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LIBTENSORFLOW_PATH: /usr/local/lib/libtensorflow.so
+          LIBTENSORFLOW_PATH: ${{ github.workspace }}/lib/libtensorflow.so
         timeout-minutes: 20
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
